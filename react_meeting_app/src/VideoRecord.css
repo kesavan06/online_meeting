@@ -1,0 +1,60 @@
+.recordElement {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 180px;
+}
+
+.recordIconBox {
+  width: 20%;
+  height: 40px;
+  border: 1px solid rgb(42, 42, 40);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+}
+
+.recordIcon {
+  color: #ea6744;
+  width: 25px;
+  height: 25px;
+}
+
+.recordTime {
+  width: 60%;
+  height: 40px;
+  border: 1px solid rgb(42, 42, 40);
+  border-radius:5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.round {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ea6744;
+}
+
+.recordTime p {
+  color: rgb(241, 241, 241);
+}
+
+.stopRecord {
+  width: 20%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(42, 42, 40);
+  border-radius: 5px;
+}
+
+.stopRecordIcon {
+  width: 25px;
+  height: 25px;
+  color: rgb(241, 241, 241);
+  cursor: pointer;
+}
