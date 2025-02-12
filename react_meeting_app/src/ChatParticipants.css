@@ -1,5 +1,5 @@
 .chatContainer {
-  width: 25%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -41,18 +41,18 @@
   transition: 0.2s all ease-in;
 }
 
-.toggleBtns button:hover{
-    background-color: rgb(32, 33, 40);
+.toggleBtns button:hover {
+  background-color: rgb(32, 33, 40);
 }
 
-.activeBtnColor{
-    background-color: rgb(32, 33, 40);
+.activeBtnColor {
+  background-color: rgb(32, 33, 40);
 }
-.nonActiveBtnColor{
+.nonActiveBtnColor {
   background-color: rgb(16, 16, 16);
 }
 
-.closeChatBox{
-    filter: invert(1);
-    cursor: pointer;
+.closeChatBox {
+  filter: invert(1);
+  cursor: pointer;
 }

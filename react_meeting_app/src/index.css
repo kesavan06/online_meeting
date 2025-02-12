@@ -5,12 +5,3 @@
   font-family: sans-serif;
 }
 
-.meetingContainer{
-  width: 100vw;
-  min-height: fit-content;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: column;
-  background-color: rgb(16, 16, 16);
-}
