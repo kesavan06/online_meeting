@@ -9,8 +9,10 @@ import Meeting from "./components/Meeting.jsx";
 import HomePage from "./components/HomePage.jsx";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Routes, Route, Link } from "react-router-dom";
+import MeetingSetup from "./components/MeetingSetup.jsx";
 
 createRoot(document.getElementById("root")).render(
+
   <StrictMode>
     <HomePage></HomePage>
     <Meeting></Meeting>

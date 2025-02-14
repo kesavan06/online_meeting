@@ -18,6 +18,13 @@ let setRoomNameState = null;
 
 const Client = (setRoomId, setRoomName, myVideoRef, videoGridRef) => {
 
+  setRoomIdState = setRoomId;
+  setRoomIdState = setRoomName;
+
+  peerRef.on("open", (id) => {
+    
+  })
+
 }
 
 // const videoGrid = document.getElementById("video-grid");

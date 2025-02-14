@@ -3,7 +3,12 @@ import { FaVideo } from "react-icons/fa";
 import { FaUserFriends } from "react-icons/fa";
 import "../AboutMeeting.css";
 
-export default function AboutMeeting() {
+export default function AboutMeeting({
+  view,
+  setView,
+  viewJoinMeeting,
+  setViewJoinMeeting,
+}) {
   return (
     <center>
       <div className="about">
@@ -13,13 +18,20 @@ export default function AboutMeeting() {
         </p>
         <div className="whole">
           <button
+            onClick={() => {
+              setView(!view);
+            }}
             className="newMeeting"
-            onClick={() => setViewMeeting(!viewMeeting)}
           >
             <FaVideo className="icon"></FaVideo>
             New Meeting
           </button>
-          <button className="joinMeeting">
+          <button
+            onClick={() => {
+              setViewJoinMeeting(!viewJoinMeeting);
+            }}
+            className="joinMeeting"
+          >
             <FaUserFriends className="icon"></FaUserFriends>
             Join Meeting
           </button>
