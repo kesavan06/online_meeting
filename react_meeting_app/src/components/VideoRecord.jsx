@@ -6,7 +6,6 @@ import "../VideoRecord.css";
 
 function VideoRecord() {
   return (
-    <>
       <div className="recordElement">
         <div className="recordIconBox">
           <FaRecordVinyl className="recordIcon"></FaRecordVinyl>
@@ -19,7 +18,6 @@ function VideoRecord() {
             <FaCircleStop className="stopRecordIcon"></FaCircleStop>
         </div>
       </div>
-    </>
   );
 }
 

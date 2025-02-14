@@ -8,7 +8,6 @@ function ChatParticipants() {
   let [view, setView] = useState(true);
 
   return (
-    <>
       <div className="chatContainer">
         <div className="toggleBox">
           <div className="toggleBtns">
@@ -33,7 +32,6 @@ function ChatParticipants() {
         </div>
         {view ? <ChatBox></ChatBox> : <Participants></Participants>}
       </div>
-    </>
   );
 }
 

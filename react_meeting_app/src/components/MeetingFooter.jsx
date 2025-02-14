@@ -17,7 +17,6 @@ function MeetingFooter() {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   return (
-    <>
       <div className="footerBox">
         <div className="micVideoConrol">
           <div
@@ -68,7 +67,6 @@ function MeetingFooter() {
           </div>
         </div>
       </div>
-    </>
   );
 }
 

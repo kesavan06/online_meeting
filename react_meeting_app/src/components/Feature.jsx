@@ -1,6 +1,6 @@
 
 import React from "react";
-import "../style/Feature.css"
+import "../Feature.css"
 
 function Feature(probs)
 {
