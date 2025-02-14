@@ -1,0 +1,33 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+#container{
+    width:400px;
+    height:250px;
+    box-sizing:border-box;
+    padding-left:40px;
+    padding-right:40px;
+    padding-top:30px;
+    text-align:center;
+    background-color:#1F2937;
+    border-radius:14px; 
+    /* display: flex;
+    justify-content: space-between;
+    flex-direction: column; */
+    /* border: 2px solid black; */
+}
+
+#heading{
+    color: white;
+    margin-top: 20px;
+}
+
+#content{
+    font-size: 18px;
+    color: white;
+    margin-top: 20px;
+}
+
