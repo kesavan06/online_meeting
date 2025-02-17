@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FaVideo } from "react-icons/fa";
 import { FaUserFriends } from "react-icons/fa";
 import "../AboutMeeting.css";
+import { useAppContext } from "../Context";
 
 export default function AboutMeeting({
   view,
@@ -9,6 +10,7 @@ export default function AboutMeeting({
   viewJoinMeeting,
   setViewJoinMeeting,
 }) {
+  const { viewVideo, setViewVideo } = useAppContext();
   return (
     <center>
       <div className="about">

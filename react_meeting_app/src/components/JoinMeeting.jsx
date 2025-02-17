@@ -60,7 +60,7 @@ function JoinMeeting({ viewJoinMeeting, setViewJoinMeeting }) {
               <input type="text" placeholder="Enter Room ID"></input>
             </div>
             <div className="joinMeetingBtns">
-              <button className="createMeeting">Create</button>
+              <button className="createMeeting">Join</button>
               <button
                 onClick={() => {
                   setViewJoinMeeting(!viewJoinMeeting);

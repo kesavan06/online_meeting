@@ -9,7 +9,7 @@ export default function HomePage() {
   const [viewSetupMeeting, setViewSetupMeeting] = useState(false);
   const [viewJoinMeeting, setViewJoinMeeting] = useState(false);
 
-  if (!viewSetupMeeting && !viewJoinMeeting) {
+  if (!viewSetupMeeting && !viewJoinMeeting ) {
     return (
       <div className="homeContainer">
         <Header />
