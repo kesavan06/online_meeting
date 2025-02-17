@@ -1,6 +1,7 @@
-import Feature from "./Feature"
-import { FaVideo } from "react-icons/fa"
+import Feature from "./Feature";
+import { FaVideo } from "react-icons/fa";
 // import {FaShareNodes} from "react-icons/fa"
+
 import { FaPenNib } from "react-icons/fa"
 import React from "react"
 function FeatureList()

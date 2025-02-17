@@ -1,0 +1,8 @@
+{
+	"command": "nodemon server.js",
+	"build_path": "/home/kesavan-zstk364/Documents/online_meeting/react_meeting_app/backend",
+	"stack": "node20",
+	"env_variables": {},
+	"memory": 256,
+	"scripts": {}
+}

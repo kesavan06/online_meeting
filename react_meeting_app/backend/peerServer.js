@@ -1,5 +1,7 @@
+const { PeerServer } = require("peer");
+
 const peerServer = PeerServer({
-  port: 4000,
+  port: 4001,
   path: "/peerjs",
   allow_discovery: true,
   corsOptions: {
@@ -10,4 +12,4 @@ const peerServer = PeerServer({
   },
 });
 
-console.log("PeerJS Server is running on http://localhost:3001");
+console.log("PeerJS Server is running on http://localhost:4001");

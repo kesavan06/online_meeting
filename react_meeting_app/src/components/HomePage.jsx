@@ -16,7 +16,7 @@ export default function HomePage() {
   const [showSignIn,setShowSignIn] = useState(false);
 
 
-  if (!viewSetupMeeting && !viewJoinMeeting && !showSignUp && !showSignIn) {
+  if (!viewSetupMeeting && !viewJoinMeeting) {
     return (
       <div className="homeContainer">
         <Header showSignUp={showSignUp} setShowSignUp={setShowSignUp} showSignIn={showSignIn} setShowSignIn={setShowSignIn} />

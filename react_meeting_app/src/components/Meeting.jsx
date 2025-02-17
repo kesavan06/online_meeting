@@ -3,10 +3,13 @@ import VideoBox from "./VideoBox";
 import ChatParticipants from "./ChatParticipants";
 import MeetingFooter from "./MeetingFooter";
 import { useState } from "react";
+import { useAppContext } from "../Context";
 
 import "../Meeting.css";
 
 function Meeting({ viewMeeting }) {
+  let {videoGridRed} = useAppContext();
+
   return (
     <div className="meetingContainer">
       <div className="meetingHeader">
