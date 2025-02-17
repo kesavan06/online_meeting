@@ -15,6 +15,6 @@ createRoot(document.getElementById("root")).render(
 
   <StrictMode>
     <HomePage></HomePage>
-    <Meeting></Meeting>
+    {/* <Meeting></Meeting> */}
   </StrictMode>
 );

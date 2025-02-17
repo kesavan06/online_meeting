@@ -13,7 +13,7 @@ export default function AboutMeeting({
     <center>
       <div className="about">
         <h1 style={{ color: "white" }}>Welcome to Meeting</h1>
-        <p style={{ color: "white", marginTop: "30px" }}>
+        <p style={{ color: "white", marginTop: "30px",fontSize:"20px" }}>
           Connect with your team anytime, anywhere
         </p>
         <div className="whole">

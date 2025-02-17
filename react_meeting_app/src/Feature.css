@@ -5,8 +5,8 @@
 }
 
 #container{
-    width:400px;
-    height:250px;
+    width:430px;
+    height:280px;
     box-sizing:border-box;
     padding-left:40px;
     padding-right:40px;
@@ -29,5 +29,10 @@
     font-size: 18px;
     color: white;
     margin-top: 20px;
+    line-height: 25px;
 }
 
+.image{
+    width: 70px;
+    height: 70px;
+}

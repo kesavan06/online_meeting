@@ -9,11 +9,12 @@ function FeatureList()
         {src:"video_on.svg",title:"HD Video Conferencing",content:"Crystal clear video and audio for seamless communication"},
         {src:"chat_1.svg",title:"Integrated Chat",content:"Real-time messaging during meetings for enhanced collaboration"},
         {src:"share_2.svg",title:"Screen Sharing",content:"Share your screen effortlessly for presentations and demonstrations"},
-        {src:"pen.svg",title:"Interactive Whiteboard",content:"Collaborate in real-time with a shared digital whiteboard"}
+        {src:"pen.svg",title:"Interactive Whiteboard",content:"Collaborate in real-time with a shared digital whiteboard"},
+        {src:"record-vinyl-solid.svg",title:"Video Capture",content:"Never miss key moments—record and playback your meetings whenever needed."}
     ]
     return(
         <center>
-            <div style={{width:"46%",height:"630px",display:"flex",justifyContent:"space-between",flexWrap:"wrap",marginTop:"50px"}}>
+            <div style={{width:"67%",height:"670px",display:"flex",flexWrap:"wrap",marginTop:"50px", alignItems:"center",gap:"4%"}}>
                 {
                     features.map((feature)=>{
                         return(
