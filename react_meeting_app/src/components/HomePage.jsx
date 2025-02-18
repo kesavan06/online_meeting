@@ -44,7 +44,7 @@ export default function HomePage() {
           setShowSignIn={setShowSignIn}
         />
         <Wrapper>
-          <Signup></Signup>
+          <Signup showSignUp={showSignUp} setShowSignUp={setShowSignUp} setShowSignIn={setShowSignIn}></Signup>
         </Wrapper>
         <AboutMeeting
           view={viewSetupMeeting}
@@ -66,7 +66,7 @@ export default function HomePage() {
           setShowSignIn={setShowSignIn}
         />
         <Wrapper>
-          <Signin></Signin>
+          <Signin showSignIn={showSignIn} setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp}></Signin>
         </Wrapper>
         <AboutMeeting
           view={viewSetupMeeting}

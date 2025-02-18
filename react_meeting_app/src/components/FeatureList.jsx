@@ -15,7 +15,7 @@ function FeatureList()
     ]
     return(
         <center>
-            <div style={{width:"67%",height:"670px",display:"flex",flexWrap:"wrap",marginTop:"50px", alignItems:"center",gap:"4%"}}>
+            <div style={{width:"75%",height:"670px",display:"flex",flexWrap:"wrap",margin:"auto",marginTop:"50px", alignItems:"center",gap:"4%"}}>
                 {
                     features.map((feature)=>{
                         return(
