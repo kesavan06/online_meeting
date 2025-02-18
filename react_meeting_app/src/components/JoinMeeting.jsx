@@ -4,13 +4,69 @@ import { FaMicrophone } from "react-icons/fa";
 import { FaVideo } from "react-icons/fa";
 import { FaVideoSlash } from "react-icons/fa";
 import "../JoinMeeting.css";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
-function JoinMeeting({ viewJoinMeeting, setViewJoinMeeting }) {
+function JoinMeeting({
+  viewJoinMeeting,
+  setViewJoinMeeting,
+  view,
+  setView,
+  showMeeting,
+  setRoomId,
+  setShowMeeting,
+}) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   const [name, setName] = useState("Kesavan");
+  const [roomInput, setRoomInput] = useState("");
 
+  const [stream, setStream] = useState(null);
+
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const startStream = async () => {
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
+        console.log(mediaStream);
+
+        setStream(mediaStream);
+        console.log("Stream:", stream);
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = mediaStream;
+        }
+      } catch (error) {
+        console.error("Error accessing media devices:", error);
+      }
+    };
+    startStream();
+  }, []);
+
+  const stopStream = async () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      console.log(stream);
+      setStream(null);
+      setView(!view);
+
+      if (videoRef) {
+        videoRef.current.srcObject = null;
+      }
+    }
+  };
+
+  const joinRoom = () => {
+    if (roomInput.trim() !== "") {
+      setRoomId(roomInput);
+      setView(!view);
+    } else {
+      alert("Please enter a valid Room ID");
+    }
+  };
   return (
     <div className="popupContainer">
       <div className="joinMeetingContainer">
@@ -26,7 +82,9 @@ function JoinMeeting({ viewJoinMeeting, setViewJoinMeeting }) {
             {/* <button className="participentsBtn">18 others Participants</button> */}
           </div>
 
-          <div className="joinMeetingVideoBox"></div>
+          <div className="joinMeetingVideoBox">
+            <video ref={videoRef} autoPlay playsInline />
+          </div>
           <div className="joinMeetingControls">
             <div
               onClick={() => (mic ? setMic(false) : setMic(true))}
@@ -57,10 +115,17 @@ function JoinMeeting({ viewJoinMeeting, setViewJoinMeeting }) {
                 placeholder="Enter your name"
                 onChange={(e) => setName(e.target.value)}
               />
-              <input type="text" placeholder="Enter Room ID"></input>
+              <input
+                type="text"
+                placeholder="Enter Room ID"
+                value={roomInput}
+                onChange={(e) => setRoomInput(e.target.value)}
+              ></input>
             </div>
             <div className="joinMeetingBtns">
-              <button className="createMeeting">Join</button>
+              <button className="createMeeting" onClick={joinRoom}>
+                Join
+              </button>
               <button
                 onClick={() => {
                   setViewJoinMeeting(!viewJoinMeeting);

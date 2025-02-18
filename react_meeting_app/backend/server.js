@@ -25,12 +25,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  // res.cookie("your_cookie", "value", {
-  //   sameSite: "None", // ✅ Allow cross-site requests
-  //   secure: true, // ✅ Required for cross-site cookies
-  //   httpOnly: true, // Prevents XSS attacks
-  // });
-
   res.json({ message: "Hello from Backend!" });
 });
 
@@ -38,7 +32,6 @@ io.on("connection", (socket) => {
   console.log("socket connected: ", socket.id);
   socket.on("send-message", (msg) => {
     console.log("Result: ", msg);
-    
   })
 });
 

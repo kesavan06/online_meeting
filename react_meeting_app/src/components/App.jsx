@@ -1,30 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import HomePage from "./HomePage";
 import Meeting from "./Meeting";
 import "../App.css";
-import { createContext } from "react";
-import AppProvider from "../Context";
+import { AppProvider, useAppContext } from "../Context";
 import axios from "axios";
 
-const BACKEND_SERVER_URL = "http://localhost:3007";
-function App() {
-  useEffect(() => {
-    axios
-      .get(BACKEND_SERVER_URL)
-      .then((response) => {
-        console.log("Received:", response.data.message);
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-      });
-  }, []);
-
+const App = () => {
+  const [roomId, setRoomId] = useState(null);
   return (
-    <AppProvider className="wrapper">
-      <HomePage></HomePage>
-      {/* <Meeting></Meeting> */}
-    </AppProvider>
+    <div className="wrapper">
+      {!roomId ? (
+        <HomePage setRoomId={setRoomId}></HomePage>
+      ) : (
+        <Meeting roomId={roomId}></Meeting>
+      )}
+    </div>
   );
-}
+};
 
 export default App;

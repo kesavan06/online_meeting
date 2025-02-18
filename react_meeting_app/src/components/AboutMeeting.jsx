@@ -10,12 +10,11 @@ export default function AboutMeeting({
   viewJoinMeeting,
   setViewJoinMeeting,
 }) {
-  const { viewVideo, setViewVideo } = useAppContext();
   return (
     <center>
       <div className="about">
         <h1 style={{ color: "white" }}>Welcome to Meeting</h1>
-        <p style={{ color: "white", marginTop: "30px",fontSize:"20px" }}>
+        <p style={{ color: "white", marginTop: "30px", fontSize: "20px" }}>
           Connect with your team anytime, anywhere
         </p>
         <div className="whole">

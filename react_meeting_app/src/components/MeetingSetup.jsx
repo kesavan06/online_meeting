@@ -6,8 +6,16 @@ import { FaVideoSlash } from "react-icons/fa";
 import "../MeetingSetup.css";
 import { useState } from "react";
 import { useAppContext } from "../Context";
+// import { useSocketEvents } from "../socket";
 
-function MeetingSetup({ view, setView }) {
+function MeetingSetup({
+  view,
+  setView,
+  setRoomId,
+  showMeeting,
+  setShowMeeting,
+}) {
+  // const { createRoom, joinRoom } = useSocketEvents();
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   const [name, setName] = useState("Kesavan");
@@ -17,8 +25,6 @@ function MeetingSetup({ view, setView }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    console.log("Hello");
-
     const startStream = async () => {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -51,6 +57,13 @@ function MeetingSetup({ view, setView }) {
         videoRef.current.srcObject = null;
       }
     }
+  };
+
+  const createRoomClicked = () => {
+    const newRoomId = Math.random().toString(36).substring(2, 9);
+    setRoomId(newRoomId);
+    setShowMeeting(!showMeeting);
+    setView(!view);
   };
 
   return (
@@ -100,7 +113,14 @@ function MeetingSetup({ view, setView }) {
               placeholder="Enter your name"
               onChange={(e) => setName(e.target.value)}
             />
-            <button className="createMeeting">Create</button>
+            <button
+              className="createMeeting"
+              onClick={() => {
+                createRoomClicked();
+              }}
+            >
+              Create
+            </button>
             <button onClick={stopStream} className="cancelMeeting">
               Cancel
             </button>
