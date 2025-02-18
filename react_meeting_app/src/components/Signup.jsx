@@ -36,7 +36,7 @@ function Signup(probs) {
 
             <form id="signUp">
                 <h1 style={{color:"white"}}>Create your account</h1>
-                <p style={{color:"rgb(159 163 166 / 88%)"}}>Already have an account? <span style={{color:"#7C3AED"}} onClick={showSignIn}>Sign in</span></p>
+                <p style={{color:"rgb(159 163 166 / 88%)"}}>Already have an account? <span style={{color:"#7C3AED",cursor:"pointer"}} onClick={showSignIn}>Sign in</span></p>
                 <label className="labelTag">User name
                     <input type="text" name="fullName" className="inputTag" required></input>
                 </label>

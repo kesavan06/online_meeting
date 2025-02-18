@@ -23,7 +23,7 @@ export default function Signin(probs)
         <div> 
             <form id="signin">
                 <h1 style={{color:"white"}}>Sign in to your account</h1>
-                <p style={{color:"rgb(159 163 166 / 88%)"}}>Don't have an account? <span style={{color:"#7C3AED"}} onClick={showSignUp}>Sign up</span></p>
+                <p style={{color:"rgb(159 163 166 / 88%)"}}>Don't have an account? <span style={{color:"#7C3AED",cursor:"pointer"}} onClick={showSignUp}>Sign up</span></p>
                 <label className="label">Email address
                     <input type="email" name="emailAddress" className="input" required></input>
                 </label>
