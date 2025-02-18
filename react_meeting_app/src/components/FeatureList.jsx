@@ -15,7 +15,7 @@ function FeatureList({ displayParent }) {
 
     return (
         <center>
-            <div style={{width:"67%",height:"670px",display:"flex",flexWrap:"wrap",marginTop:"50px", alignItems:"center",gap:"4%"}}>
+            <div style={{width:"80%",height:"670px",display:"flex",flexWrap:"wrap",marginTop:"50px", alignItems:"center",gap:"4%"}}>
                 {
                     features.map((feature) => {
                         return (
