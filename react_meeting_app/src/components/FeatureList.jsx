@@ -15,13 +15,12 @@ function FeatureList({ displayParent }) {
 
     return (
         <center>
-            <div style={{width:"80%",height:"670px",display:"flex",flexWrap:"wrap",marginTop:"50px", alignItems:"center",gap:"4%"}}>
+            <div style={{width:"75%",height:"670px",display:"flex",flexWrap:"wrap",marginTop:"50px", alignItems:"center",gap:"4%"}}>
                 {
                     features.map((feature) => {
                         return (
                             <Feature src={feature.src} title={feature.title} content={feature.content} white={feature.onClick} />
                         )
-
                     })
                 }
             </div>
@@ -30,3 +29,4 @@ function FeatureList({ displayParent }) {
 }
 
 export default FeatureList;
+
