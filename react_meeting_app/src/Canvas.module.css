@@ -1,0 +1,99 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #111827;
+}
+
+.wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    /* border: 1px solid white; */
+
+}
+
+
+.canvas {
+    background-color: #111827;
+    color: white;
+    border: 2px solid white;
+    border-left: 0px solid;
+}
+
+.button {
+    width: 79%;
+    height: 5%;
+    border-radius: 38px;
+    background: #111827;
+    color: white;
+    transition: all 0.3s ease-in;
+}
+
+.button:hover{
+    background-color: #1F2937;
+}
+
+.parent {
+    width: 8%;
+    height: 100vh;
+    border: 2px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 2%;
+}
+
+.colorP{
+    width: 79%;
+    height: 5%;
+    border-radius: 38px;
+    overflow: hidden;
+    /* background: black; */
+    color: white;
+}
+
+
+.input{
+    /* width: 81%;
+    height: 7%; */
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    padding: 0px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.input::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+}
+
+.input::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+input[type="range"]{
+    width: 70%;
+}
+
+.on{
+    background-color: #d4d4d4;
+}
+
+.control{
+    width: 20%;
+    height: 5%;
+    background-color: white;
+}

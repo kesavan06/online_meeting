@@ -7,14 +7,20 @@ import JoinMeeting from "./JoinMeeting";
 import Signin from "./Signin";
 import Signup from "./Signup";
 import Wrapper from "./Wrapper";
+import WhiteBoard from "./WhiteBoard";
 
 export default function HomePage() {
   const [viewSetupMeeting, setViewSetupMeeting] = useState(false);
   const [viewJoinMeeting, setViewJoinMeeting] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
+  const [displayParent, setDisplayParent] = useState(false);
 
-  if (!viewSetupMeeting && !viewJoinMeeting && !showSignUp && !showSignIn) {
+  function handleParentShow() {
+    setDisplayParent(!displayParent);
+  }
+
+  if (!viewSetupMeeting && !viewJoinMeeting && !showSignUp && !showSignIn && !displayParent) {
     return (
       <div className="homeContainer">
         <Header
@@ -30,7 +36,8 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
         />
 
-        <FeatureList />
+        <FeatureList displayParent={handleParentShow} />
+
       </div>
     );
   } else if (showSignUp) {
@@ -56,7 +63,7 @@ export default function HomePage() {
       </div>
     );
   } else if (showSignIn) {
-    // console.log("signin"+showSignIn+"\nsignup"+showSignUp);
+
     return (
       <div className="homeContainer">
         <Header
@@ -77,7 +84,13 @@ export default function HomePage() {
         <FeatureList />
       </div>
     );
-  } else {
+  }
+
+  else if (displayParent) {
+    return  <WhiteBoard parentShow={handleParentShow}/>
+  }
+
+  else {
     if (viewSetupMeeting) {
       return (
         <MeetingSetup
@@ -92,9 +105,8 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
         ></JoinMeeting>
       );
-    } else {
-      return <Signup></Signup>;
     }
+
   }
 }
 
