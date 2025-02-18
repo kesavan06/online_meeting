@@ -1,17 +1,29 @@
 
 import "../Signin.css"
 
-export default function Signin()
+export default function Signin(probs)
 {
+
+    function cancelShowSignIn()
+    {
+        probs.setShowSignIn(false);
+    }
+
+    function showSignUp()
+    {
+        probs.setShowSignUp(true);
+        probs.setShowSignIn(false);
+    }
+
     function signIn()
     {
-        
+
     }
     return(
         <div> 
             <form id="signin">
                 <h1 style={{color:"white"}}>Sign in to your account</h1>
-                <p style={{color:"rgb(159 163 166 / 88%)"}}>Don't have an account? Sign up</p>
+                <p style={{color:"rgb(159 163 166 / 88%)"}}>Don't have an account? <span style={{color:"#7C3AED",cursor:"pointer"}} onClick={showSignUp}>Sign up</span></p>
                 <label className="label">Email address
                     <input type="email" name="emailAddress" className="input" required></input>
                 </label>
@@ -19,7 +31,7 @@ export default function Signin()
                     <input type="password" name="emailAddress" className="input" required></input>
                 </label>
                 <div id="signinButtons">
-                    <button id="button">Cancel</button>
+                    <button id="button" onClick={cancelShowSignIn}>Cancel</button>
                     <button id="button" onClick={signIn}>Sign in</button>
                 </div>
                 {/* <button>Sign in</button> */}

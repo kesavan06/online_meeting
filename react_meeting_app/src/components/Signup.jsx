@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import "../Signup.css";
 
-function Signup() {
+function Signup(probs) {
     // const dialogRef=useRef(null);
     // if(probs.showSignUp)
     // {
@@ -12,7 +12,18 @@ function Signup() {
     //     dialogRef.current.close();
     // }
 
-    const [user,setUser] = useState()
+    const [user,setUser] = useState();
+
+    function cancelSignUp()
+    {
+        probs.setShowSignUp(false);
+    }
+
+    function showSignIn()
+    {
+        probs.setShowSignIn(true);
+        probs.setShowSignUp(false);
+    }
 
     function signUp()
     {
@@ -24,6 +35,8 @@ function Signup() {
         <div>
 
             <form id="signUp">
+                <h1 style={{color:"white"}}>Create your account</h1>
+                <p style={{color:"rgb(159 163 166 / 88%)"}}>Already have an account? <span style={{color:"#7C3AED",cursor:"pointer"}} onClick={showSignIn}>Sign in</span></p>
                 <label className="labelTag">User name
                     <input type="text" name="fullName" className="inputTag" required></input>
                 </label>
@@ -37,7 +50,7 @@ function Signup() {
                     <input type="password" className="inputTag" required></input>
                 </label>
                 <div id="signupPage">
-                    <button className="signupButton">Cancel</button>
+                    <button className="signupButton" onClick={cancelSignUp}>Cancel</button>
                     <button className="signupButton"onClick={signUp}>Sign up</button>
                 </div>
                 {/* <button id="signupButton">Create account</button> */}
