@@ -49,7 +49,7 @@ export default function ButtonDiv(props) {
     function setEraserOn() {
         setDrawing(true);
         setEraser(true);
-        setShowEraserBar(true);
+        setShowEraserBar(!showEraserBar);
     }
 
 
@@ -69,7 +69,8 @@ export default function ButtonDiv(props) {
     function handleWidthForEraser(e) {
 
         setWidthOfEraser(e.target.value);
-        setEraserWidth(widthOfEraser);
+        setEraserWidth(e.target.value);
+
     }
 
     function handleClickInEraser() {
