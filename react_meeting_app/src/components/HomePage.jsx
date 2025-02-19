@@ -9,6 +9,7 @@ import Signup from "./Signup";
 import Wrapper from "./Wrapper";
 import WhiteBoard from "./WhiteBoard";
 import Meeting from "./Meeting";
+import ScreenShare from "./ShareScreen";
 
 export default function HomePage({ setRoomId }) {
   const [viewSetupMeeting, setViewSetupMeeting] = useState(false);
@@ -17,9 +18,15 @@ export default function HomePage({ setRoomId }) {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showMeeting, setShowMeeting] = useState(false);
   const [displayParent, setDisplayParent] = useState(false);
+  const [displayScreenShare,setDisplayScreenShare] = useState(false);
 
   function handleParentShow() {
     setDisplayParent(!displayParent);
+  }
+
+  function handleScreenShare()
+  {
+    setDisplayScreenShare(!displayScreenShare);
   }
 
   if (
@@ -28,7 +35,8 @@ export default function HomePage({ setRoomId }) {
     !showSignUp &&
     !showSignIn &&
     !displayParent &&
-    !showMeeting
+    !showMeeting&&
+    !displayScreenShare
   ) {
     return (
       <div className="homeContainer">
@@ -45,7 +53,7 @@ export default function HomePage({ setRoomId }) {
           setViewJoinMeeting={setViewJoinMeeting}
         />
 
-        <FeatureList displayParent={handleParentShow} />
+        <FeatureList displayParent={handleParentShow} displayScreenShare={handleScreenShare} />
       </div>
     );
   } else if (showSignUp) {
@@ -101,7 +109,12 @@ export default function HomePage({ setRoomId }) {
     );
   } else if (displayParent) {
     return <WhiteBoard parentShow={handleParentShow} />;
-  } else {
+  } 
+  else if(displayScreenShare)
+  {
+    return <ScreenShare></ScreenShare>
+  }
+  else {
     if (viewSetupMeeting) {
       return (
         <MeetingSetup

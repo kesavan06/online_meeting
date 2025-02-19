@@ -15,7 +15,7 @@ export default function AboutMeeting({
       <div className="about">
         <h1 style={{ color: "white" }}>Welcome to Meeting</h1>
         <p style={{ color: "white", marginTop: "30px", fontSize: "20px" }}>
-          Connect with your team anytime, anywhere
+          Connect with your team anytime, anywhere!
         </p>
         <div className="whole">
           <button
@@ -25,7 +25,7 @@ export default function AboutMeeting({
             className="newMeeting"
           >
             <FaVideo className="icon"></FaVideo>
-            New Meeting
+            New
           </button>
           <button
             onClick={() => {
@@ -34,7 +34,7 @@ export default function AboutMeeting({
             className="joinMeeting"
           >
             <FaUserFriends className="icon"></FaUserFriends>
-            Join Meeting
+            Join
           </button>
         </div>
       </div>

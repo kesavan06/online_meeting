@@ -18,7 +18,7 @@ body{
 }
 
 .whole{
-    width:600px;
+    width:400px;
     height:90px;
     display:flex;
     justify-content:space-between;
@@ -26,11 +26,11 @@ body{
 }
 
 .newMeeting{
-    width:210px;
+    width:150px;
     height:50px;
     display:flex;
     align-items:center;
-    justify-content:space-around;
+    justify-content:center;
     background-color: #EA580C;
     border: none;
     color: white;
@@ -39,11 +39,11 @@ body{
 }
 
 .joinMeeting{
-    width:210px;
+    width:150px;
     height:50px;
     display:flex;
     align-items:center;
-    justify-content:space-around;
+    justify-content:center;
     border: none;
     color: white;
     font-size: 22px;
@@ -54,5 +54,7 @@ body{
 .icon{
     font-size:23px;
     color:white;
+    margin-right: 15px;
+    /* padding-right: 20px; */
 }
 
