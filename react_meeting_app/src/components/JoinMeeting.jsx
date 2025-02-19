@@ -5,22 +5,22 @@ import { FaVideo } from "react-icons/fa";
 import { FaVideoSlash } from "react-icons/fa";
 import "../JoinMeeting.css";
 import { useState, useRef, useEffect } from "react";
+import { useAppContext } from "../Context";
 
 function JoinMeeting({
   viewJoinMeeting,
   setViewJoinMeeting,
-  view,
-  setView,
   showMeeting,
-  setRoomId,
   setShowMeeting,
 }) {
+  const { roomId, socketRef, initializeMediaStream } = useAppContext();
+
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   const [name, setName] = useState("Kesavan");
   const [roomInput, setRoomInput] = useState("");
 
-  const [stream, setStream] = useState(null);
+  const stream = useRef(null);
 
   const videoRef = useRef(null);
 
@@ -33,7 +33,7 @@ function JoinMeeting({
         });
         console.log(mediaStream);
 
-        setStream(mediaStream);
+        stream.current = mediaStream;
         console.log("Stream:", stream);
 
         if (videoRef.current) {
@@ -48,10 +48,10 @@ function JoinMeeting({
 
   const stopStream = async () => {
     if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
+      stream.current.getTracks().forEach((track) => track.stop());
       console.log(stream);
-      setStream(null);
-      setView(!view);
+      stream.current = null;
+      setViewJoinMeeting(!viewJoinMeeting);
 
       if (videoRef) {
         videoRef.current.srcObject = null;
@@ -61,12 +61,26 @@ function JoinMeeting({
 
   const joinRoom = () => {
     if (roomInput.trim() !== "") {
-      setRoomId(roomInput);
-      setView(!view);
+      roomId.current = roomInput;
+      setShowMeeting(!showMeeting);
+      console.log("joinRoom: ", roomId.current);
+      setViewJoinMeeting(!viewJoinMeeting);
+
+      socketRef.current.emit("join-existing-room", roomId.current);
     } else {
       alert("Please enter a valid Room ID");
     }
   };
+
+  socketRef.current.on("room-exists", (res) => {
+    console.log(`Room exists check: ${res.exists}`);
+    if (res.exists) {
+      initializeMediaStream();
+    } else {
+      alert("Room does not exist!");
+    }
+  });
+
   return (
     <div className="popupContainer">
       <div className="joinMeetingContainer">
@@ -128,7 +142,7 @@ function JoinMeeting({
               </button>
               <button
                 onClick={() => {
-                  setViewJoinMeeting(!viewJoinMeeting);
+                  stopStream();
                 }}
                 className="cancelMeeting"
               >

@@ -6,15 +6,10 @@ import { AppProvider, useAppContext } from "../Context";
 import axios from "axios";
 
 const App = () => {
-  const [roomId, setRoomId] = useState(null);
   return (
-    <div className="wrapper">
-      {!roomId ? (
-        <HomePage setRoomId={setRoomId}></HomePage>
-      ) : (
-        <Meeting roomId={roomId}></Meeting>
-      )}
-    </div>
+    <AppProvider className="wrapper">
+      <HomePage></HomePage>
+    </AppProvider>
   );
 };
 

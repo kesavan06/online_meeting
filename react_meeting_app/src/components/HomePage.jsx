@@ -9,8 +9,9 @@ import Signup from "./Signup";
 import Wrapper from "./Wrapper";
 import WhiteBoard from "./WhiteBoard";
 import Meeting from "./Meeting";
+import { useAppContext } from "../Context";
 
-export default function HomePage({ setRoomId }) {
+export default function HomePage() {
   const [viewSetupMeeting, setViewSetupMeeting] = useState(false);
   const [viewJoinMeeting, setViewJoinMeeting] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
@@ -109,7 +110,6 @@ export default function HomePage({ setRoomId }) {
           setView={setViewSetupMeeting}
           showMeeting={showMeeting}
           setShowMeeting={setShowMeeting}
-          setRoomId={setRoomId}
         ></MeetingSetup>
       );
     } else if (viewJoinMeeting) {
@@ -117,9 +117,8 @@ export default function HomePage({ setRoomId }) {
         <JoinMeeting
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
-          view={viewSetupMeeting}
-          setView={setViewSetupMeeting}
-          setRoomId={setRoomId}
+          setShowMeeting={setShowMeeting}
+          showMeeting={showMeeting}
         ></JoinMeeting>
       );
     } else if (showMeeting) {
