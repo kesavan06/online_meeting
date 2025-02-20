@@ -8,19 +8,13 @@ import { useState } from "react";
 import { useAppContext } from "../Context";
 // import { useSocketEvents } from "../socket";
 
-function MeetingSetup({
-  view,
-  setView,
-  setRoomId,
-  showMeeting,
-  setShowMeeting,
-}) {
-  // const { createRoom, joinRoom } = useSocketEvents();
+function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
+  const { roomId, socketRef, initializeMediaStream } = useAppContext();
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   const [name, setName] = useState("Kesavan");
 
-  const [stream, setStream] = useState(null);
+  const localStream = useRef(null);
 
   const videoRef = useRef(null);
 
@@ -33,8 +27,8 @@ function MeetingSetup({
         });
         console.log(mediaStream);
 
-        setStream(mediaStream);
-        console.log("Stream:", stream);
+        localStream.current = mediaStream;
+        console.log("Stream:", localStream.current);
 
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
@@ -47,10 +41,10 @@ function MeetingSetup({
   }, []);
 
   const stopStream = async () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
+    if (localStream.current) {
+      localStream.current.getTracks().forEach((track) => track.stop());
       console.log(stream);
-      setStream(null);
+      localStream.current = null;
       setView(!view);
 
       if (videoRef) {
@@ -61,10 +55,19 @@ function MeetingSetup({
 
   const createRoomClicked = () => {
     const newRoomId = Math.random().toString(36).substring(2, 9);
-    setRoomId(newRoomId);
-    setShowMeeting(!showMeeting);
+    roomId.current = newRoomId;
     setView(!view);
+    console.log("Create room");
+    socketRef.current.emit("create-room", roomId.current);
   };
+
+  socketRef.current.on("room-created", (newRoomId) => {
+    console.log(`Room created: ${newRoomId}`);
+    console.log("Room id", roomId.current);
+
+    setShowMeeting(!showMeeting);
+    initializeMediaStream();
+  });
 
   return (
     <div className="popupContainer">

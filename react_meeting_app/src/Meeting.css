@@ -24,6 +24,7 @@
 
 .meetingVideoBox {
   width: 70%;
+  height: 50em;
   align-self: flex-start;
   height: fit-content;
   display: flex;
@@ -31,6 +32,12 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 30px;
+}
+
+.video {
+  width: 300px;
+  height: 250px;
+  transform: rotateY(180deg);
 }
 
 .meetingChatParticipants {

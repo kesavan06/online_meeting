@@ -7,17 +7,16 @@ import axios from "axios";
 import PollCreater from "./PollCreater";
 
 const App = () => {
-  // const [roomId, setRoomId] = useState(null);
-  // return (
-  //   <div className="wrapper">
-  //     {!roomId ? (
-  //       <HomePage setRoomId={setRoomId}></HomePage>
-  //     ) : (
-  //       <Meeting roomId={roomId}></Meeting>
-  //     )}
-  //   </div>
-  // );
-  return <PollCreater></PollCreater>
+  const [roomId, setRoomId] = useState(null);
+  return (
+    <div className="wrapper">
+      {!roomId ? (
+        <HomePage setRoomId={setRoomId}></HomePage>
+      ) : (
+        <Meeting roomId={roomId}></Meeting>
+      )}
+    </div>
+  );
 };
 
 export default App;
