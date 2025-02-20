@@ -4,6 +4,7 @@ import Meeting from "./Meeting";
 import "../App.css";
 import { AppProvider, useAppContext } from "../Context";
 import axios from "axios";
+import PollCreater from "./PollCreater";
 
 const App = () => {
   return (

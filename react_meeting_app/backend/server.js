@@ -61,14 +61,10 @@ io.on("connection", (socket) => {
   // Handle joining a room
   socket.on("join-room", (roomId, userId) => {
     console.log(`User ${userId} joined room ${roomId}`);
-    // if (!rooms[roomId]) {
-    //   rooms[roomId] = new Set(); // Create a new room if it doesn't exist
-    // }
+   
     rooms[roomId].add(userId); // Add the user to the room
     socket.join(roomId); // Join the socket room
-    // const allSockets = Array.from(io.sockets.sockets.keys());
-    // console.log("All Connected Sockets:", allSockets);
-    socket.to(roomId).emit("user-connected", userId); // Notify other users in the room
+    socket.to(roomId).emit("user-connected", userId);
 
 
     // send Message

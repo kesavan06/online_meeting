@@ -127,17 +127,3 @@ export default function HomePage() {
   }
 }
 
-// export default function HomePage() {
-//   const [viewMeeting, setViewMeeting] = useState(false);
-
-//   return (
-//     <div>
-//       <Header showSignUp={showSignUp} setShowSignUp={setShowSignUp} showSignIn={showSignIn} setShowSignIn={setShowSignIn} />
-
-//       <AboutMeeting viewMeeting={(viewMeeting, setViewMeeting)}/>
-//       <FeatureList/>
-//       {/* <Signin></Signin> */}
-//       {/* <Signup></Signup> */}
-//     </div>
-//   );
-// }

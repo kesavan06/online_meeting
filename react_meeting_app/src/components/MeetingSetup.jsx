@@ -9,7 +9,7 @@ import { useAppContext } from "../Context";
 // import { useSocketEvents } from "../socket";
 
 function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
-  const { roomId, socketRef, initializeMediaStream,user_name } =
+  const { roomId, socketRef, initializeMediaStream , user_name} =
     useAppContext();
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
@@ -46,7 +46,6 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
   const stopStream = async () => {
     if (localStream.current) {
       localStream.current.getTracks().forEach((track) => track.stop());
-      console.log(stream);
       localStream.current = null;
       setView(!view);
 
