@@ -9,8 +9,7 @@ import { useAppContext } from "../Context";
 // import { useSocketEvents } from "../socket";
 
 function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
-  const { roomId, socketRef, initializeMediaStream } =
-    useAppContext();
+  const { roomId, socketRef, initializeMediaStream } = useAppContext();
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   const [name, setName] = useState("Kesavan");
