@@ -16,7 +16,7 @@ export const AppProvider = ({ children }) => {
   let socketRef = useRef(null);
   let peersRef = useRef({});
   let streams = useRef([]);
-  // let [myStream, setMyStream] = useState(null);
+  let user_name = useRef({});
   let myStream = useRef(null);
 
   useEffect(() => {
@@ -117,11 +117,11 @@ export const AppProvider = ({ children }) => {
     <AppContext.Provider
       value={{
         roomId,
-        peerRef,
         socketRef,
         peerRef,
         initializeMediaStream,
         streams,
+        user_name,
       }}
     >
       {children}

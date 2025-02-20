@@ -20,6 +20,11 @@ const corsOptions = {
   // optionsSuccessStatus: 200
 };
 
+
+
+let allMessages=[];
+
+
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -60,6 +65,24 @@ io.on("connection", (socket) => {
     rooms[roomId].add(userId); // Add the user to the room
     socket.join(roomId); // Join the socket room
     socket.to(roomId).emit("user-connected", userId);
+
+
+    // send Message
+
+    socket.on("sendMessage", (msgObject)=>{
+      console.log("Message Received from ",socket.id," Message: ",msgObject);
+      console.log("SenderId: ",msgObject.sender_id);
+      console.log("Room: ",msgObject.room_id);
+
+      allMessages.push({user_name:msgObject.user_name, message: msgObject.message});
+       console.log("ALl messages: ",allMessages);
+
+     io.to(msgObject.room_id).emit("receivedMessage", (msgObject));
+    })
+
+
+
+
 
     // Handle user disconnection
     socket.on("disconnect", () => {
