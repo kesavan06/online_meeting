@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Button from "./Button";
 import style from "../Canvas.module.css";
 import { FaPaintBrush } from "react-icons/fa";
@@ -6,6 +6,7 @@ import { TbBrushOff } from "react-icons/tb";
 import { FaEraser } from "react-icons/fa6";
 import { PiBroomFill } from "react-icons/pi";
 import { MdCancel } from "react-icons/md";
+import { IoMdColorPalette } from "react-icons/io";
 
 
 export default function ButtonDiv(props) {
@@ -19,8 +20,7 @@ export default function ButtonDiv(props) {
     let setEraser = props.setEraser;
     let setColor = props.color;
 
-    let [color, setColorNow] = useState("#FFFFFF");
-    
+    let [color, setColorNow] = useState("#000000");
 
 
     let setBrushWidth = props.setBrushWidth;
@@ -29,6 +29,7 @@ export default function ButtonDiv(props) {
     let [widthOfBrush, setWidthOfBrush] = useState(5);
     let [widthOfEraser, setWidthOfEraser] = useState(10);
 
+    let [chooseColor, setChooseColor] = useState(false);
 
 
 
@@ -57,6 +58,7 @@ export default function ButtonDiv(props) {
 
         setColor(e.target.value);
         setColorNow(e.target.value);
+        console.log("Color : ", color);
     }
 
 
@@ -81,33 +83,37 @@ export default function ButtonDiv(props) {
         setWidth(false);
     }
 
-    useEffect(()=>{
-        setColor("white");
-    },[])
+    function setColorsNow() {
+        setChooseColor(!chooseColor);
+    }
+
+
 
 
     return (
         <div className={style.parent}>
 
-            <Button value={<FaPaintBrush style={{ fontSize: "2rem" }} />} onClick={startDrawing} type="button"></Button>
+            <Button value={<FaPaintBrush style={{ fontSize: "2rem" }} />} onClick={startDrawing} type="button" title="Doodle"></Button>
             <p style={{ color: "white" }}>Width : {widthOfBrush}</p>
             {(width) && <input type="range" min={5} max={100} value={widthOfBrush} onChange={handleWidthChange} onClick={handleClick}></input>}
 
-            <Button value={<TbBrushOff style={{ fontSize: "2rem" }} />} onClick={stopDrawing} type="button"></Button>
+            <Button value={<TbBrushOff style={{ fontSize: "2rem" }} />} onClick={stopDrawing} type="button" title="Distable Drawing"></Button>
 
-            <Button value={<FaEraser style={{ fontSize: "2rem" }} />} onClick={setEraserOn} type="button"></Button>
-            <p style={{ color: "white", fontSize : "15px" }} width={"70%"}>Width : {widthOfEraser}</p>
+            <Button value={<FaEraser style={{ fontSize: "2rem" }} />} onClick={setEraserOn} type="button" title="Select Eraser"></Button>
+            <p style={{ color: "white", fontSize: "15px" }} width={"70%"}>Width : {widthOfEraser}</p>
 
             {(showEraserBar) && <input type="range" min={5} max={100} value={widthOfEraser} onChange={handleWidthForEraser} onClick={handleClickInEraser}></input>}
 
 
-            <input value={color} onChange={setColorForBrush} className={style.input} type="color" />
+            <button style={{ width: "114px", height: "52px", backgroundColor: "#111827", borderRadius: "35px" }} title="Color Palette" >
+                <IoMdColorPalette style={{ fontSize: "3rem", color: "white" }} onClick={setColorsNow} />
+                {chooseColor && <input value={color} onChange={setColorForBrush} className={style.input} type="color" />}
+            </button>
 
-
-            <Button value={<PiBroomFill style={{ fontSize: "2rem" }} />} onClick={clearAll} type="button"></Button>
-
+            <Button value={<PiBroomFill style={{ fontSize: "2rem" }} />} onClick={clearAll} type="button" title="Clear"></Button>
+       
             <Button value={<MdCancel style={{ fontSize: "2rem" }} />} onClick={props.parentShow} type="button"></Button>
-
+            
         </div>
     )
 }

@@ -1,4 +1,8 @@
-import { useRef,useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
+
+import { RiBrushAiFill } from "react-icons/ri";
+import { PiEraserFill } from "react-icons/pi";
+import { FaPencilAlt } from "react-icons/fa";
 
 
 export default function Canvas(props) {
@@ -16,9 +20,10 @@ export default function Canvas(props) {
     let eraserWidth = props.widthOfEraser;
 
 
+    let [position, setPosition] = useState({ x:0, y:0 });  
 
     const getMousePosition = (event) => {
-    
+
         const rect = canvasRef.current.getBoundingClientRect();
 
         return {
@@ -47,8 +52,10 @@ export default function Canvas(props) {
     };
 
 
-
+  
     const draw = (event) => {
+
+        setPosition({ x: event.clientX-25, y: event.clientY-4 });
 
         if (!isDrawingRef || !isDrawingActive) return;
 
@@ -83,10 +90,10 @@ export default function Canvas(props) {
         canvas = canvasRef.current;
         if (canvas) {
             context = canvas?.getContext("2d");
-      
+
         }
         else {
-            // console.log("Can't get 2d");
+            console.log("Can't get 2d");
         }
 
 
@@ -110,6 +117,14 @@ export default function Canvas(props) {
 
 
     return (
-        <canvas ref={canvasRef} className={props.class} width={1720} height={1064}> </canvas>
+        <>
+            <canvas ref={canvasRef} className={props.class} width={1720} height={1064} style={{position: "relative", cursor:"none"}}> </canvas>
+
+            <div style={{ transition: "transform 0.05s linear", pointerEvents: "none", position: "absolute", left: position.x, top: position.y}} >
+              {isDrawingRef.current && !isErasing.current && <FaPencilAlt style={{fontSize: "1.7rem", rotate: "180deg"}}/> }
+              {isErasing.current &&  <PiEraserFill style={{fontSize: "1.7rem", rotate: "180deg",   color:"black"}}/>}
+              {!isDrawingRef.current && <div style={{width:"20px", height: "21px", borderRadius: "100%",backgroundColor: "black"}}></div>}
+            </div>
+        </>
     )
 }

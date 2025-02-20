@@ -12,14 +12,12 @@ body {
     width: 100vw;
     height: 100vh;
     display: flex;
-    /* border: 1px solid white; */
-
 }
 
 
 .canvas {
-    background-color: #111827;
-    color: white;
+    background-color: white;
+    color: black;
     border: 2px solid white;
     border-left: 0px solid;
 }
@@ -53,16 +51,13 @@ body {
     height: 5%;
     border-radius: 38px;
     overflow: hidden;
-    /* background: black; */
     color: white;
 }
 
 
 .input{
-    /* width: 81%;
-    height: 7%; */
-    width: 60px;
-    height: 60px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
