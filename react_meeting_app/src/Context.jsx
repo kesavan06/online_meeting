@@ -16,7 +16,8 @@ export const AppProvider = ({ children }) => {
   let socketRef = useRef(null);
   let peersRef = useRef({});
   let streams = useRef([]);
-  let [myStream, setMyStream] = useState(null);
+  // let [myStream, setMyStream] = useState(null);
+  let myStream = useRef(null);
 
   useEffect(() => {
     socketRef.current = io("http://localhost:3002");
@@ -28,7 +29,7 @@ export const AppProvider = ({ children }) => {
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         console.log("Media stream obtained");
-        setMyStream(stream);
+        myStream.current = stream;
         addVideoStream(stream); // Add the local video stream
         console.log("Video stream added locally completed");
         // Create a completely new Peer instance
@@ -54,8 +55,8 @@ export const AppProvider = ({ children }) => {
         // Handle incoming calls
         peerRef.current.on("call", (call) => {
           console.log(`Receiving call from: ${call.peer}`);
-          console.log(myStream);
-          call.answer(myStream); // Answer the call with the local stream
+          console.log(myStream.current);
+          call.answer(myStream.current); // Answer the call with the local stream
 
           call.on("stream", (userVideoStream) => {
             console.log(`Received stream from: ${call.peer}`);
@@ -66,7 +67,7 @@ export const AppProvider = ({ children }) => {
         // Handle new user connections
         socketRef.current.on("user-connected", (userId) => {
           console.log(`User connected: ${userId}`);
-          connectToNewUser(userId, myStream); // Connect to the new user
+          connectToNewUser(userId, myStream.current); // Connect to the new user
         });
       })
       .catch((error) => {
@@ -77,6 +78,8 @@ export const AppProvider = ({ children }) => {
   function connectToNewUser(userId, stream) {
     console.log(`Connecting to new user: ${userId}`);
     const call = peerRef.current.call(userId, stream); // Call the new user
+    console.log("Call: ", call);
+
     // const video = document.createElement("video");
 
     call.on("stream", (userVideoStream) => {
@@ -97,7 +100,7 @@ export const AppProvider = ({ children }) => {
     }
     console.log(stream);
     streams.current = [...streams.current, stream];
-    console.log("Stream added:", streams.current);
+    console.log("Stream added:", streams);
   };
 
   useEffect(() => {

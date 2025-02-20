@@ -44,7 +44,6 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
   const stopStream = async () => {
     if (localStream.current) {
       localStream.current.getTracks().forEach((track) => track.stop());
-      console.log(stream);
       localStream.current = null;
       setView(!view);
 
