@@ -9,11 +9,13 @@ import { useAppContext } from "../Context";
 // import { useSocketEvents } from "../socket";
 
 function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
-  const { roomId, socketRef, initializeMediaStream } =
+  const { roomId, socketRef, initializeMediaStream,user_name } =
     useAppContext();
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
-  const [name, setName] = useState("Kesavan");
+  // const [name, setName] = useState("Kesavan");
+
+  let userName = useRef();
 
   const localStream = useRef(null);
 
@@ -55,6 +57,10 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
   };
 
   const createRoomClicked = () => {
+    
+    user_name.current = userName.current.value; 
+
+
     const newRoomId = Math.random().toString(36).substring(2, 9);
     roomId.current = newRoomId;
     setView(!view);
@@ -64,8 +70,7 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
 
   socketRef.current.on("room-created", (newRoomId) => {
     console.log(`Room created: ${newRoomId}`);
-    console.log("Room id", roomId.current);
-
+    
     setShowMeeting(!showMeeting);
     initializeMediaStream();
   });
@@ -113,9 +118,8 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
           <div className="setupUser">
             <input
               type="text"
-              value={name}
               placeholder="Enter your name"
-              onChange={(e) => setName(e.target.value)}
+              ref={userName}
             />
             <button
               className="createMeeting"

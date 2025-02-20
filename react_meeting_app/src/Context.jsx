@@ -17,6 +17,7 @@ export const AppProvider = ({ children }) => {
   let peersRef = useRef({});
   let streams = useRef([]);
   let [myStream, setMyStream] = useState(null);
+  let user_name = useRef({});
 
   useEffect(() => {
     socketRef.current = io("http://localhost:3002");
@@ -119,6 +120,7 @@ export const AppProvider = ({ children }) => {
         peerRef,
         initializeMediaStream,
         streams,
+        user_name,
       }}
     >
       {children}

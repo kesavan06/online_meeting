@@ -13,12 +13,15 @@ function JoinMeeting({
   showMeeting,
   setShowMeeting,
 }) {
-  const { roomId, socketRef, initializeMediaStream } = useAppContext();
+  const { roomId, socketRef, initializeMediaStream , user_name} = useAppContext();
 
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
-  const [name, setName] = useState("Kesavan");
-  const [roomInput, setRoomInput] = useState("");
+  // const [name, setName] = useState("Kesavan");
+  // const [roomInput, setRoomInput] = useState("");
+
+  const userName = useRef(null);
+  const roomInput = useRef(null);
 
   const stream = useRef(null);
 
@@ -60,8 +63,14 @@ function JoinMeeting({
   };
 
   const joinRoom = () => {
-    if (roomInput.trim() !== "") {
-      roomId.current = roomInput;
+    console.log("User: ",userName.current.value);
+    console.log("Room: ",roomInput.current.value);
+
+    if (roomInput.current.value.trim() !== "") {
+   
+      user_name.current = userName.current.value;
+      roomId.current = roomInput.current.value;
+
       setShowMeeting(!showMeeting);
       console.log("joinRoom: ", roomId.current);
       setViewJoinMeeting(!viewJoinMeeting);
@@ -125,15 +134,13 @@ function JoinMeeting({
             <div className="joinMeetingInputs">
               <input
                 type="text"
-                value={name}
                 placeholder="Enter your name"
-                onChange={(e) => setName(e.target.value)}
+                ref={userName}
               />
               <input
                 type="text"
                 placeholder="Enter Room ID"
-                value={roomInput}
-                onChange={(e) => setRoomInput(e.target.value)}
+                ref={roomInput}
               ></input>
             </div>
             <div className="joinMeetingBtns">
