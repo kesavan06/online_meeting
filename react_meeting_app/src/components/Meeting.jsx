@@ -11,16 +11,6 @@ function Meeting() {
   // let {videoGridRed} = useAppContext();
 
   const { roomId, streams } = useAppContext();
-
-  // const [videoElements, setVideoElements] = useState([]);
-
-  // useEffect(() => {
-  //   console.log("Hello");
-  //   console.log(streams.current);
-
-  //   setVideoElements(streams.current);
-  // }, []);
-
   return (
     <div className="meetingContainer">
       <p style={{ color: "white" }}>Room ID:{roomId.current}</p>
@@ -29,22 +19,23 @@ function Meeting() {
       </div>
       <div className="meetingContent">
         <div className="meetingVideoBox">
-          {streams.current.map((stream, index) => {
-            console.log(stream);
-            return (
-              <video
-                className="video"
-                key={index}
-                autoPlay={true}
-                // playsInline // Required for mobile browsers
-                ref={(videoElement) => {
-                  if (videoElement) {
-                    videoElement.srcObject = stream; // Assign the MediaStream to srcObject
-                  }
-                }}
-              />
-            );
-          })}
+          {setTimeout(() => {
+            streams.current.map((stream, index) => {
+              console.log(stream);
+              return (
+                <video
+                  className="video"
+                  key={index}
+                  autoPlay={true}
+                  ref={(videoElement) => {
+                    if (videoElement) {
+                      videoElement.srcObject = stream; // Assign the MediaStream to srcObject
+                    }
+                  }}
+                />
+              );
+            });
+          }, 1000)}
         </div>
         <div className="meetingChatParticipants">
           <ChatParticipants></ChatParticipants>
