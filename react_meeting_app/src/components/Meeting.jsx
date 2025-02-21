@@ -3,11 +3,13 @@ import VideoBox from "./VideoBox";
 import ChatParticipants from "./ChatParticipants";
 import MeetingFooter from "./MeetingFooter";
 import { useState, useEffect, useRef } from "react";
+import WhiteBoard from "./WhiteBoard"
+
 
 import "../Meeting.css";
 import { useAppContext } from "../Context";
 
-const VideoComponent = ({ stream, isLocalStream }) => {
+const VideoComponent = ({ stream, isLocalStream, showWhiteBoard }) => {
   const videoRef = useRef();
 
   useEffect(() => {
@@ -44,7 +46,7 @@ const VideoComponent = ({ stream, isLocalStream }) => {
   return (
     <video
       ref={videoRef}
-      className="video"
+      className={!showWhiteBoard ? "video" : "upVideo"}
       autoPlay
       playsInline
       muted={isLocalStream}
@@ -56,9 +58,15 @@ const VideoComponent = ({ stream, isLocalStream }) => {
 function Meeting() {
   // let {videoGridRed} = useAppContext();
 
-  const { roomId, streams,myStream } = useAppContext();
+  const [showWhiteBoard, setShowWhiteBoard] = useState(false);
+
+  const { roomId, streams, myStream } = useAppContext();
 
   const [videoElements, setVideoElements] = useState([]);
+
+  function handleWhiteBoardShow() {
+    setShowWhiteBoard((!showWhiteBoard));
+  }
 
   useEffect(() => {
     console.log("Current streams:", streams);
@@ -71,24 +79,35 @@ function Meeting() {
         <VideoRecord></VideoRecord>
       </div>
       <div className="meetingContent">
-        <div className="meetingVideoBox">
-          {streams.map((stream) => {
-            return (
-              <VideoComponent
-                key={stream.id}
-                stream={stream}
-                isLocalStream={stream.id === myStream?.current?.id}
-              ></VideoComponent>
-            );
-          })}
+
+
+        <div className={ !showWhiteBoard ?"meetingDiv": "meetingDiv meetingDiv2"}>
+          {showWhiteBoard && <WhiteBoard controlBoard={handleWhiteBoardShow} />}
+
+          <div className={ !showWhiteBoard ?"meetingVideoParent" : "meetingVideoParentInWhite"}>
+            <div className={!showWhiteBoard ? "meetingVideoBox" : "whiteBoardOn"}>
+              {streams.map((stream) => {
+                return (
+                  <VideoComponent
+                    key={stream.id}
+                    stream={stream}
+                    isLocalStream={stream.id === myStream?.current?.id}
+                    showWhiteBoard={showWhiteBoard}
+                  ></VideoComponent>
+                );
+              })}
+            </div>
+          </div>
         </div>
+
+
         <div className="meetingChatParticipants">
           <ChatParticipants></ChatParticipants>
         </div>
       </div>
 
       <div className="meetingFooter">
-        <MeetingFooter></MeetingFooter>
+        <MeetingFooter handleBoard={handleWhiteBoardShow}></MeetingFooter>
       </div>
       <></>
     </div>

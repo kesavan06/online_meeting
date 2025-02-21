@@ -1,13 +1,11 @@
 
 #signUp{
-    width:490px;
-    height:640px;
+    height:100%;
     padding-top:50px;
     padding-bottom:50px;
     background-color:#1F2937;
     display:flex;
     flex-direction:column;
-    /* margin-top: 20px; */
     padding-left:40px;
     align-items:flex-start;
     justify-content:space-between;
@@ -18,22 +16,30 @@
     display:flex;
     flex-direction:column;
     text-align:left;
+    font-size: 1.2rem;
+    height: 78%;
 }
 
 .inputTag{
-    width:400px;
-    height:50px;
+    width:90%;
+    height:100%;
     background-color:#374151;
     border:none;
     margin-top: 5px;
     color: white;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    padding-left: 4%;
     border-radius:8px;
+    margin-top: 2%;
+    outline: none;
+
 }
 
 .signupButton{
     color:white;
-    width:180px;
-    height:60px;
+    width:46%;
+    height:100%;
     border-radius: 10px;
     border: none;
     font-size: 18px;
@@ -56,11 +62,59 @@
     margin: auto;
     overflow: hidden;
     margin-top: 150px;
+    height: 700px;
+    width: 510px;
+    background: transparent;
 }
 
 #signupPage{
     width: 400px;
-    height: 70px;
+    height: 10%;
     display: flex;
     justify-content: space-between;
+    margin-top: 3%;
+}
+
+.passwordShow{
+    width: 90%;
+    height: 50px;
+    background: #374151;
+    border-radius: 10px;
+    margin-top: 2%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.passInput{
+    width: 90%;
+    height:41px;
+    margin: 0px;
+    padding: 2%;
+}
+
+
+.icon{
+    margin: 0px;
+    font-size: 1.3rem;
+}
+
+.messageToShow{
+    width: 100%;
+    height: 22%;
+    padding: 2%;
+}
+
+.parent{
+    width: 100%;
+    height: 17%;
+    margin-top: 2%;
+}
+
+.parent:last-of-type{
+    margin-bottom: 20%;
+}
+
+.labelTag:nth-of-type(2){
+    height: 86%;
 }

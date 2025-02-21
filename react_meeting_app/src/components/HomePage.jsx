@@ -10,6 +10,7 @@ import Wrapper from "./Wrapper";
 import WhiteBoard from "./WhiteBoard";
 import Meeting from "./Meeting";
 import { useAppContext } from "../Context";
+import SignUp from "./SignUp.js";
 
 export default function HomePage() {
   const [viewSetupMeeting, setViewSetupMeeting] = useState(false);
@@ -18,6 +19,11 @@ export default function HomePage() {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showMeeting, setShowMeeting] = useState(false);
   const [displayParent, setDisplayParent] = useState(false);
+
+  const [name, setName] = useState("");
+  const [nameUnique,  setNameUnique] = useState('');
+  const [password, setPassword] = useState("");
+
 
   function handleParentShow() {
     setDisplayParent(!displayParent);
@@ -64,6 +70,15 @@ export default function HomePage() {
             showSignUp={showSignUp}
             setShowSignUp={setShowSignUp}
             setShowSignIn={setShowSignIn}
+
+            name={name}
+            setName={setName}
+            nameUnique={nameUnique}
+            setNameUnique = {setNameUnique}
+            password={password}
+            setPassword = {setPassword}
+            signUpFunction={SignUp}
+
           ></Signup>
         </Wrapper>
         <AboutMeeting
@@ -89,6 +104,12 @@ export default function HomePage() {
             showSignIn={showSignIn}
             setShowSignIn={setShowSignIn}
             setShowSignUp={setShowSignUp}
+
+            nameUnique={nameUnique}
+            setNameUnique = {setNameUnique}
+            password={password}
+            setPassword = {setPassword}
+          
           ></Signin>
         </Wrapper>
         <AboutMeeting
