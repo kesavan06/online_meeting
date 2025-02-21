@@ -10,7 +10,7 @@ import { useAppContext } from "../Context";
 function Meeting() {
   // let {videoGridRed} = useAppContext();
 
-  const { roomId, streams,user_name  } = useAppContext();
+  const { roomId, streams } = useAppContext();
 
   // const [videoElements, setVideoElements] = useState([]);
 

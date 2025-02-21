@@ -21,8 +21,63 @@ const corsOptions = {
 };
 
 
+const mysql = require("mysql2");
 
-let allMessages=[];
+
+const connection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "Deepa30"
+})
+
+connection.connect((err) => {
+  err ? console.log("Can not connect with mysql") : console.log("Connect with mysql");
+})
+
+connection.query('CREATE DATABASE if not exists users_db ;', (err, data) => {
+  if (err) {
+    console.log("DB creation failed");
+    return;
+  }
+  console.log("Successfully created db");
+})
+
+connection.end();
+
+
+const dbConnection = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "Deepa30",
+  database: "users_db",
+})
+
+
+dbConnection.connect((err)=>{
+  if(err){
+    console.log("Erro connection to the database");
+  }
+  else{
+    console.log("Connected to the database");
+  }
+})
+
+let tableCreateQuery = "create table if not exists users(user_id smallint auto_increment primary key, user_name varchar(60) not null, unique_name varchar(100)  unique key not null ,password varchar(100) not null, user_key varchar(16)  unique key not null);";
+
+dbConnection.query(tableCreateQuery, (err, result) => {
+  if (err) {
+    console.error('Error creating table:', err);
+    return;
+  }
+  console.log('Table "users" created or already exists');
+})
+
+
+
+
+
+
+let allMessages = [];
 
 
 app.use(cors(corsOptions));
@@ -61,7 +116,7 @@ io.on("connection", (socket) => {
   // Handle joining a room
   socket.on("join-room", (roomId, userId) => {
     console.log(`User ${userId} joined room ${roomId}`);
-   
+
     rooms[roomId].add(userId); // Add the user to the room
     socket.join(roomId); // Join the socket room
     socket.to(roomId).emit("user-connected", userId);
@@ -69,15 +124,15 @@ io.on("connection", (socket) => {
 
     // send Message
 
-    socket.on("sendMessage", (msgObject)=>{
-      console.log("Message Received from ",socket.id," Message: ",msgObject);
-      console.log("SenderId: ",msgObject.sender_id);
-      console.log("Room: ",msgObject.room_id);
+    socket.on("sendMessage", (msgObject) => {
+      console.log("Message Received from ", socket.id, " Message: ", msgObject);
+      console.log("SenderId: ", msgObject.sender_id);
+      console.log("Room: ", msgObject.room_id);
 
-      allMessages.push({user_name:msgObject.user_name, message: msgObject.message});
-       console.log("ALl messages: ",allMessages);
+      allMessages.push({ user_name: msgObject.user_name, message: msgObject.message, time: msgObject.time });
+      console.log("ALl messages: ", allMessages);
 
-     io.to(msgObject.room_id).emit("receivedMessage", (msgObject));
+      io.to(msgObject.room_id).emit("receivedMessage", (msgObject));
     })
 
 

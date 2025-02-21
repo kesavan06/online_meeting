@@ -1,6 +1,6 @@
 import "../ChatBox.css";
 
-export default function Message({ user_name, message }) {
+export default function Message({ user_name, message, time }) {
 
     try {
         console.log("In message: ", user_name, message);
@@ -14,7 +14,7 @@ export default function Message({ user_name, message }) {
 
             <div className="userDetail">
                 <p id="name">{user_name}</p>
-                <p id="time">11:11 am</p>
+                <p id="time">{time}</p>
             </div>
 
             <div className="message">
