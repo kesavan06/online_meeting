@@ -7,18 +7,19 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5174",
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   },
 });
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "http://localhost:5174",
   methods: "GET,POST,PUT,DELETE",
   credentials: true,
   // optionsSuccessStatus: 200
 };
+
 
 
 const mysql = require("mysql2");
@@ -72,13 +73,7 @@ dbConnection.query(tableCreateQuery, (err, result) => {
   console.log('Table "users" created or already exists');
 })
 
-
-
-
-
-
 let allMessages = [];
-
 
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
@@ -116,11 +111,30 @@ io.on("connection", (socket) => {
   // Handle joining a room
   socket.on("join-room", (roomId, userId) => {
     console.log(`User ${userId} joined room ${roomId}`);
-
     rooms[roomId].add(userId); // Add the user to the room
     socket.join(roomId); // Join the socket room
     socket.to(roomId).emit("user-connected", userId);
 
+    socket.on("ice-candidate", ({ candidate, to }) => {
+      socket.to(roomId).emit("ice-candidate", {
+        candidate,
+        from: socket.id,
+      });
+    });
+
+    socket.on("offer", ({ offer, to }) => {
+      socket.to(roomId).emit("offer", {
+        offer,
+        from: socket.id,
+      });
+    });
+
+    socket.on("answer", ({ answer, to }) => {
+      socket.to(roomId).emit("answer", {
+        answer,
+        from: socket.id,
+      });
+    });
 
     // send Message
 
@@ -129,10 +143,10 @@ io.on("connection", (socket) => {
       console.log("SenderId: ", msgObject.sender_id);
       console.log("Room: ", msgObject.room_id);
 
-      allMessages.push({ user_name: msgObject.user_name, message: msgObject.message, time: msgObject.time });
-      console.log("ALl messages: ", allMessages);
+      allMessages.push({user_name:msgObject.user_name, message: msgObject.message});
+       console.log("ALl messages: ",allMessages);
 
-      io.to(msgObject.room_id).emit("receivedMessage", (msgObject));
+     io.to(msgObject.room_id).emit("receivedMessage", (msgObject));
     })
 
 

@@ -12,115 +12,199 @@ const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   let roomId = useRef(null);
-  let peerRef = useRef(null);
   let socketRef = useRef(null);
-  let peersRef = useRef({});
-  let streams = useRef([]);
+  // let streams = useRef([]);
+  const [streamState, setStreamsState] = useState([]);
   let user_name = useRef({});
   let myStream = useRef(null);
+  let peerConnectionsRef = useRef({});
+
+  const configuration = {
+    iceServers: [
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:stun1.l.google.com:19302" },
+    ],
+  };
 
   useEffect(() => {
     socketRef.current = io("http://localhost:3002");
+    setupSocketListeners();
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+      if (myStream.current) {
+        myStream.current.getTracks().forEach((track) => track.stop());
+      }
+    };
   }, []);
 
-  const initializeMediaStream = () => {
-    console.log("Initializing media stream");
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        console.log("Media stream obtained");
-        myStream.current = stream;
-        addVideoStream(stream); // Add the local video stream
-        console.log("Video stream added locally completed");
-        // Create a completely new Peer instance
-
-        peerRef.current = new Peer(undefined, {
-          host: "0.peerjs.com",
-          port: 443,
-          secure: true,
-          debug: 3,
-        });
-
-        peerRef.current.on("open", (id) => {
-          console.log(`✅ New Peer connected! ID: ${id}`);
-          console.log("Room Id", roomId.current);
-
-          socketRef.current.emit("join-room", roomId.current, id);
-        });
-
-        peerRef.current.on("error", (err) => {
-          console.error("❌ Peer error:", err);
-        });
-
-        // Handle incoming calls
-        peerRef.current.on("call", (call) => {
-          console.log(`Receiving call from: ${call.peer}`);
-          console.log(myStream.current);
-          call.answer(myStream.current); // Answer the call with the local stream
-
-          call.on("stream", (userVideoStream) => {
-            console.log(`Received stream from: ${call.peer}`);
-            addVideoStream(userVideoStream); // Add the remote video stream
-          });
-        });
-
-        // Handle new user connections
-        socketRef.current.on("user-connected", (userId) => {
-          console.log(`User connected: ${userId}`);
-          connectToNewUser(userId, myStream.current); // Connect to the new user
-        });
-      })
-      .catch((error) => {
-        console.error("Error accessing media devices:", error);
-      });
-  };
-
-  function connectToNewUser(userId, stream) {
-    console.log(`Connecting to new user: ${userId}`);
-    const call = peerRef.current.call(userId, stream); // Call the new user
-    console.log("Call: ", call);
-
-    // const video = document.createElement("video");
-
-    call.on("stream", (userVideoStream) => {
-      console.log(`Received stream from: ${userId}`);
-      addVideoStream(userVideoStream); // Add the remote video stream
-    });
-
-    call.on("close", () => {
-      console.log(`Call closed for: ${userId}`);
-    });
-    peersRef.current[userId] = call; // Store the call in the peers object
-  }
-
-  const addVideoStream = (stream) => {
-    if (!stream) {
-      console.error("No stream provided to addVideoStream");
-      return;
-    }
-    console.log(stream);
-    streams.current = [...streams.current, stream];
-    console.log("Stream added:", streams);
-  };
-
-  useEffect(() => {
-    socketRef.current.on("user-disconnected", (userId) => {
-      console.log(`User disconnected: ${userId}`);
-      if (peersRef.current[userId]) {
-        peersRef.current[userId].close(); // Close the peer connection
-        delete peersRef.current[userId]; // Remove the peer from the peers object
+  const setupSocketListeners = () => {
+    socketRef.current.on("user-connected", async (userId) => {
+      console.log("User connected:", userId);
+      if (myStream.current) {
+        try {
+          await createPeerConnection(userId, true);
+        } catch (err) {
+          console.log("Error creating peer connection: ", err);
+        }
       }
     });
-  }, []);
+
+    socketRef.current.on("offer", async ({ offer, from }) => {
+      console.log("Received offer from: ", from);
+      await handleOffer(offer, from);
+    });
+
+    socketRef.current.on("answer", async ({ answer, from }) => {
+      console.log("Received answer from:", from);
+      await handleAnswer(answer, from);
+    });
+
+    socketRef.current.on("ice-candidate", async ({ candidate, from }) => {
+      console.log("Recieived ICE candidate from: ", from);
+      await handleNewICECandidate(candidate, from);
+    });
+
+    socketRef.current.on("user-disconnected", (userId) => {
+      console.log("User disconenected:", userId);
+      if (peerConnectionsRef.current[userId]) {
+        peerConnectionsRef.current[userId].close();
+        delete peerConnectionsRef.current[userId];
+      }
+    });
+    socketRef.current.on("error", (error) => {
+      console.log("Socket error: ", error);
+    });
+  };
+
+  const createPeerConnection = async (userId, isInitiator) => {
+    const peerConnection = new RTCPeerConnection(configuration);
+    peerConnectionsRef.current[userId] = peerConnection;
+
+    if (myStream.current) {
+      myStream.current.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, myStream.current);
+      });
+    }
+
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        socketRef.current.emit("ice-candidate", {
+          candidate: event.candidate,
+          to: userId,
+        });
+      }
+    };
+
+    peerConnection.ontrack = (event) => {
+      console.log("Remote stream received:", event.streams);
+      const [remoteStream] = event.streams;
+      if (remoteStream) {
+        addVideoStream(remoteStream);
+      }
+    };
+
+    if (isInitiator) {
+      try {
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        socketRef.current.emit("offer", {
+          offer,
+          to: userId,
+        });
+      } catch (err) {
+        console.log("Error creating offer:", err);
+      }
+    }
+    return peerConnection;
+  };
+
+  const handleOffer = async (offer, from) => {
+    const peerConnection = await createPeerConnection(from, false);
+    try {
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(offer)
+      );
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+      socketRef.current.emit("answer", {
+        answer,
+        to: from,
+      });
+    } catch (err) {
+      console.log("Error handling offer:", err);
+    }
+  };
+
+  const handleAnswer = async (answer, from) => {
+    try {
+      const peerConnection = peerConnectionsRef.current[from];
+      await peerConnection.setRemoteDescription(
+        new RTCSessionDescription(answer)
+      );
+    } catch (err) {
+      console.log("Error handling answer: ", err);
+    }
+  };
+
+  const handleNewICECandidate = async (candidate, from) => {
+    try {
+      const peerConnection = peerConnectionsRef.current[from];
+      if (peerConnection) {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      }
+    } catch (error) {
+      console.log("Error adding ICE candidate:", error);
+    }
+  };
+
+  const addVideoStream = (stream) => {
+    if (!stream || !(stream instanceof MediaStream)) {
+      console.log("No stream provided to addVideoStream");
+      return;
+    }
+    console.log("Adding stream: ", stream.id);
+    setStreamsState((prevStreams) => {
+      const exists = prevStreams.some((s) => s.id === stream.id);
+      if (!exists) {
+        console.log("Stream added to state");
+        return [...prevStreams, stream];
+      }
+      console.log("stream already exists");
+      return prevStreams;
+    });
+  };
+
+  const initializeMediaStream = async () => {
+    console.log("Initializing media stream");
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          facingMode: "user",
+        },
+        audio: true,
+      });
+      myStream.current = stream;
+      addVideoStream(stream);
+
+      socketRef.current.emit("join-room", roomId.current, socketRef.current.id);
+    } catch (err) {
+      console.log("Error accessing media devices:", err);
+    }
+  };
 
   return (
     <AppContext.Provider
       value={{
         roomId,
         socketRef,
-        peerRef,
         initializeMediaStream,
-        streams,
+        streams: streamState,
+        myStream,
         user_name,
       }}
     >
