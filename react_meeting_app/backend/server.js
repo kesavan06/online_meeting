@@ -258,8 +258,8 @@ io.on("connection", (socket) => {
     console.log("ALl messages: ", allMessages);
     console.log(roomObject.messages);
 
-    // io.to(msgObject.room_id).emit("receivedMessage", msgObject);
     io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+    // io.to(msgObject.room_id).emit("receivedMessage", roomObject.messages); //try in home here ----------------
 
   });
 
