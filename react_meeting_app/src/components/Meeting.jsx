@@ -62,8 +62,6 @@ function Meeting() {
 
   const { roomId, streams, myStream } = useAppContext();
 
-  const [videoElements, setVideoElements] = useState([]);
-
   function handleWhiteBoardShow() {
     setShowWhiteBoard((!showWhiteBoard));
   }
