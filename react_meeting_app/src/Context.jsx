@@ -226,7 +226,7 @@ export const AppProvider = ({ children }) => {
     });
   };
 
-  const initializeMediaStream = async () => {
+  const initializeMediaStream = async (userShowName) => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -243,7 +243,8 @@ export const AppProvider = ({ children }) => {
         socketRef.current.emit(
           "join-room",
           roomId.current,
-          socketRef.current.id
+          socketRef.current.id,
+          userShowName
         );
       } else {
         console.warn("Room ID not set!");

@@ -14,11 +14,16 @@ function ChatBox() {
 
   let { user_name, socketRef, roomId } = useAppContext();
 
-  let [allMessage, setAllMessage] = useState([{ user_name: "Kesavan", message: " A paragraph is a group of sentences that are organized around a single topic or idea.", time: "05.10 PM" }])
+  let [allMessage, setAllMessage] = useState([]);
 
   let messageRef = useRef("");
-  // let [messageNow, setMessage] = useState("");
+
   const [showEmoji, setShowEmoji] = useState(false);
+  let [open, setOpen] = useState(false);
+
+  function handleOpen() {
+    setOpen(!open);
+  }
 
 
   function handleSendMessage() {
@@ -34,6 +39,9 @@ function ChatBox() {
     let splitDay = getTodayTime.split(":");
 
     let day = (+splitDay[0]) > 12 ? (+splitDay[0]) - 12 + "." + splitDay[1] + " PM" : splitDay[0] + "." + splitDay[1] + " AM";
+    if (splitDay[0] == 12) {
+      day = splitDay[0] + "." + splitDay[1] + " PM";
+    }
 
     if (messageText != "") {
 
@@ -59,10 +67,15 @@ function ChatBox() {
 
 
   function checkTheEmojiClicked(msg) {
-    switch (msg) {
-      case "thumbs_up":
-        messageRef.current.value += "👍";
-        break;
+    messageRef.current.value += msg;
+  }
+
+  function handlekeyDown(e) {
+    console.log(e.key);
+    if (e.key == "Enter") {
+      if (messageRef.current.value != "") {
+        handleSendMessage();
+      }
     }
   }
 
@@ -71,20 +84,60 @@ function ChatBox() {
 
 
 
-
   function handleShowEmoji() {
     setShowEmoji(!showEmoji);
+    handleOpen();
   }
 
+  //   const handleNewMessage = (msg) => {
+
+
+  //     let isMyMessage = false;
+
+  //     let { user_name, message, sender_id, time } = msg;
+  //     let msgGot = { user_name, message,time };
+
+  //     if (socketRef.current.id == sender_id) {
+  //         isMyMessage = true;
+  //     }
+
+  //     let sendClass = isMyMessage;
+  //     console.log("Message is mine : ",isMyMessage);
+
+  //     setAllMessage((exsistingMessages) => [...(exsistingMessages), { ...msgGot, isMine: sendClass }]);
+
+  // }
+
+
+  const handleNewMessage = (allMess) => {
+
+    // setAllMessage("")
+    for (let msg of allMess) {
+      let isMyMessage = false;
+
+      let { user_name, message, sender_id, time } = msg;
+      let msgGot = { user_name, message, time };
+
+      if (socketRef.current.id == sender_id) {
+        isMyMessage = true;
+      }
+
+      let sendClass = isMyMessage;
+      console.log("Message is mine : ", isMyMessage);
+
+      setAllMessage((exsistingMessages) => [...(exsistingMessages), { ...msgGot, isMine: sendClass }]);
+    }
+
+  }
 
   useEffect(() => {
-    console.log("All messages: ", allMessage);
-    // console.log("Message: ", message);
+    handleSendMessage
 
+    socketRef.current.off("receivedMessage");
 
     socketRef.current.on("receivedMessage", (msg) => {
-      console.log("Message received: ", msg);
-      setAllMessage([...allMessage, msg]);
+      console.log("Message received: ");
+      handleNewMessage(msg);
 
     });
   }, [allMessage]);
@@ -106,12 +159,12 @@ function ChatBox() {
             <option>Hari</option>
           </select>
 
-          {showEmoji && <Emoji emojiHandle={checkTheEmojiClicked} />}
-         
+          {showEmoji && <Emoji emojiHandle={checkTheEmojiClicked} handleOpen={handleOpen}/>}
+
         </div>
 
         <div className="sentInputBox">
-          <input type="text" placeholder="Enter your message..." ref={messageRef}></input>
+          <input type="text" placeholder="Enter your message..." ref={messageRef} onKeyDown={handlekeyDown}></input>
 
           <button onClick={handleShowEmoji}>
             <FaFaceSmile className="invert" ></FaFaceSmile>

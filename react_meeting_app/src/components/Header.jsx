@@ -28,8 +28,8 @@ export default function Header({ showSignUp, setShowSignUp, showSignIn, setShowS
                 <div className="buttons">
                     {/* <button className="button" onClick={() => setShowSignUp(!showSignUp)}>Signup</button>
                     <button className="button" onClick={() => setShowSignIn(!showSignIn)}>Signin</button> */}
-                    <button className="button" onClick={showSignUp}>Signup</button>
-                    <button className="button" onClick={showSignIn}>Signin</button>
+                    <button className="buttonHeader" onClick={showSignUp}>Signup</button>
+                    <button className="buttonHeader" onClick={showSignIn}>Signin</button>
                 </div>
             </div>
             {/* signin <Signin></Signin>
