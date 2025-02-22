@@ -62,8 +62,8 @@ export default function Signin(props)
                 <p></p>
 
                 <div id="signinButtons">
-                    <button class="button" onClick={cancelShowSignIn}>Cancel</button>
-                    <button class="button" onClick={signIn}>Sign in</button>
+                    <button className="button" onClick={cancelShowSignIn}>Cancel</button>
+                    <button className="button" onClick={signIn}>Sign in</button>
                 </div>
 
             </form>

@@ -5,6 +5,9 @@ import { FaPaperPlane } from "react-icons/fa";
 import "../ChatBox.css";
 import ShowMessage from "./ShowMessages";
 import { useAppContext } from "../Context";
+import Emoji from "./Emoji";
+import EmojiPicker from 'emoji-picker-react';
+
 
 
 function ChatBox() {
@@ -13,13 +16,17 @@ function ChatBox() {
 
   let [allMessage, setAllMessage] = useState([{ user_name: "Kesavan", message: " A paragraph is a group of sentences that are organized around a single topic or idea.", time: "05.10 PM" }])
 
-  let message = useRef("");
-  let [messageNow, setMessage] = useState("");
+  let messageRef = useRef("");
+  // let [messageNow, setMessage] = useState("");
+  const [showEmoji, setShowEmoji] = useState(false);
 
 
   function handleSendMessage() {
 
     let newM;
+    let messageText = messageRef.current.value;
+    messageText = messageText.trim();
+
     const today = new Date();
     console.log(today.toLocaleString());
 
@@ -28,23 +35,21 @@ function ChatBox() {
 
     let day = (+splitDay[0]) > 12 ? (+splitDay[0]) - 12 + "." + splitDay[1] + " PM" : splitDay[0] + "." + splitDay[1] + " AM";
 
-    if (message != "") {
+    if (messageText != "") {
 
       console.log("Room : ", roomId.current);
-      console.log("Message : ", message.current);
-
+      console.log("Message : ", messageRef.current);
 
       newM = {
         user_name: user_name.current,
-        message: message.current,
+        message: messageText,
         sender_id: socketRef.current.id,
         room_id: roomId.current,
         time: day,
       }
 
-      // console.log("Object: ", newM);
       socketRef.current.emit("sendMessage", (newM));
-      setMessage("");
+      messageRef.current.value = "";
 
 
     }
@@ -53,9 +58,28 @@ function ChatBox() {
 
 
 
+  function checkTheEmojiClicked(msg) {
+    switch (msg) {
+      case "thumbs_up":
+        messageRef.current.value += "👍";
+        break;
+    }
+  }
+
+
+
+
+
+
+
+  function handleShowEmoji() {
+    setShowEmoji(!showEmoji);
+  }
+
+
   useEffect(() => {
     console.log("All messages: ", allMessage);
-    console.log("Message: ", message);
+    // console.log("Message: ", message);
 
 
     socketRef.current.on("receivedMessage", (msg) => {
@@ -73,6 +97,7 @@ function ChatBox() {
       </div>
 
       <div className="sentBox">
+
         <div className="msgPermision">
           <p>To</p>
           <select className="selectUser">
@@ -80,18 +105,22 @@ function ChatBox() {
             <option>Kesavan</option>
             <option>Hari</option>
           </select>
+
+          {showEmoji && <Emoji emojiHandle={checkTheEmojiClicked} />}
+         
         </div>
+
         <div className="sentInputBox">
-          <input type="text" placeholder="Enter your message..." onChange={(e) => {
-            message.current = (e.target.value)
-            setMessage(e.target.value)
-          }} value={messageNow}></input>
-          <button>
-            <FaFaceSmile className="invert"></FaFaceSmile>
+          <input type="text" placeholder="Enter your message..." ref={messageRef}></input>
+
+          <button onClick={handleShowEmoji}>
+            <FaFaceSmile className="invert" ></FaFaceSmile>
           </button>
+
           <button onClick={handleSendMessage}>
             <FaPaperPlane className="invert"></FaPaperPlane>
           </button>
+
         </div>
       </div>
     </div>
@@ -99,3 +128,5 @@ function ChatBox() {
 }
 
 export default ChatBox;
+
+
