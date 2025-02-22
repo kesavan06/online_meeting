@@ -24,7 +24,10 @@ export default function AboutMeeting({
             }}
             className="newMeeting"
           >
-            <FaVideo className="icon"></FaVideo>
+            <FaVideo
+              className="icon"
+              style={{ margin: "0px 10px 0px 0px" }}
+            ></FaVideo>
             New
           </button>
           <button
@@ -33,7 +36,10 @@ export default function AboutMeeting({
             }}
             className="joinMeeting"
           >
-            <FaUserFriends className="icon"></FaUserFriends>
+            <FaUserFriends
+              style={{ margin: "0px 10px 0px 0px" }}
+              className="icon"
+            ></FaUserFriends>
             Join
           </button>
         </div>

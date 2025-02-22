@@ -3,8 +3,7 @@ import VideoBox from "./VideoBox";
 import ChatParticipants from "./ChatParticipants";
 import MeetingFooter from "./MeetingFooter";
 import { useState, useEffect, useRef } from "react";
-import WhiteBoard from "./WhiteBoard"
-
+import WhiteBoard from "./WhiteBoard";
 
 import "../Meeting.css";
 import { useAppContext } from "../Context";
@@ -51,6 +50,7 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard }) => {
       playsInline
       muted={isLocalStream}
       style={{ cursor: "pointer" }}
+      disablePictureInPicture
     ></video>
   );
 };
@@ -59,11 +59,13 @@ function Meeting() {
   // let {videoGridRed} = useAppContext();
 
   const [showWhiteBoard, setShowWhiteBoard] = useState(false);
+  const [showChatBox, setShowChatBox] = useState(true);
+  let [chatView, setChatView] = useState(true);
 
   const { roomId, streams, myStream } = useAppContext();
 
   function handleWhiteBoardShow() {
-    setShowWhiteBoard((!showWhiteBoard));
+    setShowWhiteBoard(!showWhiteBoard);
   }
 
   useEffect(() => {
@@ -72,42 +74,50 @@ function Meeting() {
 
   return (
     <div className="meetingContainer">
-      <p style={{ color: "white" }}>Room ID:{roomId.current}</p>
-      <div className="meetingHeader">
-        <VideoRecord></VideoRecord>
+      <div className="meetingHeaderBox">
+        <div className="meetingHeader">
+          <VideoRecord></VideoRecord>
+          <p style={{ color: "white" }}>Meeting ID: {roomId.current}</p>
+        </div>
       </div>
       <div className="meetingContent">
-
-
-        <div className={ !showWhiteBoard ?"meetingDiv": "meetingDiv meetingDiv2"}>
-          {showWhiteBoard && <WhiteBoard controlBoard={handleWhiteBoardShow} />}
-
-          <div className={ !showWhiteBoard ?"meetingVideoParent" : "meetingVideoParentInWhite"}>
-            <div className={!showWhiteBoard ? "meetingVideoBox" : "whiteBoardOn"}>
-              {streams.map((stream) => {
-                return (
-                  <VideoComponent
-                    key={stream.id}
-                    stream={stream}
-                    isLocalStream={stream.id === myStream?.current?.id}
-                    showWhiteBoard={showWhiteBoard}
-                  ></VideoComponent>
-                );
-              })}
-            </div>
+        <div className= {showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
+          <div className="videoBoxes">
+            {streams.map((stream) => {
+              return (
+                <VideoComponent
+                  key={stream.id}
+                  stream={stream}
+                  isLocalStream={stream.id === myStream?.current?.id}
+                  showWhiteBoard={showWhiteBoard}
+                ></VideoComponent>
+              );
+            })}
+          </div>
+          <div className="whiteBoardBox">
+            {showWhiteBoard && (
+              <WhiteBoard controlBoard={handleWhiteBoardShow} />
+            )}
           </div>
         </div>
-
-
-        <div className="meetingChatParticipants">
-          <ChatParticipants></ChatParticipants>
-        </div>
+        {showChatBox && (
+          <div className="meetingChatParticipants">
+            <ChatParticipants
+              setShowChatBox={setShowChatBox}
+              chatView={chatView}
+              setChatView={setChatView}
+            ></ChatParticipants>
+          </div>
+        )}
       </div>
-
       <div className="meetingFooter">
-        <MeetingFooter handleBoard={handleWhiteBoardShow}></MeetingFooter>
+        <MeetingFooter
+          setShowChatBox={setShowChatBox}
+          handleBoard={handleWhiteBoardShow}
+          chatView={chatView}
+          setChatView={setChatView}
+        ></MeetingFooter>
       </div>
-      <></>
     </div>
   );
 }

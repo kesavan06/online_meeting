@@ -43,7 +43,7 @@
 }
 
 .moreControls {
-  width: 13%;
+  width: 8%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -60,15 +60,13 @@
   background-color: rgb(255, 98, 58);
 }
 
-.participantBtn{
-    width: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 5px;
-
+.participantBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
-.participantBtn p{
-    color: white;
+.participantBtn p {
+  color: white;
+  margin: 0px 0px 0px 5px;
 }

@@ -51,10 +51,10 @@ body{
     border-radius: 10px;
 }
 
+
 .icon{
     font-size:23px;
     color:white;
-    margin-right: 15px;
-    /* padding-right: 20px; */
+    margin: 0px 10px 0px 0px;
 }
 
