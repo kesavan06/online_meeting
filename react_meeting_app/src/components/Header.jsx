@@ -24,7 +24,10 @@ export default function Header({ showSignUp, setShowSignUp, showSignIn, setShowS
     return (
         <div>
             <div id="whole">
-                <h1 style={{ color: "white", marginTop: "15px" }}>Meeting</h1>
+                <div style={{width:"300px",height:"60px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <img src="Logo2.png" style={{width:"70px",height:"50px",marginTop:"10px"}}></img>
+                    <h1 style={{ color: "white",marginTop:"6px"}}>ConvoSpace</h1>
+                </div>
                 <div className="buttons">
                     {/* <button className="button" onClick={() => setShowSignUp(!showSignUp)}>Signup</button>
                     <button className="button" onClick={() => setShowSignIn(!showSignIn)}>Signin</button> */}

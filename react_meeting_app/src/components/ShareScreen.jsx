@@ -2,7 +2,7 @@ import { useRef, useState } from "react"
 import { sendOffer } from "../ScreenShare";
 import { startScreenShare } from "../ScreenShare";
 
-export default function ScreenShare()
+export default function ShareScreen()
 {
     const localVideoRef=useRef(null);
     const remoteVideoRef=useRef(null);

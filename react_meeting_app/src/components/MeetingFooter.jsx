@@ -12,6 +12,9 @@ import { FaRightFromBracket } from "react-icons/fa6";
 import { FaRegMessage } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { FaBars } from "react-icons/fa";
+import { FaRecordVinyl } from "react-icons/fa";
+import { startScreenRecording } from "../Recording";
+import { stopScreenRecording } from "../Recording";
 
 function MeetingFooter() {
   const [mic, setMic] = useState(true);
@@ -53,6 +56,10 @@ function MeetingFooter() {
           <div className="controlBox exitBox">
             <FaRightFromBracket className="exit"></FaRightFromBracket>
           </div>
+          <div className="controlBox" onClick={startScreenRecording}>
+            <FaRecordVinyl className="changeColor"></FaRecordVinyl>
+          </div>
+          <button onClick={stopScreenRecording}>Stop recording</button>
         </div>
         <div className="moreControls">
           <div className="controlBox">
