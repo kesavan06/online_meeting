@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const socketio = require("socket.io");
+let allMessages = [];
 
 const app = express();
 const server = http.createServer(app);
@@ -20,12 +21,17 @@ const corsOptions = {
   // optionsSuccessStatus: 200
 };
 
+
+let allRoomDetails = [];
+
+
+
 const mysql = require("mysql2");
 
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "kesavan@123",
+  password: "Deepa30",
 });
 
 connection.connect((err) => {
@@ -47,7 +53,7 @@ connection.end();
 const dbConnection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "kesavan@123",
+  password: "Deepa30",
   database: "users_db",
 });
 
@@ -70,7 +76,6 @@ dbConnection.query(tableCreateQuery, (err, result) => {
   console.log('Table "users" created or already exists');
 });
 
-let allMessages = [];
 
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
@@ -175,14 +180,37 @@ io.on("connection", (socket) => {
   });
 
   // Handle joining a room
-  socket.on("join-room", (roomId, userId) => {
+  socket.on("join-room", (roomId, userId, userNameShow) => {
     if (!roomId || !userId)
       return socket.emit("error", "Invalid roomId or userId");
     console.log(`User ${userId} joining room ${roomId}`);
 
+
+
     if (!rooms[roomId]) {
       rooms[roomId] = new Set(); // Auto-create room if it doesn’t exist (optional)
     }
+
+    let roomCheck = checkTheRoomToId(roomId); //true- exsists
+
+    if (roomCheck) {
+      
+      let roomObject = getRoom(roomId);
+      roomObject.participants.push({userId:userId, name : userNameShow});
+      console.log("RoomObject: ",roomObject);
+
+    }
+    else {
+      let roomObject ={};
+      roomObject.roomId = roomId;
+      roomObject.participants =[{userId: userId, name : userNameShow}];
+      console.log("Room PArticipant: ",roomObject.participants)
+      roomObject.messages =[];
+      allRoomDetails.push(roomObject);
+    }
+
+
+    console.log("RoomDetails: ",allRoomDetails);
 
     rooms[roomId].add(userId);
     socket.join(roomId);
@@ -216,13 +244,23 @@ io.on("connection", (socket) => {
     console.log("SenderId: ", msgObject.sender_id);
     console.log("Room: ", msgObject.room_id);
 
-    allMessages.push({
-      user_name: msgObject.user_name,
-      message: msgObject.message,
-    });
-    console.log("ALl messages: ", allMessages);
+    let roomObject = getRoom(msgObject.room_id);
+    console.log("Room obj: ",roomObject);
 
+    let {user_name, message, time, sender_id} = msgObject;
+
+    allMessages.push({
+      user_name, message, time, sender_id
+    });
+
+    roomObject.messages.push({user_name,sender_id, message, time});
+
+    console.log("ALl messages: ", allMessages);
+    console.log(roomObject.messages);
+
+    // io.to(msgObject.room_id).emit("receivedMessage", msgObject);
     io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+
   });
 
   // Handle user disconnection
@@ -264,3 +302,28 @@ async function getUserDetails() {
 server.listen(3002, () => {
   console.log(`Server running on port 3002`);
 });
+
+
+function checkTheRoomToId(roomId) {
+
+  let exists = false;
+  for (let room of allRoomDetails) {
+    if (room.roomId == roomId) {
+      exists = true;
+      break;
+    }
+  }
+
+  return exists;
+}
+
+
+
+function getRoom(roomID){
+  for(let room of allRoomDetails){
+    console.log("Room: ",room)
+    if(room.roomId == roomID){
+      return room;
+    }
+  }
+}
