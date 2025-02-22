@@ -136,7 +136,7 @@ function Signup(probs) {
 
                 <div className="parent">
                     <label className="labelTag">User name
-                        <input type="text" name="userName" autocomplete="off" className="inputTag" onChange={(e) => setNameUnique(e.target.value)} onBlur={() => checkUnique(nameUnique)} required />
+                        <input type="text" name="userName" autoComplete="off" className="inputTag" onChange={(e) => setNameUnique(e.target.value)} onBlur={() => checkUnique(nameUnique)} required />
                     </label>
                     <p className="messageToShow" style={{ color: !showM ? "red" : "green" }}>{messageUnique}</p>
 
@@ -145,7 +145,7 @@ function Signup(probs) {
 
                 <div className="parent">
                     <label className="labelTag">Name
-                        <input type="text" name="name" autocomplete="off" className="inputTag" onChange={(e) => setName(e.target.value)} required />
+                        <input type="text" name="name" autoComplete="off" className="inputTag" onChange={(e) => setName(e.target.value)} required />
                     </label>
 
                 </div>
@@ -154,7 +154,7 @@ function Signup(probs) {
                 <div className="parent">
                     <label className="labelTag">Password
                         <div className="passwordShow">
-                            <input type={!showPass ? "password" : "text"} autocomplete="off" className="inputTag passInput" onChange={(e) => setPassFirst(e.target.value)} onBlur={() => checkPassword(passFirst)} required />
+                            <input type={!showPass ? "password" : "text"} autoComplete="off" className="inputTag passInput" onChange={(e) => setPassFirst(e.target.value)} onBlur={() => checkPassword(passFirst)} required />
                             {!showPass ? <RiEyeCloseFill onClick={handlePassShow} className="icon" /> : <IoIosEye onClick={handlePassShow} className="icon" />}
                         </div>
                     </label>
@@ -165,7 +165,7 @@ function Signup(probs) {
 
                 <div className="parent">
                     <label className="labelTag">Confirm password
-                        <input type="password" className="inputTag" autocomplete="off" onChange={(e) => setPassword(e.target.value)} required />
+                        <input type="password" className="inputTag" autoComplete="off" onChange={(e) => setPassword(e.target.value)} required />
                     </label>
                     <p className="messageToShow" style={{ color: !isSamePass ? "red" : "green" }}>{samePassMessage}</p>
 

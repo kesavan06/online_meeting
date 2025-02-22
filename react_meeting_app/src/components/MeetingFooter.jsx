@@ -15,8 +15,9 @@ import { FaBars } from "react-icons/fa";
 import { FaRecordVinyl } from "react-icons/fa";
 import { startScreenRecording } from "../Recording";
 import { stopScreenRecording } from "../Recording";
+import { saveRecording } from "../Recording";
 
-function MeetingFooter({handleBoard}) {
+function MeetingFooter({handleBoard,setIsShare,isShare}) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
 
@@ -24,6 +25,12 @@ function MeetingFooter({handleBoard}) {
   function handleClick(){
     handleBoard();
   }
+
+  function shareScreen()
+  {
+    setIsShare(true);
+  }
+
   return (
       <div className="footerBox">
         <div className="micVideoConrol">
@@ -50,7 +57,7 @@ function MeetingFooter({handleBoard}) {
         </div>
         <div className="meetingControl">
           <div className="controlBox">
-            <FaShareFromSquare className="changeColor"></FaShareFromSquare>
+            <FaShareFromSquare className="changeColor" onClick={shareScreen}></FaShareFromSquare>
           </div>
           <div className="controlBox" onClick={handleClick}>
             <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher> 
@@ -65,6 +72,7 @@ function MeetingFooter({handleBoard}) {
             <FaRecordVinyl className="changeColor"></FaRecordVinyl>
           </div>
           <button onClick={stopScreenRecording}>Stop recording</button>
+          <button onClick={saveRecording}>Download</button>
         </div>
         <div className="moreControls">
           <div className="controlBox">

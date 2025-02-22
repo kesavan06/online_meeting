@@ -3,7 +3,8 @@ import VideoBox from "./VideoBox";
 import ChatParticipants from "./ChatParticipants";
 import MeetingFooter from "./MeetingFooter";
 import { useState, useEffect, useRef } from "react";
-import WhiteBoard from "./WhiteBoard"
+import WhiteBoard from "./WhiteBoard";
+import ShareScreen from "./ShareScreen";
 
 
 import "../Meeting.css";
@@ -59,10 +60,9 @@ function Meeting() {
   // let {videoGridRed} = useAppContext();
 
   const [showWhiteBoard, setShowWhiteBoard] = useState(false);
+  const [isShare,setIsShare] = useState(false);
 
   const { roomId, streams, myStream } = useAppContext();
-
-  const [videoElements, setVideoElements] = useState([]);
 
   function handleWhiteBoardShow() {
     setShowWhiteBoard((!showWhiteBoard));
@@ -82,6 +82,7 @@ function Meeting() {
 
 
         <div className={ !showWhiteBoard ?"meetingDiv": "meetingDiv meetingDiv2"}>
+          {isShare && <ShareScreen isShare={isShare} setIsShare={setIsShare}></ShareScreen>}
           {showWhiteBoard && <WhiteBoard controlBoard={handleWhiteBoardShow} />}
 
           <div className={ !showWhiteBoard ?"meetingVideoParent" : "meetingVideoParentInWhite"}>
@@ -107,7 +108,7 @@ function Meeting() {
       </div>
 
       <div className="meetingFooter">
-        <MeetingFooter handleBoard={handleWhiteBoardShow}></MeetingFooter>
+        <MeetingFooter isShare={isShare} setIsShare={setIsShare} handleBoard={handleWhiteBoardShow}></MeetingFooter>
       </div>
       <></>
     </div>

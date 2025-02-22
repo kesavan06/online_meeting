@@ -35,7 +35,7 @@ export function stopScreenRecording() {
     // }
 }
 
-function saveRecording() {
+export function saveRecording() {
     const recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
 
     const downloadLink = document.createElement("a");
