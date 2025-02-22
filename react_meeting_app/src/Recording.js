@@ -6,12 +6,13 @@ export async function startScreenRecording() {
     try {
         screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
 
-        document.getElementById("screen-video").srcObject = screenStream;
+        // document.getElementById("screen-video").srcObject = screenStream;
 
         mediaRecorder = new MediaRecorder(screenStream, { mimeType: "video/webm" });
 
         mediaRecorder.ondataavailable = (event) => {
             if (event.data.size > 0) {
+                console.log("Inside the if condition");
                 recordedChunks.push(event.data);
             }
         };

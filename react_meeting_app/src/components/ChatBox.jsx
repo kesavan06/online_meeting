@@ -11,15 +11,22 @@ function ChatBox() {
 
   let { user_name, socketRef, roomId } = useAppContext();
 
-  let [allMessage, setAllMessage] = useState([{ user_name: "Kesavan", message: " A paragraph is a group of sentences that are organized around a single topic or idea." }])
+  let [allMessage, setAllMessage] = useState([{ user_name: "Kesavan", message: " A paragraph is a group of sentences that are organized around a single topic or idea.", time: "05.10 PM" }])
 
   let message = useRef("");
+  let [messageNow, setMessage] = useState("");
 
 
   function handleSendMessage() {
-    // console.log("Message: ", messageOw);
 
     let newM;
+    const today = new Date();
+    console.log(today.toLocaleString());
+
+    let getTodayTime = today.toLocaleTimeString();
+    let splitDay = getTodayTime.split(":");
+
+    let day = (+splitDay[0]) > 12 ? (+splitDay[0]) - 12 + "." + splitDay[1] + " PM" : splitDay[0] + "." + splitDay[1] + " AM";
 
     if (message != "") {
 
@@ -32,11 +39,13 @@ function ChatBox() {
         message: message.current,
         sender_id: socketRef.current.id,
         room_id: roomId.current,
+        time: day,
       }
 
-      console.log("Object: ", newM);
-
+      // console.log("Object: ", newM);
       socketRef.current.emit("sendMessage", (newM));
+      setMessage("");
+
 
     }
 
@@ -49,8 +58,8 @@ function ChatBox() {
     console.log("Message: ", message);
 
 
-    socketRef.current.on("receivedMessage",( msg)=>{
-      console.log("Message received: ",msg);
+    socketRef.current.on("receivedMessage", (msg) => {
+      console.log("Message received: ", msg);
       setAllMessage([...allMessage, msg]);
 
     });
@@ -73,7 +82,10 @@ function ChatBox() {
           </select>
         </div>
         <div className="sentInputBox">
-          <input type="text" placeholder="Enter your message..." onChange={(e) => message.current = (e.target.value)}></input>
+          <input type="text" placeholder="Enter your message..." onChange={(e) => {
+            message.current = (e.target.value)
+            setMessage(e.target.value)
+          }} value={messageNow}></input>
           <button>
             <FaFaceSmile className="invert"></FaFaceSmile>
           </button>

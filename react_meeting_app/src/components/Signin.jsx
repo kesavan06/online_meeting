@@ -1,59 +1,72 @@
 
 import "../Signin.css"
+import Login from "./SignIn";
 
-export default function Signin(probs)
+
+export default function Signin(props)
 {
+
+    let {nameUnique, setNameUnique} = props;
+    let {password, setPassword} = props;
 
     function cancelShowSignIn()
     {
-        probs.setShowSignIn(false);
+        props.setShowSignIn(false);
     }
 
     function showSignUp()
     {
-        probs.setShowSignUp(true);
-        probs.setShowSignIn(false);
+        props.setShowSignUp(true);
+        props.setShowSignIn(false);
     }
 
-    function signIn()
+    function signIn(event)
     {
-
+        event.preventDefault();
+        if(nameUnique != "" && password != ""){
+            handleUniqueName();
+        }
     }
+
+
+    function handleUniqueName(){
+        console.log(nameUnique, password);
+        let userLogin = Login(nameUnique, password);
+        console.log(userLogin);
+    }
+
+
+
+
+
+
+
+
+
+
     return(
         <div> 
             <form id="signin">
                 <h1 style={{color:"white"}}>Sign in to your account</h1>
+
                 <p style={{color:"rgb(159 163 166 / 88%)"}}>Don't have an account? <span style={{color:"#7C3AED",cursor:"pointer"}} onClick={showSignUp}>Sign up</span></p>
+
                 <label className="label">User name
-                    <input type="text" name="emailAddress" className="input" required></input>
+                    <input type="text" name="unique_name" className="input" onChange={(e)=> setNameUnique(e.target.value)} required></input>
                 </label>
+
                 <label className="label">Password
-                    <input type="password" name="emailAddress" className="input" required></input>
+                    <input type="password" name="password" className="input"  onChange={(e)=> setPassword(e.target.value)} required></input>
                 </label>
+
+                <p></p>
+
                 <div id="signinButtons">
-                    <button id="button" onClick={cancelShowSignIn}>Cancel</button>
-                    <button id="button" onClick={signIn}>Sign in</button>
+                    <button class="button" onClick={cancelShowSignIn}>Cancel</button>
+                    <button class="button" onClick={signIn}>Sign in</button>
                 </div>
-                {/* <button>Sign in</button> */}
-                {/* <button id="button">Cancel</button> */}
+
             </form>
         </div>
     )
-    // return(
-    //     <div style={{width:"100vw",height:"98vh",display:"flex",boxSizing:"border-box"}}>
-    //         <div style={{width:"50%",height:"100%",backgroundColor:"white"}}></div>
-    //         <div style={{width:"50%",height:"100%",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",backgroundColor:"#0A0A0A"}}>
-    //             <h1>Sign in</h1>
-    //             <form style={{width:"350px",height:"350px",display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
-    //                 <label style={{color:" #464646",display:"flex",flexDirection:"column",textAlign:"left"}}>Email
-    //                     <input type="email" name="email" style={{width:"350px",height:"50px",border:"1px solid #464646",borderRadius:"22px",backgroundColor:"#0A0A0A"}}></input>
-    //                 </label>
-    //                 <label style={{color:" #464646",display:"flex",flexDirection:"column",textAlign:"left"}}>Password
-    //                     <input type="password" name="password" style={{width:"350px",height:"50px",border:"1px solid #464646",borderRadius:"22px",backgroundColor:"#0A0A0A"}}></input>
-    //                 </label>
-    //                 <button style={{color:"black",width:"350px",height:"60px",backgroundColor:"white",borderRadius:"40px"}}>Sign in</button>
-    //             </form>
-    //         </div>
-    //     </div>
-    // )
 }

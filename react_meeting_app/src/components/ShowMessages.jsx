@@ -9,7 +9,7 @@ export default function ShowMessage(props) {
       {props.newMessages.map((message) => {
         { console.log("Message: ", message) }
 
-        return <Message user_name={message.user_name} message={message.message}></Message>
+        return <Message user_name={message.user_name} message={message.message} time={message.time} ></Message>
       })
       }
     </>

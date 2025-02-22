@@ -33,7 +33,7 @@ export default function ButtonDiv(props) {
 
 
 
-    function startDrawing(e) {
+    function startDrawing() {
         setDrawing(true);
         setEraser(false);
         setWidth(!width);
@@ -93,26 +93,26 @@ export default function ButtonDiv(props) {
     return (
         <div className={style.parent}>
 
-            <Button value={<FaPaintBrush style={{ fontSize: "2rem" }} />} onClick={startDrawing} type="button" title="Doodle"></Button>
+            <Button value={<FaPaintBrush style={{ fontSize: "1.6rem" }} />} onClick={startDrawing} type="button" title="Doodle"></Button>
             <p style={{ color: "white" }}>Width : {widthOfBrush}</p>
             {(width) && <input type="range" min={5} max={100} value={widthOfBrush} onChange={handleWidthChange} onClick={handleClick}></input>}
 
-            <Button value={<TbBrushOff style={{ fontSize: "2rem" }} />} onClick={stopDrawing} type="button" title="Distable Drawing"></Button>
+            <Button value={<TbBrushOff style={{ fontSize: "1.6rem" }} />} onClick={stopDrawing} type="button" title="Distable Drawing"></Button>
 
-            <Button value={<FaEraser style={{ fontSize: "2rem" }} />} onClick={setEraserOn} type="button" title="Select Eraser"></Button>
+            <Button value={<FaEraser style={{ fontSize: "1.6rem" }} />} onClick={setEraserOn} type="button" title="Select Eraser"></Button>
             <p style={{ color: "white", fontSize: "15px" }} width={"70%"}>Width : {widthOfEraser}</p>
 
             {(showEraserBar) && <input type="range" min={5} max={100} value={widthOfEraser} onChange={handleWidthForEraser} onClick={handleClickInEraser}></input>}
 
 
-            <button style={{ width: "114px", height: "52px", backgroundColor: "#111827", borderRadius: "35px" }} title="Color Palette" >
-                <IoMdColorPalette style={{ fontSize: "3rem", color: "white" }} onClick={setColorsNow} />
+            <button style={{ width: "70%", height: "52px", backgroundColor: "#111827", borderRadius: "5px" }} title="Color Palette" >
+                <IoMdColorPalette style={{ fontSize: "1.6rem", color: "white" }} onClick={setColorsNow} />
                 {chooseColor && <input value={color} onChange={setColorForBrush} className={style.input} type="color" />}
             </button>
 
-            <Button value={<PiBroomFill style={{ fontSize: "2rem" }} />} onClick={clearAll} type="button" title="Clear"></Button>
+            <Button value={<PiBroomFill style={{ fontSize: "1.6rem" }} />} onClick={clearAll} type="button" title="Clear"></Button>
        
-            <Button value={<MdCancel style={{ fontSize: "2rem" }} />} onClick={props.parentShow} type="button"></Button>
+            <Button value={<MdCancel style={{ fontSize: "1.6rem" }} />} onClick={props.parentShow} type="button"></Button>
             
         </div>
     )

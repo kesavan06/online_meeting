@@ -6,7 +6,7 @@ import ButtonDiv from "./ButtonIn";
 import style from "../Canvas.module.css";
 import Parent from "./Parent";
 
-export default function WhiteBoard({ parentShow }) {
+export default function WhiteBoard({ controlBoard }) {
 
     let isDrawingRef = useRef(false);
     let canvasRef = useRef(null);
@@ -60,7 +60,7 @@ export default function WhiteBoard({ parentShow }) {
     return (
         <>
             <Parent>
-                <ButtonDiv setIsDrawing={setIsDrawing} isDrawing={isDrawingRef.current} clearCanvas={clearCanvas} setEraser={setEraser} color={setColor} setBrushWidth={setBrushWidth} setEraserWidth={setEraserWidth}  displayParent={displayWrap} parentShow={parentShow} />
+                <ButtonDiv setIsDrawing={setIsDrawing} isDrawing={isDrawingRef.current} clearCanvas={clearCanvas} setEraser={setEraser} color={setColor} setBrushWidth={setBrushWidth} setEraserWidth={setEraserWidth}  displayParent={displayWrap} parentShow={controlBoard} />
                 <Canvas isDrawingRef={isDrawingRef} class={style.canvas} canvasRef={canvasRef} isEraser={eraserRef} color={colorRef} brushWidth={brushRef} widthOfEraser={eraserWidthRef} />
             </Parent>
         </>

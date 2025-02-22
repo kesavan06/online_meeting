@@ -25,7 +25,7 @@ export default function AboutMeeting({
             className="newMeeting"
           >
             <FaVideo className="icon"></FaVideo>
-            New
+            <p style={{marginLeft:"10px"}}>New</p>
           </button>
           <button
             onClick={() => {
@@ -34,7 +34,7 @@ export default function AboutMeeting({
             className="joinMeeting"
           >
             <FaUserFriends className="icon"></FaUserFriends>
-            Join
+            <p style={{marginLeft:"10px"}}>Join</p>
           </button>
         </div>
       </div>

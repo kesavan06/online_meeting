@@ -16,9 +16,14 @@ import { FaRecordVinyl } from "react-icons/fa";
 import { startScreenRecording } from "../Recording";
 import { stopScreenRecording } from "../Recording";
 
-function MeetingFooter() {
+function MeetingFooter({handleBoard}) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
+
+
+  function handleClick(){
+    handleBoard();
+  }
   return (
       <div className="footerBox">
         <div className="micVideoConrol">
@@ -47,8 +52,8 @@ function MeetingFooter() {
           <div className="controlBox">
             <FaShareFromSquare className="changeColor"></FaShareFromSquare>
           </div>
-          <div className="controlBox">
-            <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher>
+          <div className="controlBox" onClick={handleClick}>
+            <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher> 
           </div>
           <div className="controlBox">
             <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
