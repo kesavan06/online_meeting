@@ -10,7 +10,7 @@ import EmojiPicker from 'emoji-picker-react';
 
 
 
-function ChatBox() {
+function ChatBox({ view, setView }) {
 
   let { user_name, socketRef, roomId } = useAppContext();
 
@@ -89,6 +89,41 @@ function ChatBox() {
     handleOpen();
   }
 
+  useEffect( () => {
+  
+
+    setTimeout(async() => {
+      let fetchAllMessages =await fetch("http://localhost:3002/allMessages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ roomId: roomId.current })
+      })
+      setAllMessage([]);
+
+      // console.log("All Messages: ",fetchAllMessages );
+
+      let allM = await fetchAllMessages.json();
+      console.log("AllMEssages:  ",allM);
+      console.log("AllMEssages:  ",allM.data.messages);
+      console.log("Participants:  ",allM.data.participants);
+      let message = allM.data.messages;
+
+      for(let mess of message){
+        let isMine = false;
+        if(mess.sender_id == socketRef.current.id){
+          isMine = true
+        }
+        mess.isMine =isMine;
+        console.log("Is mine : ",isMine);
+        console.log("Mess Final : ",mess);
+        setAllMessage((prev)=>[...prev,mess])
+      }
+
+    },1000)
+  }, [view])
+
   //   const handleNewMessage = (msg) => {
 
 
@@ -109,9 +144,34 @@ function ChatBox() {
   // }
 
 
-  const handleNewMessage = (allMess) => {
+  const handleNewMessage = (msg) => {
 
     // setAllMessage("")
+    // for (let msg of allMess) {
+
+    let isMyMessage = false;
+
+    let { user_name, message, sender_id, time } = msg;
+    let msgGot = { user_name, message, time };
+
+    if (socketRef.current.id == sender_id) {
+      isMyMessage = true;
+    }
+
+    let sendClass = isMyMessage;
+    console.log("Message is mine : ", isMyMessage);
+
+    setAllMessage((exsistingMessages) => [...(exsistingMessages), { ...msgGot, isMine: sendClass }]);
+    // }
+
+  }
+
+
+  const handleNewMessageFirstTime = (allMess) => {
+
+    // setAllMessage("")
+    setAllMessage((prev) => console.log(prev));
+
     for (let msg of allMess) {
       let isMyMessage = false;
 
@@ -130,8 +190,31 @@ function ChatBox() {
 
   }
 
+
+
+  // useEffect(() => {
+  //   async function getMess() {
+  //     let allMessGet = await fetch("http://localhost:3002/messObject", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ roomId: roomId.current }),
+  //     })
+
+  //     // console.log("All mess : ",allMessGet);
+
+  //   }
+
+  //   getMess();
+  //   // handleNewMessageFirstTime();
+  // }, [])
+
+
+
+
+
   useEffect(() => {
-    handleSendMessage
 
     socketRef.current.off("receivedMessage");
 
@@ -159,7 +242,7 @@ function ChatBox() {
             <option>Hari</option>
           </select>
 
-          {showEmoji && <Emoji emojiHandle={checkTheEmojiClicked} handleOpen={handleOpen}/>}
+          {showEmoji && <Emoji emojiHandle={checkTheEmojiClicked} handleOpen={handleOpen} />}
 
         </div>
 
@@ -170,7 +253,7 @@ function ChatBox() {
             <FaFaceSmile className="invert" ></FaFaceSmile>
           </button>
 
-          <button onClick={handleSendMessage}>
+          <button onClick={() => handleSendMessage()}>
             <FaPaperPlane className="invert"></FaPaperPlane>
           </button>
 

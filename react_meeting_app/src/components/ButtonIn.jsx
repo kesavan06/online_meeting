@@ -3,7 +3,7 @@ import Button from "./Button";
 import style from "../Canvas.module.css";
 import { FaPaintBrush } from "react-icons/fa";
 import { TbBrushOff } from "react-icons/tb";
-import { FaEraser } from "react-icons/fa6";
+import { FaEraser, FaSlack } from "react-icons/fa6";
 import { PiBroomFill } from "react-icons/pi";
 import { MdCancel } from "react-icons/md";
 import { IoMdColorPalette } from "react-icons/io";
@@ -20,6 +20,10 @@ export default function ButtonDiv(props) {
     let setEraser = props.setEraser;
     let setColor = props.color;
 
+    
+    let setTool = props.setTool;
+
+
     let [color, setColorNow] = useState("#000000");
 
 
@@ -30,6 +34,7 @@ export default function ButtonDiv(props) {
     let [widthOfEraser, setWidthOfEraser] = useState(10);
 
     let [chooseColor, setChooseColor] = useState(false);
+    let [showShape, setShowShape] = useState(false);
 
 
 
@@ -88,6 +93,9 @@ export default function ButtonDiv(props) {
     }
 
 
+    function selectShapes() {
+        setShowShape((prev) => !prev);
+    }
 
 
     return (
@@ -98,6 +106,14 @@ export default function ButtonDiv(props) {
             {(width) && <input type="range" min={5} max={100} value={widthOfBrush} onChange={handleWidthChange} onClick={handleClick}></input>}
 
             <Button value={<TbBrushOff style={{ fontSize: "1.6rem" }} />} onClick={stopDrawing} type="button" title="Distable Drawing"></Button>
+
+            <Button value={"shape"} onClick={selectShapes} type="button" title="Shapes"></Button>
+            {showShape &&
+                <div className={style.shapeDiv}>
+                    <button id="line" onClick={() => setTool("line")}>line</button>
+                    <button id="rectangle" onClick={() => setTool("rectangle")}>rectangle</button>
+                </div>
+            }
 
             <Button value={<FaEraser style={{ fontSize: "1.6rem" }} />} onClick={setEraserOn} type="button" title="Select Eraser"></Button>
             <p style={{ color: "white", fontSize: "15px" }} width={"70%"}>Width : {widthOfEraser}</p>
@@ -111,9 +127,9 @@ export default function ButtonDiv(props) {
             </button>
 
             <Button value={<PiBroomFill style={{ fontSize: "1.6rem" }} />} onClick={clearAll} type="button" title="Clear"></Button>
-       
+
             <Button value={<MdCancel style={{ fontSize: "1.6rem" }} />} onClick={props.parentShow} type="button"></Button>
-            
+
         </div>
     )
 }

@@ -85,6 +85,22 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello from Backend!" });
 });
 
+
+app.post("/allMessages", (req, res)=>{
+//   console.log("In messObj post-R Details : ",allRoomDetails);
+  let {roomId}= req.body;
+  console.log("Room ID : ",roomId);
+  let theRoom =getRoom(roomId);
+  console.log("Selected Room : ",theRoom);
+
+  if(theRoom != null){
+    res.status(201).send({message : true, data: theRoom});
+  }
+  else{
+    res.status(504).send({message : false, data: theRoom});
+  }
+})
+
 app.post("/unique", async (req, res) => {
   try {
     console.log(req.body);
@@ -252,14 +268,17 @@ io.on("connection", (socket) => {
     allMessages.push({
       user_name, message, time, sender_id
     });
+    // let isMine = sender_id == socket.id ? true : false;
 
     roomObject.messages.push({user_name,sender_id, message, time});
+    // roomObject.messages.push({user_name,sender_id, message, time,isMine});
 
     console.log("ALl messages: ", allMessages);
     console.log(roomObject.messages);
 
-    // io.to(msgObject.room_id).emit("receivedMessage", msgObject);
-    io.to(msgObject.room_id).emit("receivedMessage", roomObject.messages); //try in home here ----------------
+    io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+   
+    // io.to(msgObject.room_id).emit("receivedMessage", roomObject.messages); //try in home here ----------------
 
   });
 

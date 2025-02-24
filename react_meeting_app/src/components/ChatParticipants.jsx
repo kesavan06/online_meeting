@@ -30,7 +30,7 @@ function ChatParticipants() {
           </div>
           <FaXmark size={"20px"} className="closeChatBox"></FaXmark>
         </div>
-        {view ? <ChatBox></ChatBox> : <Participants></Participants>}
+        {view ? <ChatBox view={view} setView = {setView}></ChatBox> : <Participants></Participants>}
       </div>
   );
 }
