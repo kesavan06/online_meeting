@@ -20,6 +20,7 @@ function MeetingFooter({
   chatView,
   setChatView,
   startScreenShare,
+  isSharing,
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
@@ -28,8 +29,7 @@ function MeetingFooter({
     handleBoard();
   }
 
-  function shareScreen()
-  {
+  function shareScreen() {
     setIsShare(true);
   }
 
@@ -58,7 +58,12 @@ function MeetingFooter({
         </div>
       </div>
       <div className="meetingControl">
-        <div className="controlBox" onClick={() => startScreenShare()}>
+        <div
+          className="controlBox"
+          onClick={() => {
+            startScreenShare();
+          }}
+        >
           <FaShareFromSquare className="changeColor"></FaShareFromSquare>
         </div>
         <div className="controlBox" onClick={handleClick}>

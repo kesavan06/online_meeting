@@ -8,37 +8,34 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
   cors: {
-    origin: "172.17.20.38:5173",
+    origin: "http://localhost:5173",
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   },
 });
 
 const corsOptions = {
-  origin: "172.17.20.38:5173",
+  origin: "http://localhost:5173",
   methods: "GET,POST,PUT,DELETE",
   credentials: true,
   // optionsSuccessStatus: 200
 };
 
-
 let allRoomDetails = [];
-
 
 const mysql = require("mysql2");
 
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Vennila_Mysql"
-})
+  password: "kesavan@123",
+});
 
 connection.connect((err) => {
   err
     ? console.log("Can not connect with mysql")
     : console.log("Connect with mysql");
 });
-
 
 connection.query("CREATE DATABASE if not exists users_db ;", (err, data) => {
   if (err) {
@@ -50,14 +47,12 @@ connection.query("CREATE DATABASE if not exists users_db ;", (err, data) => {
 
 connection.end();
 
-
 const dbConnection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Deepa30",
+  password: "kesavan@123",
   database: "users_db",
-})
-
+});
 
 dbConnection.connect((err) => {
   if (err) {
@@ -66,7 +61,6 @@ dbConnection.connect((err) => {
     console.log("Connected to the database");
   }
 });
-
 
 let tableCreateQuery =
   "create table if not exists users(user_id smallint auto_increment primary key, user_name varchar(60) not null, unique_name varchar(100)  unique key not null ,password varchar(100) not null, user_key varchar(16)  unique key not null);";
@@ -79,7 +73,6 @@ dbConnection.query(tableCreateQuery, (err, result) => {
   console.log('Table "users" created or already exists');
 });
 
-
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -88,21 +81,19 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello from Backend!" });
 });
 
+app.post("/allMessages", (req, res) => {
+  //   console.log("In messObj post-R Details : ",allRoomDetails);
+  let { roomId } = req.body;
+  console.log("Room ID : ", roomId);
+  let theRoom = getRoom(roomId);
+  console.log("Selected Room : ", theRoom);
 
-app.post("/allMessages", (req, res)=>{
-//   console.log("In messObj post-R Details : ",allRoomDetails);
-  let {roomId}= req.body;
-  console.log("Room ID : ",roomId);
-  let theRoom =getRoom(roomId);
-  console.log("Selected Room : ",theRoom);
-
-  if(theRoom != null){
-    res.status(201).send({message : true, data: theRoom});
+  if (theRoom != null) {
+    res.status(201).send({ message: true, data: theRoom });
+  } else {
+    res.status(504).send({ message: false, data: theRoom });
   }
-  else{
-    res.status(504).send({message : false, data: theRoom});
-  }
-})
+});
 
 app.post("/unique", async (req, res) => {
   try {
@@ -129,9 +120,7 @@ app.post("/unique", async (req, res) => {
   } catch (err) {
     res.status(500).send("Internal Error");
   }
-})
-
-
+});
 
 app.post("/signUp", async (req, res) => {
   try {
@@ -162,8 +151,7 @@ app.post("/signUp", async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: "Failed", data: "Failed to add" });
   }
-
-})
+});
 
 app.get("/secretKey", async (req, res) => {
   try {
@@ -178,11 +166,7 @@ app.get("/secretKey", async (req, res) => {
     console.log("Err in getting user detail: ", err);
     res.status(500).send({ data: "Internal Server error" });
   }
-  
-})
-
-
-
+});
 
 const rooms = {};
 
@@ -211,32 +195,27 @@ io.on("connection", (socket) => {
       return socket.emit("error", "Invalid roomId or userId");
     console.log(`User ${userId} joining room ${roomId}`);
 
-
-
     if (!rooms[roomId]) {
       rooms[roomId] = new Set(); // Auto-create room if it doesn’t exist (optional)
     }
 
     let roomCheck = checkTheRoomToId(roomId); //true- exsists
 
+    console.log("Room exisits: ", roomCheck);
     if (roomCheck) {
-      
       let roomObject = getRoom(roomId);
-      roomObject.participants.push({userId:userId, name : userNameShow});
-      console.log("RoomObject: ",roomObject);
-
-    }
-    else {
-      let roomObject ={};
+      roomObject.participants.push({ userId: userId, name: userNameShow });
+      console.log("RoomObject: ", roomObject);
+    } else {
+      let roomObject = {};
       roomObject.roomId = roomId;
-      roomObject.participants =[{userId: userId, name : userNameShow}];
-      console.log("Room PArticipant: ",roomObject.participants)
-      roomObject.messages =[];
+      roomObject.participants = [{ userId: userId, name: userNameShow }];
+      console.log("Room PArticipant: ", roomObject.participants);
+      roomObject.messages = [];
       allRoomDetails.push(roomObject);
     }
 
-
-    console.log("RoomDetails: ",allRoomDetails);
+    console.log("RoomDetails: ", allRoomDetails);
 
     rooms[roomId].add(userId);
     socket.join(roomId);
@@ -263,6 +242,26 @@ io.on("connection", (socket) => {
     io.to(to).emit("answer", { answer, from: socket.id });
   });
 
+  socket.on("screen-offer", ({ offer, to }) => {
+    io.to(to).emit("screen-offer", { offer, from: socket.id });
+  });
+
+  socket.on("screen-answer", ({ answer, to }) => {
+    io.to(to).emit("screen-answer", { answer, from: socket.id });
+  });
+
+  socket.on("screen-candidate", ({ candidate, to }) => {
+    io.to(to).emit("screen-candidate", { candidate, from: socket.id });
+  });
+
+  socket.on("screen-sharing-started", ({ roomId, userId }) => {
+    socket.to(roomId).emit("screen-sharing-started", userId);
+  });
+
+  socket.on("screen-sharing-stopped", (roomId) => {
+    socket.to(roomId).emit("screen-sharing-stopped", socket.id);
+  });
+
   // send Message
 
   socket.on("sendMessage", (msgObject) => {
@@ -270,24 +269,28 @@ io.on("connection", (socket) => {
     console.log("SenderId: ", msgObject.sender_id);
     console.log("Room: ", msgObject.room_id);
 
+    console.log("Room Details : ", allMessages);
     let roomObject = getRoom(msgObject.room_id);
-    console.log("Room obj: ",roomObject);
+    console.log("Room obj: ", roomObject);
 
-    let {user_name, message, time, sender_id} = msgObject;
+    let { user_name, message, time, sender_id } = msgObject;
 
     allMessages.push({
-      user_name, message, time, sender_id
+      user_name,
+      message,
+      time,
+      sender_id,
     });
     // let isMine = sender_id == socket.id ? true : false;
 
-    roomObject.messages.push({user_name,sender_id, message, time});
+    roomObject.messages.push({ user_name, sender_id, message, time });
     // roomObject.messages.push({user_name,sender_id, message, time,isMine});
 
     console.log("ALl messages: ", allMessages);
     console.log(roomObject.messages);
 
     io.to(msgObject.room_id).emit("receivedMessage", msgObject);
-   
+
     // io.to(msgObject.room_id).emit("receivedMessage", roomObject.messages); //try in home here ----------------
   });
 
@@ -331,9 +334,7 @@ server.listen(3002, () => {
   console.log(`Server running on port 3002`);
 });
 
-
 function checkTheRoomToId(roomId) {
-
   let exists = false;
   for (let room of allRoomDetails) {
     if (room.roomId == roomId) {
@@ -345,12 +346,10 @@ function checkTheRoomToId(roomId) {
   return exists;
 }
 
-
-
-function getRoom(roomID){
-  for(let room of allRoomDetails){
-    console.log("Room: ",room)
-    if(room.roomId == roomID){
+function getRoom(roomID) {
+  for (let room of allRoomDetails) {
+    console.log("Room: ", room);
+    if (room.roomId == roomID) {
       return room;
     }
   }

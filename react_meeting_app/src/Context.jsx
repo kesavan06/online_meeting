@@ -29,9 +29,7 @@ export const AppProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:3002", {
-      transports: ["websocket"],
-    });
+    socketRef.current = io("http://localhost:3002");
     setupSocketListeners();
 
     return () => {
@@ -39,7 +37,11 @@ export const AppProvider = ({ children }) => {
       if (myStream.current) {
         myStream.current.getTracks().forEach((track) => track.stop());
       }
+      if (myScreenStream.current) {
+        myScreenStream.current.getTracks().forEach((track) => track.stop());
+      }
       peerConnectionsRef.current.forEach((pc) => pc.close());
+
       peerConnectionsRef.current.clear();
     };
   }, []);
@@ -52,8 +54,72 @@ export const AppProvider = ({ children }) => {
     socketRef.current.on("user-connected", async (userId) => {
       if (userId === socketRef.current.id) return; // Ignore self
       console.log("User connected:", userId);
-      if (myStream.current) {
-        await createPeerConnection(userId, true);
+      if (myStream.current || myScreenStream.current) {
+        await createPeerConnection(userId, true); // Create peer connection and include screen share if active
+      }
+    });
+
+    socketRef.current.on("screen-offer", async ({ offer, from }) => {
+      try {
+        const peerConnection = peerConnectionsRef.current.get(from);
+        if (!peerConnection) {
+          console.warn(`No peer connection for ${from}`);
+          return;
+        }
+
+        await peerConnection.setRemoteDescription(
+          new RTCSessionDescription(offer)
+        );
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+
+        socketRef.current.emit("screen-answer", {
+          answer,
+          to: from,
+        });
+      } catch (err) {
+        console.error("Error handling screen offer:", err);
+      }
+    });
+
+    socketRef.current.on("screen-answer", async ({ answer, from }) => {
+      const peerConnection = peerConnectionsRef.current.get(from);
+      if (peerConnection) {
+        await peerConnection.setRemoteDescription(
+          new RTCSessionDescription(answer)
+        );
+      }
+    });
+
+    socketRef.current.on("screen-candidate", async ({ candidate, from }) => {
+      const peerConnection = peerConnectionsRef.current.get(from);
+      if (!peerConnection) {
+        console.warn(
+          `No peer connection for ${from}, queuing screen candidate`
+        );
+        candidateQueues.current.set(from, [
+          ...(candidateQueues.current.get(from) || []),
+          candidate,
+        ]);
+        return;
+      }
+      try {
+        if (peerConnection.remoteDescription) {
+          await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        } else {
+          candidateQueues.current.set(from, [
+            ...(candidateQueues.current.get(from) || []),
+            candidate,
+          ]);
+        }
+      } catch (err) {
+        console.error("Error adding screen ICE candidate:", err);
+      }
+    });
+
+    socketRef.current.on("screen-sharing-stopped", (userId) => {
+      if (screenStreamState?.userId === userId) {
+        setScreenStreamState(null);
       }
     });
 
@@ -94,6 +160,14 @@ export const AppProvider = ({ children }) => {
       myStream.current
         .getTracks()
         .forEach((track) => peerConnection.addTrack(track, myStream.current));
+    }
+
+    if (myScreenStream.current) {
+      myScreenStream.current
+        .getTracks()
+        .forEach((track) =>
+          peerConnection.addTrack(track, myScreenStream.current)
+        );
     }
 
     // Handle ICE candidates
@@ -215,7 +289,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const addVideoStream = (stream) => {
-    if (!stream || !(stream instanceof MediaStream)) {
+    if (!stream) {
       console.warn("Invalid stream provided to addVideoStream");
       return;
     }
@@ -240,17 +314,33 @@ export const AppProvider = ({ children }) => {
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
-        audio: true, // Enable audio sharing if needed
       });
 
       myScreenStream.current = screenStream;
 
       // Add tracks from screen stream to all existing peer connections
-      peerConnectionsRef.current.forEach((peerConnection) => {
+      for (const [userId, peerConnection] of peerConnectionsRef.current) {
         screenStream.getTracks().forEach((track) => {
-          peerConnection.addTrack(track, screenStream);
+          peerConnection.addTrack(track, screenStream); // Add screen tracks to existing connection
         });
-      });
+
+        // screenPeerConnection.onicecandidate = (event) => {
+        //   if (event.candidate) {
+        //     socketRef.current.emit("screen-candidate", {
+        //       candidate: event.candidate,
+        //       to: userId,
+        //     });
+        //   }
+        // };
+
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        socketRef.current.emit("screen-offer", {
+          offer,
+          to: userId,
+          from: socketRef.current.id,
+        });
+      }
 
       // Set local screen stream state
       setScreenStreamState({
@@ -261,8 +351,10 @@ export const AppProvider = ({ children }) => {
       addVideoStream(screenStream);
 
       // Notify other participants about screen sharing
-      socketRef.current.emit("screen-sharing-started", roomId.current);
-
+      socketRef.current.emit("screen-sharing-started", {
+        roomId: roomId.current,
+        userId: socketRef.current.id,
+      });
       // Handle stream stop
       screenStream.getVideoTracks()[0].onended = () => {
         stopScreenSharing();
@@ -303,7 +395,7 @@ export const AppProvider = ({ children }) => {
     return stream;
   };
 
-  const initializeMediaStream = async () => {
+  const initializeMediaStream = async (userShowName) => {
     try {
       addVideoStream(myStream.current);
       if (roomId.current) {

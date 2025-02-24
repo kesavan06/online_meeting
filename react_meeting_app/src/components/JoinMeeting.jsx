@@ -103,7 +103,7 @@ function JoinMeeting({
           </div>
 
           <div className="joinMeetingVideoBox">
-            <video ref={videoRef} autoPlay playsInline />
+            <video ref={videoRef} autoPlay playsInline muted />
           </div>
           <div className="joinMeetingControls">
             <div

@@ -105,7 +105,7 @@ function ChatBox({ view, setView }) {
         console.log("Mess Final : ", mess);
         setAllMessage((prev) => [...prev, mess]);
       }
-    }, 1000);
+    }, 100);
   }, [view]);
 
   //   const handleNewMessage = (msg) => {
@@ -192,10 +192,11 @@ function ChatBox({ view, setView }) {
 
   useEffect(() => {
     console.log("All messages: ", allMessage);
+    socketRef.current.off("receivedMessage");
 
     socketRef.current.on("receivedMessage", (msg) => {
       console.log("Message received: ", msg);
-      setAllMessage([...allMessage, msg]);
+      handleNewMessage(msg);
     });
   }, [allMessage]);
 
@@ -210,8 +211,6 @@ function ChatBox({ view, setView }) {
           <p>To</p>
           <select className="selectUser">
             <option>Everyone</option>
-            <option>Kesavan</option>
-            <option>Hari</option>
           </select>
 
           {showEmoji && (

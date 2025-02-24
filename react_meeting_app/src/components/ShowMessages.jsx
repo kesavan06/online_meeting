@@ -9,6 +9,7 @@ export default function ShowMessage(props) {
         {
           console.log("Message: 2 ", message.isMine);
         }
+        
 
         return (
           <Message

@@ -14,6 +14,7 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard }) => {
   useEffect(() => {
     if (videoRef.current && stream) {
       console.log("Setting stream to video element:", stream.id);
+      console.log(stream);
       videoRef.current.srcObject = stream;
 
       videoRef.current.onloadmetadata = () => {
@@ -95,7 +96,7 @@ function Meeting() {
         </div>
       </div>
       <div className="meetingContent">
-      <div className={showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
+        <div className={showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
           <div className="videoBoxes">
             {streams.map((stream) => {
               return (

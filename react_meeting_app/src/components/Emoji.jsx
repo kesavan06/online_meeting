@@ -57,8 +57,8 @@ export default function Emoji({ emojiHandle, handleOpen,handleShowEmoji }) {
                    
                     theme="dark"
                     onEmojiClick={handleClickOnEmoji}
-                    width={230}
-                    height={300}
+                    width={300}
+                    height={400}
                     open={open}
                     // onBlur={()=>handleShowEmoji()}
                 />
