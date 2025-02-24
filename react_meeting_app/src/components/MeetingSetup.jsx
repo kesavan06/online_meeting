@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useAppContext } from "../Context";
 // import { useSocketEvents } from "../socket";
 
-function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
+function MeetingSetup({ view, setView, showMeeting, setShowMeeting }){
   const { roomId, socketRef, initializeMediaStream , user_name} =
     useAppContext();
   const [mic, setMic] = useState(true);

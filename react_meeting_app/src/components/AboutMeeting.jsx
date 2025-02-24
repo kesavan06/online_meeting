@@ -13,7 +13,7 @@ export default function AboutMeeting({
   return (
     <center>
       <div className="about">
-        <h1 style={{ color: "white" }}>Welcome to Meeting</h1>
+        <h1 style={{ color: "white" }}>Welcome to ConvoSpace</h1>
         <p style={{ color: "white", marginTop: "30px", fontSize: "20px" }}>
           Connect with your team anytime, anywhere!
         </p>
@@ -25,7 +25,7 @@ export default function AboutMeeting({
             className="newMeeting"
           >
             <FaVideo className="icon"></FaVideo>
-            New
+            <p style={{marginLeft:"10px"}}>New</p>
           </button>
           <button
             onClick={() => {
@@ -34,7 +34,7 @@ export default function AboutMeeting({
             className="joinMeeting"
           >
             <FaUserFriends className="icon"></FaUserFriends>
-            Join
+            <p style={{marginLeft:"10px"}}>Join</p>
           </button>
         </div>
       </div>

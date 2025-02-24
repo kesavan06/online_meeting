@@ -10,6 +10,7 @@ import Wrapper from "./Wrapper";
 import WhiteBoard from "./WhiteBoard";
 import Meeting from "./Meeting";
 import { useAppContext } from "../Context";
+import ShareScreen from "./ShareScreen";
 import SignUp from "./SignUp.js";
 
 export default function HomePage() {
@@ -19,6 +20,12 @@ export default function HomePage() {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showMeeting, setShowMeeting] = useState(false);
   const [displayParent, setDisplayParent] = useState(false);
+  const [displayShareScreen,setDisplayShareScreen] = useState(false);
+
+  function handleShareScreen()
+  {
+    setDisplayShareScreen(!displayShareScreen);
+  }
 
   const [name, setName] = useState("");
   const [nameUnique,  setNameUnique] = useState('');
@@ -52,7 +59,7 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
         />
 
-        <FeatureList displayParent={handleParentShow} />
+        <FeatureList displayParent={handleParentShow} displayScreenShare={handleShareScreen} />
       </div>
     );
   } else if (showSignUp) {
@@ -123,7 +130,12 @@ export default function HomePage() {
     );
   } else if (displayParent) {
     return <WhiteBoard parentShow={handleParentShow} />;
-  } else {
+  }
+  else if(displayShareScreen)
+  {
+    return <ShareScreen></ShareScreen>
+  } 
+  else {
     if (viewSetupMeeting) {
       return (
         <MeetingSetup

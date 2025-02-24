@@ -25,20 +25,20 @@ const corsOptions = {
 let allRoomDetails = [];
 
 
-
 const mysql = require("mysql2");
 
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Deepa30",
-});
+  password: "Vennila_Mysql"
+})
 
 connection.connect((err) => {
   err
     ? console.log("Can not connect with mysql")
     : console.log("Connect with mysql");
 });
+
 
 connection.query("CREATE DATABASE if not exists users_db ;", (err, data) => {
   if (err) {
@@ -50,12 +50,14 @@ connection.query("CREATE DATABASE if not exists users_db ;", (err, data) => {
 
 connection.end();
 
+
 const dbConnection = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "Deepa30",
   database: "users_db",
-});
+})
+
 
 dbConnection.connect((err) => {
   if (err) {
@@ -64,6 +66,7 @@ dbConnection.connect((err) => {
     console.log("Connected to the database");
   }
 });
+
 
 let tableCreateQuery =
   "create table if not exists users(user_id smallint auto_increment primary key, user_name varchar(60) not null, unique_name varchar(100)  unique key not null ,password varchar(100) not null, user_key varchar(16)  unique key not null);";
@@ -126,7 +129,9 @@ app.post("/unique", async (req, res) => {
   } catch (err) {
     res.status(500).send("Internal Error");
   }
-});
+})
+
+
 
 app.post("/signUp", async (req, res) => {
   try {
@@ -157,7 +162,8 @@ app.post("/signUp", async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: "Failed", data: "Failed to add" });
   }
-});
+
+})
 
 app.get("/secretKey", async (req, res) => {
   try {
@@ -172,7 +178,11 @@ app.get("/secretKey", async (req, res) => {
     console.log("Err in getting user detail: ", err);
     res.status(500).send({ data: "Internal Server error" });
   }
-});
+  
+})
+
+
+
 
 const rooms = {};
 
