@@ -289,7 +289,6 @@ io.on("connection", (socket) => {
     io.to(msgObject.room_id).emit("receivedMessage", msgObject);
    
     // io.to(msgObject.room_id).emit("receivedMessage", roomObject.messages); //try in home here ----------------
-
   });
 
   // Handle user disconnection

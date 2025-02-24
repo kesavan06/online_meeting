@@ -10,7 +10,7 @@ const generator = rough.generator();
 
 function createElement(id, x1, y1, x2, y2, type) {
 
-    console.log("Create ELEment : ",type);
+    console.log("Create ELEment : ", type);
     let roughElement;
     if (type === "rectangle") {
         roughElement = generator.rectangle(x1, y1, x2 - x1, y2 - y1)
@@ -113,11 +113,14 @@ export default function Canvas(props) {
 
         if (!isDrawingRef.current) return
 
-        context.beginPath();
-        let { x, y } = getMousePosition(event);
+        if (tool != "line" || tool != "rectangle") {
+            context.beginPath();
+            let { x, y } = getMousePosition(event);
 
-        context.moveTo(x, y);
-        isDrawingActive = true;
+            context.moveTo(x, y);
+            isDrawingActive = true;
+        }
+
 
         //
         const { clientX, clientY } = event;
@@ -125,7 +128,7 @@ export default function Canvas(props) {
         if (tool == "selection") {
 
             const element = getElementAtPosition(clientX, clientY, elements);
-            // if we are on an element
+          
             console.log("An element is there: ", element);
 
             if (element) {

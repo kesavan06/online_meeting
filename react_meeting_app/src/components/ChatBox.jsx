@@ -6,7 +6,7 @@ import "../ChatBox.css";
 import ShowMessage from "./ShowMessages";
 import { useAppContext } from "../Context";
 import Emoji from "./Emoji";
-import EmojiPicker from 'emoji-picker-react';
+// import EmojiPicker from 'emoji-picker-react';
 
 
 
@@ -167,28 +167,28 @@ function ChatBox({ view, setView }) {
   }
 
 
-  const handleNewMessageFirstTime = (allMess) => {
+  // const handleNewMessageFirstTime = (allMess) => {
 
-    // setAllMessage("")
-    setAllMessage((prev) => console.log(prev));
+  //   // setAllMessage("")
+  //   setAllMessage((prev) => console.log(prev));
 
-    for (let msg of allMess) {
-      let isMyMessage = false;
+  //   for (let msg of allMess) {
+  //     let isMyMessage = false;
 
-      let { user_name, message, sender_id, time } = msg;
-      let msgGot = { user_name, message, time };
+  //     let { user_name, message, sender_id, time } = msg;
+  //     let msgGot = { user_name, message, time };
 
-      if (socketRef.current.id == sender_id) {
-        isMyMessage = true;
-      }
+  //     if (socketRef.current.id == sender_id) {
+  //       isMyMessage = true;
+  //     }
 
-      let sendClass = isMyMessage;
-      console.log("Message is mine : ", isMyMessage);
+  //     let sendClass = isMyMessage;
+  //     console.log("Message is mine : ", isMyMessage);
 
-      setAllMessage((exsistingMessages) => [...(exsistingMessages), { ...msgGot, isMine: sendClass }]);
-    }
+  //     setAllMessage((exsistingMessages) => [...(exsistingMessages), { ...msgGot, isMine: sendClass }]);
+  //   }
 
-  }
+  // }
 
 
 
@@ -242,7 +242,7 @@ function ChatBox({ view, setView }) {
             <option>Hari</option>
           </select>
 
-          {showEmoji && <Emoji emojiHandle={checkTheEmojiClicked} handleOpen={handleOpen} />}
+          {showEmoji && <Emoji emojiHandle={checkTheEmojiClicked} handleOpen={handleOpen} handleShowEmoji={handleShowEmoji}/>}
 
         </div>
 

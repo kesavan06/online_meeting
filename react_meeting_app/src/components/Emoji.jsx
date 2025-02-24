@@ -2,9 +2,9 @@ import style from "../Emoji.module.css";
 import { IoThumbsUp } from "react-icons/io5";
 import EmojiPicker from 'emoji-picker-react';
 import { useState, useRef, useEffect } from "react";
-import { GoPlus } from "react-icons/go";
+// import { GoPlus } from "react-icons/go";
 
-export default function Emoji({ emojiHandle, handleOpen }) {
+export default function Emoji({ emojiHandle, handleOpen,handleShowEmoji }) {
 
     if (!emojiHandle) {
         console.error("emojiHandle is not passed or is undefined");
@@ -50,7 +50,7 @@ export default function Emoji({ emojiHandle, handleOpen }) {
         //     </div>
         // </>
 
-        <div className={style.emojiContainer}> 
+        <div className={style.emojiContainer} > 
 
             <div className={style.emojiWrapper}  ref={emojiRef} onBlur={()=> console.log(handleOpen())}> 
                 <EmojiPicker
@@ -60,6 +60,7 @@ export default function Emoji({ emojiHandle, handleOpen }) {
                     width={230}
                     height={300}
                     open={open}
+                    // onBlur={()=>handleShowEmoji()}
                 />
             </div>
 

@@ -68,7 +68,7 @@ export default function WhiteBoard({ controlBoard }) {
     return (
         <>
             <Parent>
-                <ButtonDiv setIsDrawing={setIsDrawing} isDrawing={isDrawingRef.current} clearCanvas={clearCanvas} setEraser={setEraser} color={setColor} setBrushWidth={setBrushWidth} setEraserWidth={setEraserWidth}  displayParent={displayWrap} parentShow={controlBoard} elements={elements} setElements={setElements} action={action} setAction={setAction} tool={tool} setTool={setTool} selectedElement={selectedElement} setSelectedElement={setSelectedElement} />
+                <ButtonDiv setIsDrawing={setIsDrawing} isDrawing={isDrawingRef.current} clearCanvas={clearCanvas} setEraser={setEraser} color={setColor} setBrushWidth={setBrushWidth} setEraserWidth={setEraserWidth}  displayParent={displayWrap} parentShow={controlBoard} setTool={setTool}  />
                 <Canvas isDrawingRef={isDrawingRef} class={style.canvas} canvasRef={canvasRef} isEraser={eraserRef} color={colorRef} brushWidth={brushRef} widthOfEraser={eraserWidthRef} elements={elements} setElements={setElements} action={action} setAction={setAction} tool={tool} setTool={setTool} selectedElement={selectedElement} setSelectedElement={setSelectedElement} />
             </Parent>
         </>
