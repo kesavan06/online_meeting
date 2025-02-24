@@ -14,12 +14,23 @@ import { FaUsers } from "react-icons/fa";
 import { FaBars } from "react-icons/fa";
 import { useAppContext } from "../Context";
 
-function MeetingFooter({ handleBoard, setShowChatBox, chatView, setChatView, startScreenShare }) {
+function MeetingFooter({
+  handleBoard,
+  setShowChatBox,
+  chatView,
+  setChatView,
+  startScreenShare,
+}) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
 
   function handleClick() {
     handleBoard();
+  }
+
+  function shareScreen()
+  {
+    setIsShare(true);
   }
 
   return (

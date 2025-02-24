@@ -310,7 +310,8 @@ export const AppProvider = ({ children }) => {
         socketRef.current.emit(
           "join-room",
           roomId.current,
-          socketRef.current.id
+          socketRef.current.id,
+          userShowName
         );
       } else {
         console.warn("Room ID not set!");

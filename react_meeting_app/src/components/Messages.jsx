@@ -1,6 +1,6 @@
 import "../ChatBox.css";
 
-export default function Message({ user_name, message, time }) {
+export default function Message({ user_name, message, time, classNow }) {
 
     try {
         console.log("In message: ", user_name, message);
@@ -10,7 +10,7 @@ export default function Message({ user_name, message, time }) {
     }
 
     return (
-        <div className="chatThread">
+        <div className={classNow ? "chatThread right": "chatThread" }>
 
             <div className="userDetail">
                 <p id="name">{user_name}</p>

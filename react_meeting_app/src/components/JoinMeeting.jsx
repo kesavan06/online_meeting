@@ -81,7 +81,7 @@ function JoinMeeting({
     console.log(`Room exists check: ${res.exists}`);
     if (res.exists) {
       setShowMeeting(!showMeeting);
-      initializeMediaStream();
+      initializeMediaStream(user_name.current);
     } else {
       alert("Room does not exist!");
     }

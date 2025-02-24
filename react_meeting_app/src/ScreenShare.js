@@ -6,8 +6,8 @@ import { io } from "socket.io-client";
 const socket=io("http://localhost:3444");
 
 let peerConnection;
-let local=document.getElementById("localVideo");
-let start=document.getElementById("start");
+// let local=document.getElementById("localVideo");
+// let start=document.getElementById("start");
 
 
 const configuration = {
@@ -17,12 +17,13 @@ const configuration = {
 
 export async function startScreenShare()
 {
+    console.log("Inside the share screen");
     peerConnection = new RTCPeerConnection(configuration);
 
     let screen=await navigator.mediaDevices.getDisplayMedia({video:true});
-    screen.getTracks().forEach((track)=>{
-        peerConnection.addTrack(track,screen);
-    })
+    // screen.getTracks().forEach((track)=>{
+    //     peerConnection.addTrack(track,screen);
+    // })
 
     // local.srcObject=screen;
 
@@ -31,66 +32,67 @@ export async function startScreenShare()
     // };
 
 
-    peerConnection.ontrack=(event)=>{
-        const remoteVideo=document.getElementById("remoteVideo");
-        if(remoteVideo)
-        {
-            remoteVideo.srcObject=event.streams[0];
-        }
-    };
+    // peerConnection.ontrack=(event)=>{
+    //     const remoteVideo=document.getElementById("remoteVideo");
+    //     if(remoteVideo)
+    //     {
+    //         remoteVideo.srcObject=event.streams[0];
+    //     }
+    // };
 
-    peerConnection.onicecandidate=(event)=>{
-        if(event.candidate){
-            socket.emit("candidate",event.candidate);
-        }
-    }
+    // peerConnection.onicecandidate=(event)=>{
+    //     if(event.candidate){
+    //         socket.emit("candidate",event.candidate);
+    //     }
+    // }
     return screen;
 }
 
-export async function sendOffer(){
-    // startScreenShare();
+// export async function sendOffer(){
+//     // startScreenShare();
+//     console.log("Send offer");
 
-    const offer=await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
+//     const offer=await peerConnection.createOffer();
+//     await peerConnection.setLocalDescription(offer);
 
-    socket.emit("offer",offer);
-}
+//     socket.emit("offer",offer);
+// }
 
 
 
-socket.on("offer",async (offer)=>{
-    peerConnection=new RTCPeerConnection(configuration);
-    peerConnection.ontrack=(event)=>{
-        local.srcObject=event.streams[0];
-    }
+// socket.on("offer",async (offer)=>{
+//     peerConnection=new RTCPeerConnection(configuration);
+//     peerConnection.ontrack=(event)=>{
+//         local.srcObject=event.streams[0];
+//     }
 
-    peerConnection.onicecandidate=(event)=>{
-        if(event.candidate)
-        {
-            socket.emit("candidate",event.candidate);
-        }
-    }
+//     peerConnection.onicecandidate=(event)=>{
+//         if(event.candidate)
+//         {
+//             socket.emit("candidate",event.candidate);
+//         }
+//     }
 
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer=await peerConnection.createAnswer();
-    await peer.setLocalDescription(answer);
+//     await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+//     const answer=await peerConnection.createAnswer();
+//     await peer.setLocalDescription(answer);
 
-    socket.emit("answer",answer);
-})
+//     socket.emit("answer",answer);
+// })
 
-socket.on("answer",async(answer)=>{
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-})
+// socket.on("answer",async(answer)=>{
+//     await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+// })
 
-socket.on("candidate",async (candidate)=>{
-    console.log("Received ICE candidate");
+// socket.on("candidate",async (candidate)=>{
+//     console.log("Received ICE candidate");
 
-    try{
-        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-    }
-    catch(err)
-    {
-        console.log("Error: "+err);
-    }
-})
+//     try{
+//         await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+//     }
+//     catch(err)
+//     {
+//         console.log("Error: "+err);
+//     }
+// })
 

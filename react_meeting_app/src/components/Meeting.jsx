@@ -95,7 +95,7 @@ function Meeting() {
         </div>
       </div>
       <div className="meetingContent">
-        <div className={showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
+      <div className={showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
           <div className="videoBoxes">
             {streams.map((stream) => {
               return (
@@ -140,7 +140,7 @@ function Meeting() {
           chatView={chatView}
           setChatView={setChatView}
           startScreenShare={startScreenShare}
-        ></MeetingFooter>
+        ></MeetingFooter>{" "}
       </div>
     </div>
   );

@@ -17,6 +17,14 @@ export default function WhiteBoard({ controlBoard }) {
     const [display, setDisplay] = useState(false);
 
 
+    let [elements, setElements] = useState([]);
+    let [action, setAction] = useState("none");
+    let [tool, setTool] = useState("line");
+    let [selectedElement, setSelectedElement] = useState(null)
+
+
+
+
     const [, forceRender] = useState(false);
 
     const setIsDrawing = (value) => {
@@ -60,8 +68,8 @@ export default function WhiteBoard({ controlBoard }) {
     return (
         <>
             <Parent>
-                <ButtonDiv setIsDrawing={setIsDrawing} isDrawing={isDrawingRef.current} clearCanvas={clearCanvas} setEraser={setEraser} color={setColor} setBrushWidth={setBrushWidth} setEraserWidth={setEraserWidth}  displayParent={displayWrap} parentShow={controlBoard} />
-                <Canvas isDrawingRef={isDrawingRef} class={style.canvas} canvasRef={canvasRef} isEraser={eraserRef} color={colorRef} brushWidth={brushRef} widthOfEraser={eraserWidthRef} />
+                <ButtonDiv setIsDrawing={setIsDrawing} isDrawing={isDrawingRef.current} clearCanvas={clearCanvas} setEraser={setEraser} color={setColor} setBrushWidth={setBrushWidth} setEraserWidth={setEraserWidth}  displayParent={displayWrap} parentShow={controlBoard} setTool={setTool}  />
+                <Canvas isDrawingRef={isDrawingRef} class={style.canvas} canvasRef={canvasRef} isEraser={eraserRef} color={colorRef} brushWidth={brushRef} widthOfEraser={eraserWidthRef} elements={elements} setElements={setElements} action={action} setAction={setAction} tool={tool} setTool={setTool} selectedElement={selectedElement} setSelectedElement={setSelectedElement} />
             </Parent>
         </>
     )

@@ -67,7 +67,7 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
     console.log(`Room created: ${newRoomId}`);
 
     setShowMeeting(!showMeeting);
-    initializeMediaStream();
+    initializeMediaStream(user_name.current);
   });
 
   return (
