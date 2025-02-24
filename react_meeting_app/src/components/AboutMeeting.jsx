@@ -11,39 +11,35 @@ export default function AboutMeeting({
   setViewJoinMeeting,
 }) {
   return (
-    <center>
-      <div className="about">
-        <h1 style={{ color: "white" }}>Welcome to Meeting</h1>
-        <p style={{ color: "white", marginTop: "30px", fontSize: "20px" }}>
-          Connect with your team anytime, anywhere!
-        </p>
-        <div className="whole">
-          <button
-            onClick={() => {
-              setView(!view);
-            }}
-            className="newMeeting"
-          >
-            <FaVideo
-              className="icon"
-              style={{ margin: "0px 10px 0px 0px" }}
-            ></FaVideo>
-            New
-          </button>
-          <button
-            onClick={() => {
-              setViewJoinMeeting(!viewJoinMeeting);
-            }}
-            className="joinMeeting"
-          >
-            <FaUserFriends
-              style={{ margin: "0px 10px 0px 0px" }}
-              className="icon"
-            ></FaUserFriends>
-            Join
-          </button>
-        </div>
+    <div className="homePageAboutMeeting">
+      <h1>Welcome to ConvoSpace</h1>
+      <p>Connect with your team anytime, anywhere!</p>
+      <div className="meetingButtons">
+        <button
+          onClick={() => {
+            setView(!view);
+          }}
+          className="newMeeting"
+        >
+          <FaVideo
+            className="icon"
+            style={{ margin: "0px 10px 0px 0px" }}
+          ></FaVideo>
+          New
+        </button>
+        <button
+          onClick={() => {
+            setViewJoinMeeting(!viewJoinMeeting);
+          }}
+          className="joinMeeting"
+        >
+          <FaUserFriends
+            style={{ margin: "0px 10px 0px 0px" }}
+            className="icon"
+          ></FaUserFriends>
+          Join
+        </button>
       </div>
-    </center>
+    </div>
   );
 }

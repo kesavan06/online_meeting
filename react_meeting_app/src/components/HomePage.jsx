@@ -11,6 +11,7 @@ import WhiteBoard from "./WhiteBoard";
 import Meeting from "./Meeting";
 import { useAppContext } from "../Context";
 import SignUp from "./SignUp.js";
+import "../HomePage.css";
 
 export default function HomePage() {
   const [viewSetupMeeting, setViewSetupMeeting] = useState(false);
@@ -21,9 +22,8 @@ export default function HomePage() {
   const [displayParent, setDisplayParent] = useState(false);
 
   const [name, setName] = useState("");
-  const [nameUnique,  setNameUnique] = useState('');
+  const [nameUnique, setNameUnique] = useState("");
   const [password, setPassword] = useState("");
-
 
   function handleParentShow() {
     setDisplayParent(!displayParent);
@@ -38,7 +38,7 @@ export default function HomePage() {
     !showMeeting
   ) {
     return (
-      <div className="homeContainer">
+      <div className="homeContainer homePageContainer">
         <Header
           showSignUp={showSignUp}
           setShowSignUp={setShowSignUp}
@@ -52,7 +52,9 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
         />
 
-        <FeatureList displayParent={handleParentShow} />
+        <FeatureList
+          displayParent={handleParentShow}
+        />
       </div>
     );
   } else if (showSignUp) {
@@ -70,15 +72,13 @@ export default function HomePage() {
             showSignUp={showSignUp}
             setShowSignUp={setShowSignUp}
             setShowSignIn={setShowSignIn}
-
             name={name}
             setName={setName}
             nameUnique={nameUnique}
-            setNameUnique = {setNameUnique}
+            setNameUnique={setNameUnique}
             password={password}
-            setPassword = {setPassword}
+            setPassword={setPassword}
             signUpFunction={SignUp}
-
           ></Signup>
         </Wrapper>
         <AboutMeeting
@@ -104,12 +104,10 @@ export default function HomePage() {
             showSignIn={showSignIn}
             setShowSignIn={setShowSignIn}
             setShowSignUp={setShowSignUp}
-
             nameUnique={nameUnique}
-            setNameUnique = {setNameUnique}
+            setNameUnique={setNameUnique}
             password={password}
-            setPassword = {setPassword}
-          
+            setPassword={setPassword}
           ></Signin>
         </Wrapper>
         <AboutMeeting
@@ -147,4 +145,3 @@ export default function HomePage() {
     }
   }
 }
-

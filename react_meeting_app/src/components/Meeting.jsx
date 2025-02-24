@@ -62,11 +62,25 @@ function Meeting() {
   const [showChatBox, setShowChatBox] = useState(true);
   let [chatView, setChatView] = useState(true);
 
-  const { roomId, streams, myStream } = useAppContext();
+  const { roomId, streams, myStream, screenStream, startScreenShare } =
+    useAppContext();
 
+  const screenVideoRef = useRef(null);
   function handleWhiteBoardShow() {
     setShowWhiteBoard(!showWhiteBoard);
   }
+  useEffect(() => {
+    if (screenVideoRef.current && screenStream) {
+      console.log(screenStream);
+      screenVideoRef.current.srcObject = screenStream.stream;
+      screenVideoRef.current.play().catch((err) => {
+        console.error("Error playing screen stream:", err);
+      });
+      console.log(screenVideoRef);
+    } else if (screenVideoRef.current) {
+      screenVideoRef.current.srcObject = null;
+    }
+  }, [screenStream]);
 
   useEffect(() => {
     console.log("Current streams:", streams);
@@ -81,7 +95,7 @@ function Meeting() {
         </div>
       </div>
       <div className="meetingContent">
-        <div className= {showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
+        <div className={showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
           <div className="videoBoxes">
             {streams.map((stream) => {
               return (
@@ -93,6 +107,15 @@ function Meeting() {
                 ></VideoComponent>
               );
             })}
+          </div>
+          <div className="mainVideoBox">
+            {screenStream && (
+              <video
+                ref={screenVideoRef}
+                className="shareScreenElement"
+                autoPlay
+              ></video>
+            )}
           </div>
           <div className="whiteBoardBox">
             {showWhiteBoard && (
@@ -116,6 +139,7 @@ function Meeting() {
           handleBoard={handleWhiteBoardShow}
           chatView={chatView}
           setChatView={setChatView}
+          startScreenShare={startScreenShare}
         ></MeetingFooter>
       </div>
     </div>

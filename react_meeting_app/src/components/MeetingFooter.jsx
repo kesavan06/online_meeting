@@ -12,8 +12,9 @@ import { FaRightFromBracket } from "react-icons/fa6";
 import { FaRegMessage } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { FaBars } from "react-icons/fa";
+import { useAppContext } from "../Context";
 
-function MeetingFooter({ handleBoard, setShowChatBox, chatView, setChatView }) {
+function MeetingFooter({ handleBoard, setShowChatBox, chatView, setChatView, startScreenShare }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
 
@@ -46,7 +47,7 @@ function MeetingFooter({ handleBoard, setShowChatBox, chatView, setChatView }) {
         </div>
       </div>
       <div className="meetingControl">
-        <div className="controlBox">
+        <div className="controlBox" onClick={() => startScreenShare()}>
           <FaShareFromSquare className="changeColor"></FaShareFromSquare>
         </div>
         <div className="controlBox" onClick={handleClick}>

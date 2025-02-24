@@ -157,6 +157,7 @@
   border: 1px solid transparent;
   color: rgb(241, 241, 241);
   font-size: 1.1em;
+  cursor: pointer;
 }
 
 .createMeeting {

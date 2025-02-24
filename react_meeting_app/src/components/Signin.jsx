@@ -49,7 +49,7 @@ export default function Signin(props)
             <form id="signin">
                 <h1 style={{color:"white"}}>Sign in to your account</h1>
 
-                <p style={{color:"rgb(159 163 166 / 88%)"}}>Don't have an account? <span style={{color:"#7C3AED",cursor:"pointer"}} onClick={showSignUp}>Sign up</span></p>
+                <p style={{color:"rgb(159 163 166 / 88%)"}}>Don't have an account? <span style={{color:"#3b82f6",cursor:"pointer"}} onClick={showSignUp}>Sign up</span></p>
 
                 <label className="label">User name
                     <input type="text" name="unique_name" className="input" onChange={(e)=> setNameUnique(e.target.value)} required></input>
@@ -61,9 +61,9 @@ export default function Signin(props)
 
                 <p></p>
 
-                <div id="signinButtons">
-                    <button class="button" onClick={cancelShowSignIn}>Cancel</button>
-                    <button class="button" onClick={signIn}>Sign in</button>
+                <div className="signinButtons">
+                    <button class="cancelBtn" onClick={cancelShowSignIn}>Cancel</button>
+                    <button class="signinBtn" onClick={signIn}>Signin</button>
                 </div>
 
             </form>

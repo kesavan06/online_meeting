@@ -13,8 +13,10 @@ export const AppProvider = ({ children }) => {
   const roomId = useRef(null); // Consider passing this as a prop if dynamic
   const socketRef = useRef(null);
   const [streamState, setStreamsState] = useState([]);
+  const [screenStreamState, setScreenStreamState] = useState(null);
   const user_name = useRef({}); // Rename for clarity
   const myStream = useRef(null);
+  const myScreenStream = useRef(null);
   const peerConnectionsRef = useRef(new Map()); // Use Map for better key management
   const candidateQueues = useRef(new Map()); // Queue ICE candidates per peer
 
@@ -226,19 +228,84 @@ export const AppProvider = ({ children }) => {
     });
   };
 
+  const startScreenShare = async () => {
+    if (screenStreamState) {
+      console.log(
+        "Screen sharing already active by:",
+        screenStreamState.userId
+      );
+      return;
+    }
+
+    try {
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true, // Enable audio sharing if needed
+      });
+
+      myScreenStream.current = screenStream;
+
+      // Add tracks from screen stream to all existing peer connections
+      peerConnectionsRef.current.forEach((peerConnection) => {
+        screenStream.getTracks().forEach((track) => {
+          peerConnection.addTrack(track, screenStream);
+        });
+      });
+
+      // Set local screen stream state
+      setScreenStreamState({
+        userId: socketRef.current.id,
+        stream: screenStream,
+      });
+
+      addVideoStream(screenStream);
+
+      // Notify other participants about screen sharing
+      socketRef.current.emit("screen-sharing-started", roomId.current);
+
+      // Handle stream stop
+      screenStream.getVideoTracks()[0].onended = () => {
+        stopScreenSharing();
+      };
+    } catch (err) {
+      console.error("Error starting screen share:", err);
+    }
+  };
+
+  const stopScreenSharing = () => {
+    if (myScreenStream.current) {
+      myScreenStream.current.getTracks().forEach((track) => track.stop());
+
+      // Remove screen sharing tracks from peer connections
+      peerConnectionsRef.current.forEach((peerConnection) => {
+        peerConnection.getSenders().forEach((sender) => {
+          if (sender.track && sender.track.kind === "video") {
+            peerConnection.removeTrack(sender);
+          }
+        });
+      });
+    }
+
+    myScreenStream.current = null;
+    setScreenStreamState(null);
+    socketRef.current.emit("screen-share-stopped", roomId.current);
+  };
+  useEffect(() => {
+    console.log("screenStreamState updated:", screenStreamState);
+  }, [screenStreamState]);
+
+  const getMediaStream = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+    myStream.current = stream;
+    return stream;
+  };
+
   const initializeMediaStream = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          facingMode: "user",
-        },
-        audio: true,
-      });
-      myStream.current = stream;
-      addVideoStream(stream);
-
+      addVideoStream(myStream.current);
       if (roomId.current) {
         socketRef.current.emit(
           "join-room",
@@ -258,8 +325,11 @@ export const AppProvider = ({ children }) => {
       value={{
         roomId,
         socketRef,
+        getMediaStream,
         initializeMediaStream,
+        startScreenShare,
         streams: streamState,
+        screenStream: screenStreamState,
         myStream,
         user_name,
       }}
