@@ -10,15 +10,16 @@ import { io } from "socket.io-client";
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const roomId = useRef(null); // Consider passing this as a prop if dynamic
+  const roomId = useRef(null);
   const socketRef = useRef(null);
   const [streamState, setStreamsState] = useState([]);
   const [screenStreamState, setScreenStreamState] = useState(null);
-  const user_name = useRef({}); // Rename for clarity
+  const user_name = useRef({});
   const myStream = useRef(null);
   const myScreenStream = useRef(null);
   const peerConnectionsRef = useRef(new Map()); // Use Map for better key management
   const candidateQueues = useRef(new Map()); // Queue ICE candidates per peer
+  let srceenSharer = useRef(null);
 
   const configuration = {
     iceServers: [
@@ -141,6 +142,23 @@ export const AppProvider = ({ children }) => {
     socketRef.current.on("user-disconnected", (userId) => {
       console.log("User disconnected:", userId);
       removePeerConnection(userId);
+      setStreamsState((prev) => {
+        prev = prev.filter((videoStream) => {
+          console.log(videoStream.userId, userId);
+          if (videoStream.userId !== userId) {
+            console.log(
+              "after disconnected the connected users:",
+              videoStream.userId
+            );
+            return videoStream;
+          }
+        });
+        return prev;
+      });
+
+      setTimeout(() => {
+        console.log("after user disconnect streams:", streamState);
+      }, 500);
     });
 
     socketRef.current.on("error", (error) => {
@@ -180,12 +198,26 @@ export const AppProvider = ({ children }) => {
       }
     };
 
+    const isScreenStream = (stream) => {
+      const tracks = stream.getTracks();
+      return tracks.length === 1 && tracks[0].kind === "video"; // Screen share typically has only video
+    };
+
+    const isCameraStream = (stream) => {
+      const videoTracks = stream.getVideoTracks();
+      const audioTracks = stream.getAudioTracks();
+      return videoTracks.length > 0 && audioTracks.length > 0; // Webcam usually has both
+    };
+
     // Handle remote stream
     peerConnection.ontrack = (event) => {
       const [remoteStream] = event.streams;
+      console.log("Remote stream: ", remoteStream.id);
+      console.log("my screen stream: ", myScreenStream.id);
       if (remoteStream) {
+        let type = isScreenStream(remoteStream) ? "screen" : "camera";
         console.log("Remote stream received:", remoteStream.id);
-        addVideoStream(remoteStream);
+        addVideoStream({ stream: remoteStream, type: type, userId: userId });
       }
     };
 
@@ -288,15 +320,15 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const addVideoStream = (stream) => {
-    if (!stream) {
+  const addVideoStream = (videoStream) => {
+    if (!videoStream) {
       console.warn("Invalid stream provided to addVideoStream");
       return;
     }
     setStreamsState((prevStreams) => {
-      if (!prevStreams.some((s) => s.id === stream.id)) {
-        console.log("Stream added:", stream.id);
-        return [...prevStreams, stream];
+      if (!prevStreams.some((s) => s.stream.id === videoStream.stream.id)) {
+        console.log("Stream added:", videoStream.stream.id);
+        return [...prevStreams, videoStream];
       }
       return prevStreams;
     });
@@ -317,7 +349,7 @@ export const AppProvider = ({ children }) => {
       });
 
       myScreenStream.current = screenStream;
-
+      srceenSharer.current = socketRef.current.id;
       // Add tracks from screen stream to all existing peer connections
       for (const [userId, peerConnection] of peerConnectionsRef.current) {
         screenStream.getTracks().forEach((track) => {
@@ -348,7 +380,11 @@ export const AppProvider = ({ children }) => {
         stream: screenStream,
       });
 
-      addVideoStream(screenStream);
+      addVideoStream({
+        stream: screenStream,
+        type: "screen",
+        userId: socketRef.current.id,
+      });
 
       // Notify other participants about screen sharing
       socketRef.current.emit("screen-sharing-started", {
@@ -379,6 +415,7 @@ export const AppProvider = ({ children }) => {
     }
 
     myScreenStream.current = null;
+    srceenSharer.current = null;
     setScreenStreamState(null);
     socketRef.current.emit("screen-share-stopped", roomId.current);
   };
@@ -397,7 +434,12 @@ export const AppProvider = ({ children }) => {
 
   const initializeMediaStream = async (userShowName) => {
     try {
-      addVideoStream(myStream.current);
+      const tempMyStream = myStream.current;
+      addVideoStream({
+        stream: tempMyStream,
+        type: "camera",
+        userId: socketRef.current.id,
+      });
       if (roomId.current) {
         socketRef.current.emit(
           "join-room",

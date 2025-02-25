@@ -168,6 +168,24 @@ app.get("/secretKey", async (req, res) => {
   }
 });
 
+app.post("/getP", async (req, res) => {
+  try {
+    let { roomId } = req.body;
+    console.log("I am inside oarticipant : ", roomId);
+    let participants = await getRoom(roomId);
+    console.log("Participants : ", participants);
+
+    let p = participants.participants;
+    if (p != null && p != "") {
+      res.status(201).send({ message: true, data: p });
+    } else {
+      res.status(501).send({ message: false, data: p });
+    }
+  } catch (err) {
+    console.log("Error : \n", err);
+  }
+});
+
 const rooms = {};
 
 io.on("connection", (socket) => {
@@ -302,7 +320,7 @@ io.on("connection", (socket) => {
         rooms[roomId].delete(socket.id);
         socket.to(roomId).emit("user-disconnected", socket.id);
         if (rooms[roomId].size === 0) {
-          delete rooms[roomId]; // Clean up empty rooms
+          delete rooms[roomId];
         }
       }
     }
