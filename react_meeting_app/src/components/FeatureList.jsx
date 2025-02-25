@@ -9,7 +9,7 @@ function FeatureList({ displayParent,displayScreenShare }) {
         { src: "video_on.svg", title: "HD Video Conferencing", content: "Crystal clear video and audio for seamless communication" },
         { src: "chat_1.svg", title: "Integrated Chat", content: "Real-time messaging during meetings for enhanced collaboration" },
         { src: "share_2.svg", title: "Screen Sharing", content: "Share your screen effortlessly for presentations and demonstrations",onClick:displayScreenShare },
-        { src: "pen.svg", title: "Interactive Whiteboard", content: "Collaborate in real-time with a shared digital whiteboard", onClick: displayParent },
+        { src: "pen.svg", title: "Interactive Whiteboard", content: "Collaborate in real-time with a shared digital whiteboard" },
         { src: "circle-play-regular.svg", title: "Video Capture", content: "Never miss key moments—record and playback your meetings whenever needed." }
     ]
 

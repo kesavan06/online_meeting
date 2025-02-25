@@ -1,7 +1,9 @@
 import CryptoJS from "crypto-js";
 
-export default function Login(unique_name, password) {
-    LoginFunction(unique_name, password);
+export default async function Login(unique_name, password) {
+   let user= await LoginFunction(unique_name, password);
+   console.log("U : ",user);
+   return user;
 }
 
 async function LoginFunction(unique_name, password) {
@@ -12,7 +14,7 @@ async function LoginFunction(unique_name, password) {
         let fetchSec = await fetch("http://localhost:3002/secretKey");
         console.log("Fetch: ", fetchSec);
 
-        let theUser;
+        let theUser =null;
 
 
         if (fetchSec.status == 201) {
@@ -41,8 +43,10 @@ async function LoginFunction(unique_name, password) {
             console.log("User: ",theUser);
         }
         else{
-            console.log("Error : ",fetchSec.arrayBuffer.data);
+            console.log("Error : ",fetchSec.data);
         }
+
+        return theUser;
 
 
 

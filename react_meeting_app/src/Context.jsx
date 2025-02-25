@@ -17,6 +17,9 @@ export const AppProvider = ({ children }) => {
   const myStream = useRef(null);
   const peerConnectionsRef = useRef(new Map()); // Use Map for better key management
   const candidateQueues = useRef(new Map()); // Queue ICE candidates per peer
+  const user = useRef({});
+  const key = useRef({});
+  const user_id = useRef({});
 
   const configuration = {
     iceServers: [
@@ -226,7 +229,7 @@ export const AppProvider = ({ children }) => {
     });
   };
 
-  const initializeMediaStream = async (userShowName) => {
+  const initializeMediaStream = async (userShowName, userId, isHost) => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -244,7 +247,9 @@ export const AppProvider = ({ children }) => {
           "join-room",
           roomId.current,
           socketRef.current.id,
-          userShowName
+          userShowName,
+          userId,
+          isHost,
         );
       } else {
         console.warn("Room ID not set!");
@@ -263,6 +268,9 @@ export const AppProvider = ({ children }) => {
         streams: streamState,
         myStream,
         user_name,
+        user, 
+        key,
+        user_id,
       }}
     >
       {children}

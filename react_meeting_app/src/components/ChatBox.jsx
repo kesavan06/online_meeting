@@ -121,7 +121,7 @@ function ChatBox({ view, setView }) {
         setAllMessage((prev)=>[...prev,mess])
       }
 
-    },1000)
+    },100)
   }, [view])
 
   //   const handleNewMessage = (msg) => {
