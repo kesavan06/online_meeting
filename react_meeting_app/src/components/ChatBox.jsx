@@ -220,6 +220,8 @@ function ChatBox({ view, setView }) {
               handleShowEmoji={handleShowEmoji}
             />
           )}
+
+          <button>Poll</button>
         </div>
 
         <div className="sentInputBox">

@@ -28,7 +28,7 @@ const mysql = require("mysql2");
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "kesavan@123",
+  password: "Vennila_Mysql",
 });
 
 connection.connect((err) => {
@@ -50,7 +50,7 @@ connection.end();
 const dbConnection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "kesavan@123",
+  password: "Vennila_Mysql",
   database: "users_db",
 });
 
@@ -293,6 +293,13 @@ io.on("connection", (socket) => {
 
     // io.to(msgObject.room_id).emit("receivedMessage", roomObject.messages); //try in home here ----------------
   });
+
+
+  socket.on("sendPoll",(poll)=>{
+    console.log("User_name",poll.userName);
+    console.log("room id: ",poll.room_Id);
+    socket.to(poll.room_Id).emit("receivedPoll",poll);
+  })
 
   // Handle user disconnection
   socket.on("disconnect", () => {

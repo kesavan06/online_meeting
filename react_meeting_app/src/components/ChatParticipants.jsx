@@ -4,7 +4,11 @@ import { FaXmark } from "react-icons/fa6";
 import "../ChatParticipants.css";
 import ChatBox from "./ChatBox";
 import Participants from "./Participants";
+import PollCreater from "./PollCreater";
+
 function ChatParticipants({ setShowChatBox, chatView, setChatView }) {
+  const [viewPoll,setViewPoll] = useState(false);
+
   return (
     <div className="chatContainer">
       <div className="toggleBox">
@@ -13,19 +17,27 @@ function ChatParticipants({ setShowChatBox, chatView, setChatView }) {
             className={chatView ? "activeBtnColor" : "nonActiveBtnColor"}
             onClick={() => {
               setChatView(true);
+              setViewPoll(false);
             }}
           >
             Chat
           </button>
           <button
             className={
-              chatView == false ? "activeBtnColor" : "nonActiveBtnColor"
+              !chatView && !viewPoll ? "activeBtnColor" : "nonActiveBtnColor"
             }
             onClick={() => {
               setChatView(false);
+              setViewPoll(false);
             }}
           >
             Participants
+          </button>
+          <button className={viewPoll ? "activeBtnColor" : "nonActiveBtnColor"} onClick={()=>{
+            setViewPoll(true);
+            setChatView(false);
+          }}>
+            Poll
           </button>
         </div>
         <FaXmark
@@ -34,7 +46,7 @@ function ChatParticipants({ setShowChatBox, chatView, setChatView }) {
           className="closeChatBox"
         ></FaXmark>
       </div>
-      {chatView ? <ChatBox></ChatBox> : <Participants></Participants>}
+      {chatView ? <ChatBox></ChatBox> : !chatView && viewPoll ? <PollCreater></PollCreater> : <Participants></Participants>}
     </div>
   );
 }
