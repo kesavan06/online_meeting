@@ -1,0 +1,30 @@
+{
+  "defaults": {
+    "project": 1,
+    "env": 1
+  },
+  "actives": {
+    "project": 1,
+    "env": 1
+  },
+  "projects": [
+    {
+      "idx": 1,
+      "id": "29990000000009001",
+      "name": "OnlineMeeting",
+      "domain": {
+        "id": "10095786665",
+        "name": "onlinemeeting-878949529.development"
+      },
+      "timezone": "Asia/Kolkata",
+      "env": [
+        {
+          "idx": 1,
+          "id": "878949529",
+          "name": "Development",
+          "type": 3
+        }
+      ]
+    }
+  ]
+}

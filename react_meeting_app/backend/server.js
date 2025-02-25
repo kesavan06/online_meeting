@@ -21,24 +21,21 @@ const corsOptions = {
   // optionsSuccessStatus: 200
 };
 
-
 let allRoomDetails = [];
-
 
 const mysql = require("mysql2");
 
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Vennila_Mysql"
-})
+  password: "Deepa30",
+});
 
 connection.connect((err) => {
   err
     ? console.log("Can not connect with mysql")
     : console.log("Connect with mysql");
 });
-
 
 connection.query("CREATE DATABASE if not exists users_db ;", (err, data) => {
   if (err) {
@@ -50,14 +47,12 @@ connection.query("CREATE DATABASE if not exists users_db ;", (err, data) => {
 
 connection.end();
 
-
 const dbConnection = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "Deepa30",
   database: "users_db",
-})
-
+});
 
 dbConnection.connect((err) => {
   if (err) {
@@ -66,7 +61,6 @@ dbConnection.connect((err) => {
     console.log("Connected to the database");
   }
 });
-
 
 let tableCreateQuery = "create table if not exists users(user_id smallint auto_increment primary key, user_name varchar(60) not null, unique_name varchar(100)  unique key not null ,password varchar(100) not null, user_key varchar(16)  unique key not null);";
 
@@ -106,6 +100,8 @@ dbConnection.query(meetingParicipantQuery, (err, result) => {
 
 
 
+
+
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -124,11 +120,10 @@ app.post("/allMessages", (req, res) => {
 
   if (theRoom != null) {
     res.status(201).send({ message: true, data: theRoom });
-  }
-  else {
+  } else {
     res.status(504).send({ message: false, data: theRoom });
   }
-})
+});
 
 app.post("/unique", async (req, res) => {
   try {
@@ -155,9 +150,7 @@ app.post("/unique", async (req, res) => {
   } catch (err) {
     res.status(500).send("Internal Error");
   }
-})
-
-
+});
 
 app.post("/signUp", async (req, res) => {
   try {
@@ -189,8 +182,7 @@ app.post("/signUp", async (req, res) => {
   } catch (err) {
     res.status(500).send({ message: "Failed", data: "Failed to add" });
   }
-
-})
+});
 
 app.get("/secretKey", async (req, res) => {
   try {
@@ -205,37 +197,27 @@ app.get("/secretKey", async (req, res) => {
     console.log("Err in getting user detail: ", err);
     res.status(500).send({ data: "Internal Server error" });
   }
-
-})
+  
+});
 
 
 app.post("/getP", async (req, res) => {
   try {
     let { roomId } = req.body;
-    console.log("I am inside oarticipant : ", roomId)
+    console.log("I am inside oarticipant : ", roomId);
     let participants = await getRoom(roomId);
     console.log("Participants : ", participants);
 
     let p = participants.participants;
     if (p != null && p != "") {
-      res.status(201).send({ message: true, data: p })
+      res.status(201).send({ message: true, data: p });
+    } else {
+      res.status(501).send({ message: false, data: p });
     }
-    else {
-      res.status(501).send({ message: false, data: p })
-    }
-  }
-  catch (err) {
+  } catch (err) {
     console.log("Error : \n", err);
   }
-})
-
-
-// app.post("/create", async (req, res) => {
-// addUser()
-// })
-
-
-
+});
 
 
 const rooms = {};
@@ -260,10 +242,11 @@ io.on("connection", (socket) => {
   });
 
   // Handle joining a room
-  socket.on("join-room", async (roomId, socketId, userNameShow, user_id, isHost) => {
+  socket.on("join-room",  async (roomId, socketId, userNameShow, user_id, isHost) => {
     if (!roomId || !socketId)
       return socket.emit("error", "Invalid roomId or socketId");
     console.log(`User ${socketId} joining room ${roomId}`);
+
 
 
 
@@ -273,10 +256,9 @@ io.on("connection", (socket) => {
 
     let roomCheck = checkTheRoomToId(roomId); //true- exsists
 
-    if (roomCheck) { // join room
-
+    if (roomCheck) {// join room
+      
       let roomObject = getRoom(roomId);
-
       let userId = user_id;
       roomObject.participants.push({ socketId: socketId, name: userNameShow, user_id: userId, isHost : isHost });
       // console.log("RoomObject: ", roomObject);
@@ -290,6 +272,7 @@ io.on("connection", (socket) => {
       roomObject.messages = [];
       allRoomDetails.push(roomObject);
     }
+
     socket.roomName = roomId;
     socket.userName = userNameShow;
 
@@ -328,6 +311,26 @@ io.on("connection", (socket) => {
     io.to(to).emit("answer", { answer, from: socket.id });
   });
 
+  socket.on("screen-offer", ({ offer, to }) => {
+    io.to(to).emit("screen-offer", { offer, from: socket.id });
+  });
+
+  socket.on("screen-answer", ({ answer, to }) => {
+    io.to(to).emit("screen-answer", { answer, from: socket.id });
+  });
+
+  socket.on("screen-candidate", ({ candidate, to }) => {
+    io.to(to).emit("screen-candidate", { candidate, from: socket.id });
+  });
+
+  socket.on("screen-sharing-started", ({ roomId, userId }) => {
+    socket.to(roomId).emit("screen-sharing-started", userId);
+  });
+
+  socket.on("screen-sharing-stopped", (roomId) => {
+    socket.to(roomId).emit("screen-sharing-stopped", socket.id);
+  });
+
   // send Message
 
   socket.on("sendMessage", (msgObject) => {
@@ -335,13 +338,17 @@ io.on("connection", (socket) => {
     console.log("SenderId: ", msgObject.sender_id);
     console.log("Room: ", msgObject.room_id);
 
+    console.log("Room Details : ", allMessages);
     let roomObject = getRoom(msgObject.room_id);
     console.log("Room obj: ", roomObject);
 
     let { user_name, message, time, sender_id } = msgObject;
 
     allMessages.push({
-      user_name, message, time, sender_id
+      user_name,
+      message,
+      time,
+      sender_id,
     });
     // let isMine = sender_id == socket.id ? true : false;
 
@@ -375,7 +382,7 @@ io.on("connection", (socket) => {
         rooms[roomId].delete(socket.id);
         socket.to(roomId).emit("user-disconnected", socket.id);
         if (rooms[roomId].size === 0) {
-          delete rooms[roomId]; // Clean up empty rooms
+          delete rooms[roomId];
         }
       }
     }
@@ -411,9 +418,7 @@ server.listen(3002, () => {
   console.log(`Server running on port 3002`);
 });
 
-
 function checkTheRoomToId(roomId) {
-
   let exists = false;
   for (let room of allRoomDetails) {
     if (room.roomId == roomId) {
@@ -436,10 +441,6 @@ function getRoom(roomID) {
     }
   }
 }
-
-
-
-
 
 async function deleteUser(roomName, socket) {
 

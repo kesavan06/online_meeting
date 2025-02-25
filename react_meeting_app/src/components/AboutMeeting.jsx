@@ -13,40 +13,41 @@ export default function AboutMeeting({
   const { user } = useAppContext();
 
   return (
-    <center>
-      <div className="about">
-        <h1 style={{ color: "white" }}>Welcome to ConvoSpace </h1>
-        <p style={{ color: "white", marginTop: "30px", fontSize: "20px" }}>
-          Connect with your team anytime, anywhere!
-        </p>
-        <div className="whole">
-          <button
-            onClick={() => {
-              if(Object.keys(user.current).length > 0){
-                alert("Welcome "+user.current);
-                setView(!view);
-              }
-              else{
-                alert("You don't have an account. Please sign in!")
-              }
-            }}
-            className="newMeeting"
-          >
-            <FaVideo className="icon"></FaVideo>
-            <p style={{ marginLeft: "10px" }}>New</p>
-          </button>
-
-          <button
-            onClick={() => {
-              setViewJoinMeeting(!viewJoinMeeting);
-            }}
-            className="joinMeeting"
-          >
-            <FaUserFriends className="icon"></FaUserFriends>
-            <p style={{ marginLeft: "10px" }}>Join</p>
-          </button>
-        </div>
-      </div>
-    </center>
+    <div className="homePageAboutMeeting">
+    <h1>Welcome to ConvoSpace</h1>
+    <p>Connect with your team anytime, anywhere!</p>
+    <div className="meetingButtons">
+      <button
+        onClick={() => {
+          if(Object.keys(user.current).length > 0){
+            alert("Welcome "+user.current);
+            setView(!view);
+          }
+          else{
+            alert("You don't have an account. Please sign in!")
+          }
+        }}
+        className="newMeeting"
+      >
+        <FaVideo
+          className="icon"
+          style={{ margin: "0px 10px 0px 0px" }}
+        ></FaVideo>
+        New
+      </button>
+      <button
+        onClick={() => {
+          setViewJoinMeeting(!viewJoinMeeting);
+        }}
+        className="joinMeeting"
+      >
+        <FaUserFriends
+          style={{ margin: "0px 10px 0px 0px" }}
+          className="icon"
+        ></FaUserFriends>
+        Join
+      </button>
+    </div>
+  </div>
   );
 }

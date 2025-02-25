@@ -12,25 +12,25 @@ import Meeting from "./Meeting";
 import { useAppContext } from "../Context";
 import ShareScreen from "./ShareScreen";
 import SignUp from "./SignUp.js";
+import "../HomePage.css";
 
 export default function HomePage() {
+  <FeatureList displayParent={handleParentShow} />;
   const [viewSetupMeeting, setViewSetupMeeting] = useState(false);
   const [viewJoinMeeting, setViewJoinMeeting] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
   const [showMeeting, setShowMeeting] = useState(false);
   const [displayParent, setDisplayParent] = useState(false);
-  const [displayShareScreen,setDisplayShareScreen] = useState(false);
+  const [displayShareScreen, setDisplayShareScreen] = useState(false);
 
-  function handleShareScreen()
-  {
+  function handleShareScreen() {
     setDisplayShareScreen(!displayShareScreen);
   }
 
   const [name, setName] = useState("");
-  const [nameUnique,  setNameUnique] = useState('');
+  const [nameUnique, setNameUnique] = useState("");
   const [password, setPassword] = useState("");
-
 
   function handleParentShow() {
     setDisplayParent(!displayParent);
@@ -45,7 +45,7 @@ export default function HomePage() {
     !showMeeting
   ) {
     return (
-      <div className="homeContainer">
+      <div className="homeContainer homePageContainer">
         <Header
           showSignUp={showSignUp}
           setShowSignUp={setShowSignUp}
@@ -59,7 +59,7 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
         />
 
-        <FeatureList displayParent={handleParentShow} displayScreenShare={handleShareScreen} />
+        <FeatureList displayParent={handleParentShow} />
       </div>
     );
   } else if (showSignUp) {
@@ -77,15 +77,13 @@ export default function HomePage() {
             showSignUp={showSignUp}
             setShowSignUp={setShowSignUp}
             setShowSignIn={setShowSignIn}
-
             name={name}
             setName={setName}
             nameUnique={nameUnique}
-            setNameUnique = {setNameUnique}
+            setNameUnique={setNameUnique}
             password={password}
-            setPassword = {setPassword}
+            setPassword={setPassword}
             signUpFunction={SignUp}
-
           ></Signup>
         </Wrapper>
         <AboutMeeting
@@ -111,12 +109,10 @@ export default function HomePage() {
             showSignIn={showSignIn}
             setShowSignIn={setShowSignIn}
             setShowSignUp={setShowSignUp}
-
             nameUnique={nameUnique}
-            setNameUnique = {setNameUnique}
+            setNameUnique={setNameUnique}
             password={password}
-            setPassword = {setPassword}
-          
+            setPassword={setPassword}
           ></Signin>
         </Wrapper>
         <AboutMeeting
@@ -130,12 +126,9 @@ export default function HomePage() {
     );
   } else if (displayParent) {
     return <WhiteBoard parentShow={handleParentShow} />;
-  }
-  else if(displayShareScreen)
-  {
-    return <ShareScreen></ShareScreen>
-  } 
-  else {
+  } else if (displayShareScreen) {
+    return <ShareScreen></ShareScreen>;
+  } else {
     if (viewSetupMeeting) {
       return (
         <MeetingSetup
@@ -159,4 +152,3 @@ export default function HomePage() {
     }
   }
 }
-

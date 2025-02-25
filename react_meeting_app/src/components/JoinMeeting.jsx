@@ -13,7 +13,7 @@ function JoinMeeting({
   showMeeting,
   setShowMeeting,
 }) {
-  const { roomId, socketRef, initializeMediaStream , user_name, user, user_id} = useAppContext();
+  const { roomId, socketRef,   getMediaStream,initializeMediaStream ,user_name, user, user_id} = useAppContext();
 
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
@@ -30,17 +30,9 @@ function JoinMeeting({
   useEffect(() => {
     const startStream = async () => {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false,
-        });
-        console.log(mediaStream);
-
-        stream.current = mediaStream;
-        console.log("Stream:", stream);
-
+        stream.current = await getMediaStream();
         if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
+          videoRef.current.srcObject = stream.current;
         }
       } catch (error) {
         console.error("Error accessing media devices:", error);
@@ -63,15 +55,13 @@ function JoinMeeting({
   };
 
   const joinRoom = () => {
-    console.log("User: ",userName.current.value);
-    console.log("Room: ",roomInput.current.value);
+    console.log("User: ", userName.current.value);
+    console.log("Room: ", roomInput.current.value);
 
     if (roomInput.current.value.trim() !== "") {
-   
       user_name.current = userName.current.value;
       roomId.current = roomInput.current.value;
 
-      setShowMeeting(!showMeeting);
       console.log("joinRoom: ", roomId.current);
       setViewJoinMeeting(!viewJoinMeeting);
 
@@ -84,6 +74,7 @@ function JoinMeeting({
   socketRef.current.on("room-exists", (res) => {
     console.log(`Room exists check: ${res.exists}`);
     if (res.exists) {
+      setShowMeeting(!showMeeting);
       initializeMediaStream(user_name.current, user_id.current, false);
     } else {
       alert("Room does not exist!");
@@ -106,7 +97,7 @@ function JoinMeeting({
           </div>
 
           <div className="joinMeetingVideoBox">
-            <video ref={videoRef} autoPlay playsInline />
+            <video ref={videoRef} autoPlay playsInline muted />
           </div>
           <div className="joinMeetingControls">
             <div
@@ -132,11 +123,7 @@ function JoinMeeting({
           </div>
           <div className="joinMeetingUser">
             <div className="joinMeetingInputs">
-              <input
-                type="text"
-                placeholder="Enter your name"
-                ref={userName}
-              />
+              <input type="text" placeholder="Enter your name" ref={userName} />
               <input
                 type="text"
                 placeholder="Enter Room ID"

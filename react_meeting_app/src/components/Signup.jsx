@@ -144,7 +144,7 @@ function Signup(probs) {
 
             <form id="signUp">
                 <h1 style={{ color: "white" }}>Create your account</h1>
-                <p style={{ color: "rgb(159 163 166 / 88%)" }}>Already have an account? <span style={{ color: "#7C3AED", cursor: "pointer" }} onClick={showSignIn}>Sign in</span></p>
+                <p style={{ color: "rgb(159 163 166 / 88%)" }}>Already have an account? <span style={{ color: "#3b82f6", cursor: "pointer" }} onClick={showSignIn}>Sign in</span></p>
 
                 <div className="parent">
                     <label className="labelTag">User name
@@ -186,8 +186,8 @@ function Signup(probs) {
 
 
                 <div id="signupPage">
-                    <button className="signupButton" onClick={cancelSignUp}>Cancel</button>
-                    <button className="signupButton" onClick={signUp}>Sign up</button>
+                    <button className="signupCancel" onClick={cancelSignUp}>Cancel</button>
+                    <button className="signupButton" onClick={signUp}>Signup</button>
                 </div>
                 {/* <button id="signupButton">Create account</button> */}
             </form>

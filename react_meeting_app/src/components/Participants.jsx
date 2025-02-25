@@ -1,35 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, {  useEffect,useState } from "react";
 import "../Participants.css";
 import ShowParticipant from "./ShowPartipants";
+
 import { useAppContext } from "../Context";
 
 
 function Participants({ view, setView }) {
-
   let [allParticipants, setParticipants] = useState([]);
   // let [count, setCount] = useState(0);
   let { socketRef, roomId } = useAppContext();
 
-
   useEffect(() => {
-
     setTimeout(async () => {
-
       setParticipants([]);
       let participant = await getPaticipants(roomId.current);
       console.log("Participants : ", participant.data);
 
       for (let p of participant.data) {
         let name = p.name;
-        console.log("Name : ",name);
-        setParticipants((prev)=> [...prev, name])
+        console.log("Name : ", name);
+        setParticipants((prev) => [...prev, name]);
       }
-    }, 100)
-  }, [!view])
+    }, 100);
+  }, [!view]);
+
 
   return (
     <div className="participantsBox">
-      {allParticipants.map((participant) => {
+    {allParticipants.map((participant) => {
         return <ShowParticipant name={participant} index={allParticipants.indexOf(participant) + 1} />
       })}
     </div>

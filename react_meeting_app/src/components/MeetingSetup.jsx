@@ -9,7 +9,7 @@ import { useAppContext } from "../Context";
 // import { useSocketEvents } from "../socket";
 
 function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
-  const { roomId, socketRef, initializeMediaStream, user_name, user,user_id } =
+  const { roomId, socketRef, initializeMediaStream, user_name, user,user_id, getMediaStream } =
     useAppContext();
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
@@ -30,20 +30,13 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
   useEffect(() => {
     const startStream = async () => {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: false,
-        });
-        console.log(mediaStream);
-
-        localStream.current = mediaStream;
-        console.log("Stream:", localStream.current);
-
+        localStream.current = await getMediaStream();
         if (videoRef.current) {
-          videoRef.current.srcObject = mediaStream;
+          videoRef.current.srcObject = localStream.current;
         }
-      } catch (error) {
-        console.error("Error accessing media devices:", error);
+        console.log(videoRef.current);
+      } catch (err) {
+        console.log("Error accessing media devices:", err);
       }
     };
     startStream();
@@ -62,9 +55,8 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
   };
 
   const createRoomClicked = () => {
-
     console.log("UserName : ",userName.current.value);
-    user_name.current = userName.current.value;
+    user_name.current = userName.current.value; 
 
 
     const newRoomId = Math.random().toString(36).substring(2, 9);
@@ -76,7 +68,7 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
 
   socketRef.current.on("room-created", (newRoomId) => {
     console.log(`Room created: ${newRoomId}`);
-    // cMeetingFetch();
+    
     setShowMeeting(!showMeeting);
     initializeMediaStream(user_name.current, user_id.current, true);
   });
@@ -115,7 +107,7 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
           </div>
 
           <div className="setupVideoBox">
-            <video ref={videoRef} autoPlay playsInline />
+            <video muted ref={videoRef} autoPlay playsInline />
           </div>
           <div className="setupVideoControls">
             <div
@@ -140,11 +132,7 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
             </div>
           </div>
           <div className="setupUser">
-            <input
-              type="text"
-              placeholder="Enter your name"
-              ref={userName}
-            />
+            <input type="text" placeholder="Enter your name" ref={userName} />
             <button
               className="createMeeting"
               onClick={() => {

@@ -8,10 +8,7 @@ import { useAppContext } from "../Context";
 import Emoji from "./Emoji";
 // import EmojiPicker from 'emoji-picker-react';
 
-
-
 function ChatBox({ view, setView }) {
-
   let { user_name, socketRef, roomId } = useAppContext();
 
   let [allMessage, setAllMessage] = useState([]);
@@ -25,9 +22,7 @@ function ChatBox({ view, setView }) {
     setOpen(!open);
   }
 
-
   function handleSendMessage() {
-
     let newM;
     let messageText = messageRef.current.value;
     messageText = messageText.trim();
@@ -38,13 +33,14 @@ function ChatBox({ view, setView }) {
     let getTodayTime = today.toLocaleTimeString();
     let splitDay = getTodayTime.split(":");
 
-    let day = (+splitDay[0]) > 12 ? (+splitDay[0]) - 12 + "." + splitDay[1] + " PM" : splitDay[0] + "." + splitDay[1] + " AM";
+    let day =
+      +splitDay[0] > 12
+        ? +splitDay[0] - 12 + "." + splitDay[1] + " PM"
+        : splitDay[0] + "." + splitDay[1] + " AM";
     if (splitDay[0] == 12) {
       day = splitDay[0] + "." + splitDay[1] + " PM";
     }
-
     if (messageText != "") {
-
       console.log("Room : ", roomId.current);
       console.log("Message : ", messageRef.current);
 
@@ -54,17 +50,13 @@ function ChatBox({ view, setView }) {
         sender_id: socketRef.current.id,
         room_id: roomId.current,
         time: day,
-      }
+      };
 
-      socketRef.current.emit("sendMessage", (newM));
+      // console.log("Object: ", newM);
+      socketRef.current.emit("sendMessage", newM);
       messageRef.current.value = "";
-
-
     }
-
   }
-
-
 
   function checkTheEmojiClicked(msg) {
     messageRef.current.value += msg;
@@ -79,53 +71,45 @@ function ChatBox({ view, setView }) {
     }
   }
 
-
-
-
-
-
   function handleShowEmoji() {
     setShowEmoji(!showEmoji);
     handleOpen();
   }
 
-  useEffect( () => {
-  
-
-    setTimeout(async() => {
-      let fetchAllMessages =await fetch("http://localhost:3002/allMessages", {
+  useEffect(() => {
+    setTimeout(async () => {
+      let fetchAllMessages = await fetch("http://localhost:3002/allMessages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ roomId: roomId.current })
-      })
+        body: JSON.stringify({ roomId: roomId.current }),
+      });
       setAllMessage([]);
 
       // console.log("All Messages: ",fetchAllMessages );
 
       let allM = await fetchAllMessages.json();
-      console.log("AllMEssages:  ",allM);
-      console.log("AllMEssages:  ",allM.data.messages);
-      console.log("Participants:  ",allM.data.participants);
+      console.log("AllMEssages:  ", allM);
+      console.log("AllMEssages:  ", allM.data.messages);
+      console.log("Participants:  ", allM.data.participants);
       let message = allM.data.messages;
 
-      for(let mess of message){
+      for (let mess of message) {
         let isMine = false;
-        if(mess.sender_id == socketRef.current.id){
-          isMine = true
+        if (mess.sender_id == socketRef.current.id) {
+          isMine = true;
         }
-        mess.isMine =isMine;
-        console.log("Is mine : ",isMine);
-        console.log("Mess Final : ",mess);
-        setAllMessage((prev)=>[...prev,mess])
+        mess.isMine = isMine;
+        console.log("Is mine : ", isMine);
+        console.log("Mess Final : ", mess);
+        setAllMessage((prev) => [...prev, mess]);
       }
 
     },100)
   }, [view])
 
   //   const handleNewMessage = (msg) => {
-
 
   //     let isMyMessage = false;
 
@@ -143,9 +127,7 @@ function ChatBox({ view, setView }) {
 
   // }
 
-
   const handleNewMessage = (msg) => {
-
     // setAllMessage("")
     // for (let msg of allMess) {
 
@@ -161,11 +143,12 @@ function ChatBox({ view, setView }) {
     let sendClass = isMyMessage;
     console.log("Message is mine : ", isMyMessage);
 
-    setAllMessage((exsistingMessages) => [...(exsistingMessages), { ...msgGot, isMine: sendClass }]);
+    setAllMessage((exsistingMessages) => [
+      ...exsistingMessages,
+      { ...msgGot, isMine: sendClass },
+    ]);
     // }
-
-  }
-
+  };
 
   // const handleNewMessageFirstTime = (allMess) => {
 
@@ -190,8 +173,6 @@ function ChatBox({ view, setView }) {
 
   // }
 
-
-
   // useEffect(() => {
   //   async function getMess() {
   //     let allMessGet = await fetch("http://localhost:3002/messObject", {
@@ -210,53 +191,53 @@ function ChatBox({ view, setView }) {
   //   // handleNewMessageFirstTime();
   // }, [])
 
-
-
-
-
   useEffect(() => {
-
+    console.log("All messages: ", allMessage);
     socketRef.current.off("receivedMessage");
 
     socketRef.current.on("receivedMessage", (msg) => {
-      console.log("Message received: ");
+      console.log("Message received: ", msg);
       handleNewMessage(msg);
-
     });
   }, [allMessage]);
 
   return (
     <div className="chatBox">
-
       <div className="chatDisplay">
         <ShowMessage newMessages={allMessage} />
       </div>
 
       <div className="sentBox">
-
         <div className="msgPermision">
           <p>To</p>
           <select className="selectUser">
             <option>Everyone</option>
-            <option>Kesavan</option>
-            <option>Hari</option>
           </select>
 
-          {showEmoji && <Emoji emojiHandle={checkTheEmojiClicked} handleOpen={handleOpen} handleShowEmoji={handleShowEmoji}/>}
-
+          {showEmoji && (
+            <Emoji
+              emojiHandle={checkTheEmojiClicked}
+              handleOpen={handleOpen}
+              handleShowEmoji={handleShowEmoji}
+            />
+          )}
         </div>
 
         <div className="sentInputBox">
-          <input type="text" placeholder="Enter your message..." ref={messageRef} onKeyDown={handlekeyDown}></input>
+          <input
+            type="text"
+            placeholder="Enter your message..."
+            ref={messageRef}
+            onKeyDown={handlekeyDown}
+          ></input>
 
           <button onClick={handleShowEmoji}>
-            <FaFaceSmile className="invert" ></FaFaceSmile>
+            <FaFaceSmile className="invert"></FaFaceSmile>
           </button>
 
           <button onClick={() => handleSendMessage()}>
             <FaPaperPlane className="invert"></FaPaperPlane>
           </button>
-
         </div>
       </div>
     </div>
@@ -264,5 +245,3 @@ function ChatBox({ view, setView }) {
 }
 
 export default ChatBox;
-
-

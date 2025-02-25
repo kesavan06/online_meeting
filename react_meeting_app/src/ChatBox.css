@@ -124,10 +124,8 @@
 .invert {
   filter: invert(1);
 }
-
-.right{
+.right {
   display: flex;
   align-items: flex-end;
   flex-direction: column;
 }
-
