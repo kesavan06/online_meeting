@@ -77,6 +77,7 @@
   height: 80%;
   width: 100%;
   padding: 20px;
+  position: relative;
 }
 
 .meetingFooter {
@@ -137,4 +138,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.emoji{
+  position: absolute;
+  top: 43%;
+  right: 23%;
+}
+
+
+.EmojiPickerReact .epr-preview {
+  display: none;
 }

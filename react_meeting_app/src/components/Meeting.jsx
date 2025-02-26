@@ -4,6 +4,8 @@ import ChatParticipants from "./ChatParticipants";
 import MeetingFooter from "./MeetingFooter";
 import { useState, useEffect, useRef } from "react";
 import WhiteBoard from "./WhiteBoard";
+import EmojiPicker from "emoji-picker-react";
+
 import { createRoot } from "react-dom/client";
 import "../Meeting.css";
 import { useAppContext } from "../Context";
@@ -58,9 +60,11 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
 function Meeting() {
   // let {videoGridRed} = useAppContext();
 
-  const [showWhiteBoard, setShowWhiteBoard] = useState(false);
+  // const [showWhiteBoard, setShowWhiteBoard] = useState(false);
   const [showChatBox, setShowChatBox] = useState(true);
   let [chatView, setChatView] = useState(true);
+  const [showEmojis, setShowEmojis] = useState(false);
+  const [allEmoji, setAllEmoji] = useState([]);
 
   const [leaveMeeting, setLeaveMeeting] = useState(false);
 
@@ -91,18 +95,15 @@ function Meeting() {
   console.log("all streams: ", streams);
 
   const screenVideoRef = useRef(null);
-  function handleWhiteBoardShow() {
-    setShowWhiteBoard(!showWhiteBoard);
-  }
+  // function handleWhiteBoardShow() {
+  //   // setShowWhiteBoard(!showWhiteBoard);
+  // }
   useEffect(() => {
     if (screenVideoRef.current && streams) {
       console.log(screenStream);
       streams.map((videoStream) => {
         if (videoStream.type == "screen")
           screenVideoRef.current.srcObject = videoStream.stream;
-        screenVideoRef.current.play().catch((err) => {
-          console.error("Error playing screen stream:", err);
-        });
       });
     } else if (screenVideoRef.current) {
       screenVideoRef.current.srcObject = null;
@@ -134,7 +135,7 @@ function Meeting() {
                       isLocalStream={
                         videoStream.stream.id === myStream?.current?.id
                       }
-                      showWhiteBoard={showWhiteBoard}
+                      // showWhiteBoard={showWhiteBoard}
                       type={videoStream.type}
                     ></VideoComponent>
                   );
@@ -150,7 +151,20 @@ function Meeting() {
               ></video>
             )}
 
-            {showWhiteBoard && openPopup()}
+            {showEmojis && (
+              <div className="emoji">
+                <EmojiPicker
+                  theme="dark"
+                  width={300}
+                  height={400}
+                  emojiStyle="native"
+                  categories={[
+                    { name: "Smileys & Emotion", category: "smileys_people" },
+                  ]}
+                  open={showEmojis}
+                />
+              </div>
+            )}
           </div>
         </div>
         {showChatBox && (
@@ -166,10 +180,11 @@ function Meeting() {
       <div className="meetingFooter">
         <MeetingFooter
           setShowChatBox={setShowChatBox}
-          handleBoard={handleWhiteBoardShow}
+          // handleBoard={handleWhiteBoardShow}
           chatView={chatView}
           setChatView={setChatView}
           startScreenShare={startScreenShare}
+          openPopup={openPopup}
         ></MeetingFooter>{" "}
       </div>
     </div>

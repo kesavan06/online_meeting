@@ -21,16 +21,23 @@ function MeetingFooter({
   setChatView,
   startScreenShare,
   isSharing,
+  showEmojis,
+  setShowEmojis,
+  openPopup,
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
 
-  function handleClick() {
-    handleBoard();
-  }
+  // function handleClick() {
+  //   handleBoard();
+  // }
 
-  function shareScreen() {
-    setIsShare(true);
+  // function shareScreen() {
+  //   setIsShare(true);
+  // }
+
+  function handleEmoji() {
+    setShowEmojis((prev) => (prev = !prev));
   }
 
   return (
@@ -69,13 +76,13 @@ function MeetingFooter({
         <div
           className="controlBox"
           onClick={() => {
-            handleClick();
             startScreenShare();
+            openPopup();
           }}
         >
           <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher>
         </div>
-        <div className="controlBox">
+        <div className="controlBox" onClick={() => handleEmoji()}>
           <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
         </div>
         <div className="controlBox exitBox">

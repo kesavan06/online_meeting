@@ -29,7 +29,6 @@ export default function Header({
         <h1>KadhaiKalaam</h1>
       </div>
       <div className="navLogin">
-        <p onClick={showSignUp}>Signup</p>
         <p onClick={showSignIn}>Signin</p>
       </div>
     </div>

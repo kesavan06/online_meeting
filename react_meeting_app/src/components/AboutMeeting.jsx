@@ -23,9 +23,11 @@ export default function AboutMeeting({
           onClick={() => {
             if (Object.keys(user.current).length > 0) {
               alert("Welcome " + user.current);
+              displayMessage((prev) => (prev = false));
               setView(!view);
             } else {
-              alert("You don't have an account. Please sign in!");
+              displayMessage((prev) => (prev = true));
+              setShowSignIn((prev) => (prev = true));
             }
           }}
           className="newMeeting"

@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 
 export default function Emoji({ emojiHandle, handleOpen,handleShowEmoji }) {
 
+    const[tone, setTone] = useState("neutral");
     if (!emojiHandle) {
         console.error("emojiHandle is not passed or is undefined");
     }
@@ -39,7 +40,9 @@ export default function Emoji({ emojiHandle, handleOpen,handleShowEmoji }) {
         }
     }, []);
 
-
+    function handleSkinTone(tone){
+        setTone(tone);
+    }
 
     return (
         // <>
@@ -60,6 +63,8 @@ export default function Emoji({ emojiHandle, handleOpen,handleShowEmoji }) {
                     width={300}
                     height={400}
                     open={open}
+                    defaultSkinTone = {tone}
+                    onSkinToneChange={(tone)=> handleSkinTone(tone)}
                     // onBlur={()=>handleShowEmoji()}
                 />
             </div>
