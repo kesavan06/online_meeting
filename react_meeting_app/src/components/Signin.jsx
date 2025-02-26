@@ -8,7 +8,7 @@ export default function Signin(props) {
   let { nameUnique, setNameUnique } = props;
   let { password, setPassword } = props;
   let { user, key, user_id } = useAppContext();
-
+  let {displayMessage, setDisplayMessage} = props
 
   function cancelShowSignIn(event) {
     event.preventDefault();
@@ -46,7 +46,10 @@ export default function Signin(props) {
   }
 
 
-
+function handleMessage(e){
+  e.preventDefault();
+  setDisplayMessage((prev)=> prev=false);
+}
 
 
 
@@ -56,8 +59,10 @@ export default function Signin(props) {
 
 
   return (
-    <div>
-      <form id="signin">
+    <div onMouseDown={displayMessage ? (e)=>handleMessage(e): undefined}>
+      <form id="signin" >
+
+        {displayMessage && <p className="message">You need to sign in to create a meeting</p>}
         <h1 style={{ color: "white" }}>Sign in to your account</h1>
 
         <p style={{ color: "rgb(159 163 166 / 88%)" }}>
@@ -77,6 +82,7 @@ export default function Signin(props) {
             name="unique_name"
             className="input"
             onChange={(e) => setNameUnique(e.target.value)}
+            autoComplete="off"
             required
           ></input>
         </label>

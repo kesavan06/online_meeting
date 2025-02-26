@@ -222,7 +222,6 @@ io.on("connection", (socket) => {
       if (!roomId || !socketId)
         return socket.emit("error", "Invalid roomId or socketId");
       console.log(`User ${socketId} joining room ${roomId}`);
-
       // if (!rooms[roomId]) {
       //   rooms[roomId] = new Set(); // Auto-create room if it doesn’t exist (optional)
       // }
@@ -361,8 +360,9 @@ io.on("connection", (socket) => {
       allRoomDetails.includes(socket.roomName)
     );
 
-    if (allRoomDetails.includes(socket.roomName)) {
+    if (socket.roomName != undefined) {
       deleteUser(socket.roomName, socket);
+      removeParticipant(allRoomDetails, socket.roomName, socket.id);
     }
 
     for (const roomId in rooms) {
@@ -529,5 +529,32 @@ async function addPaticipants(room_name, user_name, user_id) {
     return { message: true, data: "Insert success" };
   } catch (err) {
     return { message: false, data: ("Insert failed ", err) };
+  }
+}
+
+function removeParticipant(allRoomDetails, roomId, socketId) {
+  // Find the room with the given roomId
+  const room = allRoomDetails.find((room) => room.roomId === roomId);
+
+  if (room) {
+    // Find the index of the participant with the given socketId
+    const participantIndex = room.participants.findIndex(
+      (p) => p.socketId === socketId
+    );
+
+    if (participantIndex !== -1) {
+      // Remove the participant
+      room.participants.splice(participantIndex, 1);
+      console.log(
+        `Participant with socketId ${socketId} removed from room ${roomId}`
+      );
+      console.log("After remove: ", allRoomDetails[0].participants);
+    } else {
+      console.log(
+        `Participant with socketId ${socketId} not found in room ${roomId}`
+      );
+    }
+  } else {
+    console.log(`Room with ID ${roomId} not found`);
   }
 }

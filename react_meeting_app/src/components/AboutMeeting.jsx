@@ -9,6 +9,8 @@ export default function AboutMeeting({
   setView,
   viewJoinMeeting,
   setViewJoinMeeting,
+  setShowSignIn,
+  displayMessage,
 }) {
   const { user } = useAppContext();
 

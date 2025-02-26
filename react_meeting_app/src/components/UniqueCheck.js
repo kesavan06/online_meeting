@@ -31,7 +31,3 @@ export default async function useUniqueName(uName) {
     console.log("Err in email Check : \n", err);
   }
 }
-
-function decrptData(data, secKey) {
-  return CryptoJS.AES.decrypt(data, secKey).toString(CryptoJS.enc.Utf8);
-}
