@@ -106,6 +106,7 @@ export default function HomePage() {
           setView={setViewSetupMeeting}
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
+          cookie={cookie}
         />
         <FeatureList />
       </div>
@@ -140,6 +141,7 @@ export default function HomePage() {
           setView={setViewSetupMeeting}
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
+          cookie={cookie}
         />
         <FeatureList />
       </div>
