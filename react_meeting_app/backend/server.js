@@ -28,7 +28,7 @@ const mysql = require("mysql2");
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Deepa30",
+  password: "kesavan@123",
 });
 
 connection.connect((err) => {
@@ -50,7 +50,7 @@ connection.end();
 const dbConnection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Deepa30",
+  password: "kesavan@123",
   database: "users_db",
 });
 
@@ -62,7 +62,8 @@ dbConnection.connect((err) => {
   }
 });
 
-let tableCreateQuery = "create table if not exists users(user_id smallint auto_increment primary key, user_name varchar(60) not null, unique_name varchar(100)  unique key not null ,password varchar(100) not null, user_key varchar(16)  unique key not null);";
+let tableCreateQuery =
+  "create table if not exists users(user_id smallint auto_increment primary key, user_name varchar(60) not null, unique_name varchar(100)  unique key not null ,password varchar(100) not null, user_key varchar(16)  unique key not null);";
 
 dbConnection.query(tableCreateQuery, (err, result) => {
   if (err) {
@@ -72,7 +73,8 @@ dbConnection.query(tableCreateQuery, (err, result) => {
   console.log('Table "users" created or already exists');
 });
 
-let meetingTQuery = "create table if not exists meetings(meeting_id smallint auto_increment primary key, user_name varchar(60) not null, room_name varchar(10) not null unique, host_id smallint unique, foreign key (host_id) references users(user_id)  );";
+let meetingTQuery =
+  "create table if not exists meetings(meeting_id smallint auto_increment primary key, user_name varchar(60) not null, room_name varchar(10) not null unique, host_id smallint unique, foreign key (host_id) references users(user_id)  );";
 
 dbConnection.query(meetingTQuery, (err, result) => {
   if (err) {
@@ -82,7 +84,8 @@ dbConnection.query(meetingTQuery, (err, result) => {
   console.log('Table "meetings" created or already exists');
 });
 
-let meetingParicipantQuery = "create table if not exists meetings_participant(participant_id smallint auto_increment primary key, participant_name varchar(60) not null, user_id smallint null, room_name varchar(10) not null,foreign key (room_name) references meetings(room_name)  );";
+let meetingParicipantQuery =
+  "create table if not exists meetings_participant(participant_id smallint auto_increment primary key, participant_name varchar(60) not null, user_id smallint null, room_name varchar(10) not null,foreign key (room_name) references meetings(room_name)  );";
 
 dbConnection.query(meetingParicipantQuery, (err, result) => {
   if (err) {
@@ -92,16 +95,6 @@ dbConnection.query(meetingParicipantQuery, (err, result) => {
   console.log('Table "meetings_participant" created or already exists');
 });
 
-
-
-
-
-
-
-
-
-
-
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -109,7 +102,6 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.json({ message: "Hello from Backend!" });
 });
-
 
 app.post("/allMessages", (req, res) => {
   //   console.log("In messObj post-R Details : ",allRoomDetails);
@@ -125,30 +117,15 @@ app.post("/allMessages", (req, res) => {
   }
 });
 
-app.post("/unique", async (req, res) => {
+app.get("/unique", async (req, res) => {
   try {
-    console.log(req.body);
-    let { unique_name } = req.body;
-    console.log("Unique Name : ", unique_name);
+    let allusers = await getUserDetails();
+    // console.log("All users: ", allusers);
+    console.log("Success got user");
 
-    let query = "select * from users where unique_name=?";
-
-    let check = await new Promise((resolve, reject) => {
-      dbConnection.query(query, [unique_name], (err, data) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(data);
-      });
-    });
-
-    if (check.length == 0) {
-      res.status(201).send({ message: "Success", data: check });
-    } else {
-      res.status(201).send({ message: "Fail", data: check });
-    }
+    res.status(201).send({ message: true, data: allusers });
   } catch (err) {
-    res.status(500).send("Internal Error");
+    res.status(500).send({ message: false, data: "Internal Error" });
   }
 });
 
@@ -197,9 +174,7 @@ app.get("/secretKey", async (req, res) => {
     console.log("Err in getting user detail: ", err);
     res.status(500).send({ data: "Internal Server error" });
   }
-  
 });
-
 
 app.post("/getP", async (req, res) => {
   try {
@@ -218,7 +193,6 @@ app.post("/getP", async (req, res) => {
     console.log("Error : \n", err);
   }
 });
-
 
 const rooms = {};
 
@@ -242,54 +216,65 @@ io.on("connection", (socket) => {
   });
 
   // Handle joining a room
-  socket.on("join-room",  async (roomId, socketId, userNameShow, user_id, isHost) => {
-    if (!roomId || !socketId)
-      return socket.emit("error", "Invalid roomId or socketId");
-    console.log(`User ${socketId} joining room ${roomId}`);
+  socket.on(
+    "join-room",
+    async (roomId, socketId, userNameShow, user_id, isHost) => {
+      if (!roomId || !socketId)
+        return socket.emit("error", "Invalid roomId or socketId");
+      console.log(`User ${socketId} joining room ${roomId}`);
 
+      // if (!rooms[roomId]) {
+      //   rooms[roomId] = new Set(); // Auto-create room if it doesn’t exist (optional)
+      // }
 
+      let roomCheck = checkTheRoomToId(roomId); //true- exsists
 
+      if (roomCheck) {
+        // join room
 
-    if (!rooms[roomId]) {
-      rooms[roomId] = new Set(); // Auto-create room if it doesn’t exist (optional)
+        let roomObject = getRoom(roomId);
+        let userId = user_id;
+        roomObject.participants.push({
+          socketId: socketId,
+          name: userNameShow,
+          user_id: userId,
+          isHost: isHost,
+        });
+        // console.log("RoomObject: ", roomObject);
+      } else {
+        //create room
+        let roomObject = {};
+        roomObject.roomId = roomId;
+        roomObject.participants = [
+          {
+            socketId: socketId,
+            name: userNameShow,
+            user_id: user_id,
+            isHost: isHost,
+          },
+        ];
+        console.log("Room PArticipant: ", roomObject.participants);
+        roomObject.messages = [];
+        allRoomDetails.push(roomObject);
+      }
+
+      socket.roomName = roomId;
+      socket.userName = userNameShow;
+
+      console.log("Is host or not: ", isHost);
+      if (isHost) {
+        let user = await addHost(roomId, userNameShow, user_id);
+      } else {
+        let joinedUser = await addPaticipants(roomId, userNameShow, user_id);
+      }
+
+      console.log("RoomDetails: ", allRoomDetails);
+
+      rooms[roomId].add(socketId);
+      socket.join(roomId);
+      socket.to(roomId).emit("user-connected", socketId);
     }
-
-    let roomCheck = checkTheRoomToId(roomId); //true- exsists
-
-    if (roomCheck) {// join room
-      
-      let roomObject = getRoom(roomId);
-      let userId = user_id;
-      roomObject.participants.push({ socketId: socketId, name: userNameShow, user_id: userId, isHost : isHost });
-      // console.log("RoomObject: ", roomObject);
-
-    }
-    else { //create room
-      let roomObject = {};
-      roomObject.roomId = roomId;
-      roomObject.participants = [{ socketId: socketId, name: userNameShow, user_id: user_id, isHost : isHost  }];
-      console.log("Room PArticipant: ", roomObject.participants);
-      roomObject.messages = [];
-      allRoomDetails.push(roomObject);
-    }
-
-    socket.roomName = roomId;
-    socket.userName = userNameShow;
-
-    console.log("Is host or not: ",isHost);
-    if (isHost) {
-      let user = await addUser(roomId, userNameShow, user_id);
-    }
-    else{
-      let joinedUser = await addPaticipants(roomId, userNameShow, user_id);
-    }
-
-    console.log("RoomDetails: ", allRoomDetails);
-
-    rooms[roomId].add(socketId);
-    socket.join(roomId);
-    socket.to(roomId).emit("user-connected", socketId);
-  });
+  );
 
   // Handle signaling (defined at connection level, not nested)
   socket.on("ice-candidate", ({ candidate, to }) => {
@@ -370,10 +355,13 @@ io.on("connection", (socket) => {
     console.log("Disconnected Room : ", socket.roomName);
 
     let roomExsist = false;
-    console.log("All Room Details : ",allRoomDetails);
-    console.log("All Room Details has Room name: ",allRoomDetails.includes(socket.roomName));
+    console.log("All Room Details : ", allRoomDetails);
+    console.log(
+      "All Room Details has Room name: ",
+      allRoomDetails.includes(socket.roomName)
+    );
 
-    if(allRoomDetails.includes(socket.roomName)){
+    if (allRoomDetails.includes(socket.roomName)) {
       deleteUser(socket.roomName, socket);
     }
 
@@ -408,10 +396,6 @@ async function getUserDetails() {
   } catch (err) {
     console.log("Error in gettting user data : \nInternal Server Error\n", err);
   }
-
-
-
-
 }
 
 server.listen(3002, () => {
@@ -430,12 +414,10 @@ function checkTheRoomToId(roomId) {
   return exists;
 }
 
-
-
 function getRoom(roomID) {
   // console.log("All Rooms : I came inside -",allRoomDetails);
   for (let room of allRoomDetails) {
-    console.log("Room: ", room)
+    console.log("Room: ", room);
     if (room.roomId == roomID) {
       return room;
     }
@@ -443,7 +425,6 @@ function getRoom(roomID) {
 }
 
 async function deleteUser(roomName, socket) {
-
   console.log("User name : ", socket.userName);
   let dQuery;
   let room = getRoom(roomName);
@@ -453,25 +434,25 @@ async function deleteUser(roomName, socket) {
   let userDetail;
   for (let p of par) {
     if (socket.userName == p.name) {
-     userDetail = p;
-     break;
+      userDetail = p;
+      break;
     }
   }
 
   console.log("Room Person  ", userDetail);
 
-  if(userDetail.isHost){
+  if (userDetail.isHost) {
     dQuery = "delete from meetings where user_name =? and room_name=?";
-  }
-  else{
-    dQuery = "delete from meetings_participant where participant_name =? and room_name=?";
+  } else {
+    dQuery =
+      "delete from meetings_participant where participant_name =? and room_name=?";
   }
 
   try {
     let dataDelete = await new Promise((resolve, reject) => {
       dbConnection.query(dQuery, [userDetail.name, roomName], (err, data) => {
         if (err) {
-          console.log("Error in deleteing : ",err);
+          console.log("Error in deleteing : ", err);
           return reject(err);
         }
         resolve(data);
@@ -479,24 +460,17 @@ async function deleteUser(roomName, socket) {
     });
 
     console.log("Delete : ", dataDelete);
-
-  }
-  catch (err) {
+  } catch (err) {
     console.log("Error in gettting user data : \nInternal Server Error\n", err);
   }
 }
 
-
-
-
-
-async function addUser(room_name, user_name, user_id) {
-
+async function addHost(room_name, user_name, user_id) {
   try {
-
     console.log("I am inside oarticipant : ", room_name, user_name, user_id);
- 
-    let insertQ = "insert into meetings(user_name, room_name ,host_id ) values(?,?,?)";
+
+    let insertQ =
+      "insert into meetings(user_name, room_name ,host_id ) values(?,?,?)";
 
     let insertUser = await new Promise((resolve, reject) => {
       dbConnection.query(
@@ -512,29 +486,30 @@ async function addUser(room_name, user_name, user_id) {
     });
     console.log("Success");
 
-    return ({ message: true, data: "Insert success" })
-
+    return { message: true, data: "Insert success" };
+  } catch (err) {
+    return { message: false, data: ("Insert failed ", err) };
   }
-  catch (err) {
-    return ({ message: false, data: ("Insert failed ", err) })
-  }
-
 }
 
-
-async function addPaticipants(room_name, user_name, user_id){
+async function addPaticipants(room_name, user_name, user_id) {
   try {
+    console.log(
+      "I am inside join particiapnt : ",
+      room_name,
+      user_name,
+      user_id
+    );
 
-    console.log("I am inside join particiapnt : ", room_name, user_name, user_id);
+    console.log("User name : ", user_name, " User Id : ", user_id);
 
-    console.log("User name : ",user_name," User Id : ", user_id);
-
-    if(typeof user_id === "object" &&Object.keys(user_id).length == 0 ){
+    if (typeof user_id === "object" && Object.keys(user_id).length == 0) {
       user_id = null;
-      console.log("User id is null : ",user_id);
+      console.log("User id is null : ", user_id);
     }
-  
-    let insertQ = "insert into meetings_participant(participant_name, room_name ,user_id ) values(?,?,?)";
+
+    let insertQ =
+      "insert into meetings_participant(participant_name, room_name ,user_id ) values(?,?,?)";
 
     let insertUser = await new Promise((resolve, reject) => {
       dbConnection.query(
@@ -542,20 +517,17 @@ async function addPaticipants(room_name, user_name, user_id){
         [user_name, room_name, user_id],
         (err, data) => {
           if (err) {
-            console.log("Error : \n",err);
+            console.log("Error : \n", err);
             return reject(err);
           }
           resolve(data);
         }
       );
     });
-    console.log("Join Success". insertUser);
+    console.log("Join Success".insertUser);
 
-    return ({ message: true, data: "Insert success" })
-
+    return { message: true, data: "Insert success" };
+  } catch (err) {
+    return { message: false, data: ("Insert failed ", err) };
   }
-  catch (err) {
-    return ({ message: false, data: ("Insert failed ", err) })
-  }
-
 }

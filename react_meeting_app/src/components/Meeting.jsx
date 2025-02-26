@@ -4,10 +4,9 @@ import ChatParticipants from "./ChatParticipants";
 import MeetingFooter from "./MeetingFooter";
 import { useState, useEffect, useRef } from "react";
 import WhiteBoard from "./WhiteBoard";
-
+import { createRoot } from "react-dom/client";
 import "../Meeting.css";
 import { useAppContext } from "../Context";
-
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
 
@@ -63,8 +62,31 @@ function Meeting() {
   const [showChatBox, setShowChatBox] = useState(true);
   let [chatView, setChatView] = useState(true);
 
-  const { roomId, streams, myStream, screenStream, startScreenShare } =
-    useAppContext();
+  const [leaveMeeting, setLeaveMeeting] = useState(false);
+
+  const openPopup = () => {
+    const newWindow = window.open("", "_blank", "width=1000,height=700");
+    newWindow.document.title = "Kadhaikalaam - whiteboard";
+
+    if (newWindow) {
+      newWindow.document.body.innerHTML = "<div id='popup-root'></div>";
+      const popupRoot = newWindow.document.getElementById("popup-root");
+
+      if (popupRoot) {
+        const root = createRoot(popupRoot);
+        root.render(<WhiteBoard />);
+      }
+    }
+  };
+
+  const {
+    roomId,
+    streams,
+    myStream,
+    screenStream,
+    startScreenShare,
+    socketRef,
+  } = useAppContext();
 
   console.log("all streams: ", streams);
 
@@ -120,18 +142,15 @@ function Meeting() {
               })}
           </div>
           <div className="mainVideoBox">
-            {
+            {streams.some((videoStream) => videoStream.type == "screen") && (
               <video
                 ref={screenVideoRef}
                 className="shareScreenElement"
                 autoPlay
               ></video>
-            }
-          </div>
-          <div className="whiteBoardBox">
-            {showWhiteBoard && (
-              <WhiteBoard controlBoard={handleWhiteBoardShow} />
             )}
+
+            {showWhiteBoard && openPopup()}
           </div>
         </div>
         {showChatBox && (

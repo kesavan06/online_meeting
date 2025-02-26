@@ -2,6 +2,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useReducer,
   useRef,
   useState,
 } from "react";
@@ -13,6 +14,7 @@ export const AppProvider = ({ children }) => {
   const roomId = useRef(null);
   const socketRef = useRef(null);
   const [streamState, setStreamsState] = useState([]);
+
   const [screenStreamState, setScreenStreamState] = useState(null);
   const user_name = useRef({});
   const myStream = useRef(null);
@@ -23,6 +25,8 @@ export const AppProvider = ({ children }) => {
   const user = useRef({});
   const key = useRef({});
   const user_id = useRef({});
+  let host = useRef(null);
+
   const configuration = {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
@@ -335,6 +339,7 @@ export const AppProvider = ({ children }) => {
       return prevStreams;
     });
   };
+
   const startScreenShare = async () => {
     if (screenStreamState) {
       console.log(
@@ -470,9 +475,10 @@ export const AppProvider = ({ children }) => {
         screenStream: screenStreamState,
         myStream,
         user_name,
-        user, 
+        user,
         key,
         user_id,
+        host,
       }}
     >
       {children}

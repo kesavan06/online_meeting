@@ -8,128 +8,182 @@ import { PiBroomFill } from "react-icons/pi";
 import { MdCancel } from "react-icons/md";
 import { IoMdColorPalette } from "react-icons/io";
 
-
 export default function ButtonDiv(props) {
+  let [width, setWidth] = useState(false);
+  let [showEraserBar, setShowEraserBar] = useState(false);
 
-    let [width, setWidth] = useState(false);
-    let [showEraserBar, setShowEraserBar] = useState(false);
+  let setDrawing = props.setIsDrawing;
+  let clearCanvas = props.clearCanvas;
+  let setEraser = props.setEraser;
+  let setColor = props.color;
 
+  let setTool = props.setTool;
 
-    let setDrawing = props.setIsDrawing;
-    let clearCanvas = props.clearCanvas;
-    let setEraser = props.setEraser;
-    let setColor = props.color;
+  let [color, setColorNow] = useState("#000000");
 
-    
-    let setTool = props.setTool;
+  let setBrushWidth = props.setBrushWidth;
+  let setEraserWidth = props.setEraserWidth;
 
+  let [widthOfBrush, setWidthOfBrush] = useState(5);
+  let [widthOfEraser, setWidthOfEraser] = useState(10);
 
-    let [color, setColorNow] = useState("#000000");
+  let [chooseColor, setChooseColor] = useState(false);
+  let [showShape, setShowShape] = useState(false);
 
+  function startDrawing() {
+    setDrawing(true);
+    setEraser(false);
+    setWidth(!width);
+  }
 
-    let setBrushWidth = props.setBrushWidth;
-    let setEraserWidth = props.setEraserWidth;
+  function stopDrawing() {
+    setDrawing(false);
+  }
 
-    let [widthOfBrush, setWidthOfBrush] = useState(5);
-    let [widthOfEraser, setWidthOfEraser] = useState(10);
+  function clearAll() {
+    clearCanvas();
+  }
 
-    let [chooseColor, setChooseColor] = useState(false);
-    let [showShape, setShowShape] = useState(false);
+  function setEraserOn() {
+    setDrawing(true);
+    setEraser(true);
+    setShowEraserBar(!showEraserBar);
+  }
 
+  function setColorForBrush(e) {
+    setColor(e.target.value);
+    setColorNow(e.target.value);
+    console.log("Color : ", color);
+  }
 
+  function handleWidthChange(e) {
+    setWidthOfBrush(e.target.value);
+    setBrushWidth(e.target.value);
+  }
 
-    function startDrawing() {
-        setDrawing(true);
-        setEraser(false);
-        setWidth(!width);
-    }
+  function handleWidthForEraser(e) {
+    setWidthOfEraser(e.target.value);
+    setEraserWidth(e.target.value);
+  }
 
-    function stopDrawing() {
-        setDrawing(false);
-    }
+  function handleClickInEraser() {
+    setShowEraserBar(false);
+  }
 
-    function clearAll() {
-        clearCanvas();
-    }
+  function handleClick() {
+    setWidth(false);
+  }
 
-    function setEraserOn() {
-        setDrawing(true);
-        setEraser(true);
-        setShowEraserBar(!showEraserBar);
-    }
+  function setColorsNow() {
+    setChooseColor(!chooseColor);
+  }
 
+  function selectShapes() {
+    setShowShape((prev) => !prev);
+  }
 
-    function setColorForBrush(e) {
+  return (
+    <div className={style.parent}>
+      <Button
+        value={<FaPaintBrush style={{ fontSize: "1.6rem" }} />}
+        onClick={startDrawing}
+        type="button"
+        title="Doodle"
+      ></Button>
+      <p style={{ color: "white" }}>Width : {widthOfBrush}</p>
+      {width && (
+        <input
+          type="range"
+          min={5}
+          max={100}
+          value={widthOfBrush}
+          onChange={handleWidthChange}
+          onClick={handleClick}
+        ></input>
+      )}
 
-        setColor(e.target.value);
-        setColorNow(e.target.value);
-        console.log("Color : ", color);
-    }
+      <Button
+        value={<TbBrushOff style={{ fontSize: "1.6rem" }} />}
+        onClick={stopDrawing}
+        type="button"
+        title="Distable Drawing"
+      ></Button>
 
-
-    function handleWidthChange(e) {
-        setWidthOfBrush(e.target.value);
-        setBrushWidth(e.target.value);
-    }
-
-
-    function handleWidthForEraser(e) {
-
-        setWidthOfEraser(e.target.value);
-        setEraserWidth(e.target.value);
-
-    }
-
-    function handleClickInEraser() {
-        setShowEraserBar(false);
-    }
-
-    function handleClick() {
-        setWidth(false);
-    }
-
-    function setColorsNow() {
-        setChooseColor(!chooseColor);
-    }
-
-
-    function selectShapes() {
-        setShowShape((prev) => !prev);
-    }
-
-
-    return (
-        <div className={style.parent}>
-
-            <Button value={<FaPaintBrush style={{ fontSize: "1.6rem" }} />} onClick={startDrawing} type="button" title="Doodle"></Button>
-            <p style={{ color: "white" }}>Width : {widthOfBrush}</p>
-            {(width) && <input type="range" min={5} max={100} value={widthOfBrush} onChange={handleWidthChange} onClick={handleClick}></input>}
-
-            <Button value={<TbBrushOff style={{ fontSize: "1.6rem" }} />} onClick={stopDrawing} type="button" title="Distable Drawing"></Button>
-
-            <Button value={"shape"} onClick={selectShapes} type="button" title="Shapes"></Button>
-            {showShape &&
-                <div className={style.shapeDiv}>
-                    <button id="line" onClick={() => setTool("line")}>line</button>
-                    <button id="rectangle" onClick={() => setTool("rectangle")}>rectangle</button>
-                </div>
-            }
-
-            <Button value={<FaEraser style={{ fontSize: "1.6rem" }} />} onClick={setEraserOn} type="button" title="Select Eraser"></Button>
-            <p style={{ color: "white", fontSize: "15px" }} width={"70%"}>Width : {widthOfEraser}</p>
-
-            {(showEraserBar) && <input type="range" min={5} max={100} value={widthOfEraser} onChange={handleWidthForEraser} onClick={handleClickInEraser}></input>}
-
-
-            <button style={{ width: "70%", height: "52px", backgroundColor: "#111827", borderRadius: "5px" }} title="Color Palette" >
-                <IoMdColorPalette style={{ fontSize: "1.6rem", color: "white" }} onClick={setColorsNow} />
-                {chooseColor && <input value={color} onChange={setColorForBrush} className={style.input} type="color" />}
-            </button>
-
-            <Button value={<PiBroomFill style={{ fontSize: "1.6rem" }} />} onClick={clearAll} type="button" title="Clear"></Button>
-
-            <Button value={<MdCancel style={{ fontSize: "1.6rem" }} />} onClick={props.parentShow} type="button"></Button>
-
+      <Button
+        value={"shape"}
+        onClick={selectShapes}
+        type="button"
+        title="Shapes"
+      ></Button>
+      {showShape && (
+        <div className={style.shapeDiv}>
+          <button id="line" onClick={() => setTool("line")}>
+            line
+          </button>
+          <button id="rectangle" onClick={() => setTool("rectangle")}>
+            rectangle
+          </button>
         </div>
-    )
+      )}
+
+      <Button
+        value={<FaEraser style={{ fontSize: "1.6rem" }} />}
+        onClick={setEraserOn}
+        type="button"
+        title="Select Eraser"
+      ></Button>
+      <p style={{ color: "white", fontSize: "15px" }} width={"70%"}>
+        Width : {widthOfEraser}
+      </p>
+
+      {showEraserBar && (
+        <input
+          type="range"
+          min={1}
+          max={100}
+          value={widthOfEraser}
+          onChange={handleWidthForEraser}
+          onClick={handleClickInEraser}
+        ></input>
+      )}
+
+      <button
+        style={{
+          width: "70%",
+          border: "1px solid black",
+          cursor: "pointer",
+          height: "52px",
+          backgroundColor: "#111827",
+          borderRadius: "5px",
+        }}
+        title="Color Palette"
+      >
+        <IoMdColorPalette
+          style={{ fontSize: "1.6rem", color: "white" }}
+          onClick={setColorsNow}
+        />
+        {chooseColor && (
+          <input
+            value={color}
+            onChange={setColorForBrush}
+            className={style.input}
+            type="color"
+          />
+        )}
+      </button>
+
+      <Button
+        value={<PiBroomFill style={{ fontSize: "1.6rem" }} />}
+        onClick={clearAll}
+        type="button"
+        title="Clear"
+      ></Button>
+
+      <Button
+        value={<MdCancel style={{ fontSize: "1.6rem" }} />}
+        onClick={props.parentShow}
+        type="button"
+      ></Button>
+    </div>
+  );
 }

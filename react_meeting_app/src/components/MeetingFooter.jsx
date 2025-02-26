@@ -66,7 +66,13 @@ function MeetingFooter({
         >
           <FaShareFromSquare className="changeColor"></FaShareFromSquare>
         </div>
-        <div className="controlBox" onClick={handleClick}>
+        <div
+          className="controlBox"
+          onClick={() => {
+            handleClick();
+            startScreenShare();
+          }}
+        >
           <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher>
         </div>
         <div className="controlBox">
