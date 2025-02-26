@@ -23,7 +23,6 @@ export const AppProvider = ({ children }) => {
   const candidateQueues = useRef(new Map()); // Queue ICE candidates per peer
   let srceenSharer = useRef(null);
   const [isShare, setIsShare] = useState(false);
-  const user = useRef({});
   const key = useRef({});
   const user_id = useRef({});
   let host = useRef(null);
@@ -494,7 +493,6 @@ export const AppProvider = ({ children }) => {
         myStream,
         myScreenStream,
         user_name,
-        user,
         key,
         user_id,
         setIsShare,

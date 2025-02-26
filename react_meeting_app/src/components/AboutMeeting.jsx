@@ -10,19 +10,27 @@ export default function AboutMeeting({
   viewJoinMeeting,
   setViewJoinMeeting,
   setShowSignIn,
-  displayMessage,
+  displayMessage,cookie
 }) {
-  const { user } = useAppContext();
+  const { user_name, user_id } = useAppContext();
+
+  if(document.cookie){
+    console.log("Cookie : ",cookie);
+    user_name.current = cookie.user_name;
+    user_id.current = cookie.user_id;
+
+    console.log("User name, id About meeting in: ",user_id, user_name);
+  }
 
   return (
     <div className="homePageAboutMeeting">
-      <h1>Welcome to KadhaiKalaam</h1>
+     <h1>Welcome to KadhaiKalaam</h1>
       <p>Connect with your team anytime, anywhere!</p>
       <div className="meetingButtons">
         <button
           onClick={() => {
-            if (Object.keys(user.current).length > 0) {
-              alert("Welcome " + user.current);
+            if (Object.keys(user_name.current).length > 0) {
+              // alert("Welcome " + user.current);
               displayMessage((prev) => (prev = false));
               setView(!view);
             } else {

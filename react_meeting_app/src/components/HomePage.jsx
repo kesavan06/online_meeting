@@ -13,6 +13,11 @@ import { useAppContext } from "../Context";
 import ShareScreen from "./ShareScreen";
 import SignUp from "./SignUp.js";
 import "../HomePage.css";
+import { useCookies } from 'react-cookie';
+
+
+
+// setAndReadCookie();
 
 export default function HomePage() {
   <FeatureList displayParent={handleParentShow} />;
@@ -24,6 +29,10 @@ export default function HomePage() {
   const [displayParent, setDisplayParent] = useState(false);
   const [displayShareScreen, setDisplayShareScreen] = useState(false);
   const [displayMessage, setDisplayMessage] = useState(false);
+
+  const [cookie, setCookie] = useCookies(['user_name', 'user_id', ]);
+  // console.log("Cookie exsisit : ",document.cookie);
+
 
   function handleShareScreen() {
     setDisplayShareScreen(!displayShareScreen);
@@ -60,6 +69,7 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
           setShowSignIn={setShowSignIn}
           displayMessage={setDisplayMessage}
+          cookie={cookie}
         />
 
         <FeatureList displayParent={handleParentShow} />
@@ -87,6 +97,8 @@ export default function HomePage() {
             password={password}
             setPassword={setPassword}
             signUpFunction={SignUp}
+            cookie= {cookie}
+            setCookie={setCookie}
           ></Signup>
         </Wrapper>
         <AboutMeeting
@@ -118,6 +130,8 @@ export default function HomePage() {
             setPassword={setPassword}
             displayMessage={displayMessage}
             setDisplayMessage={setDisplayMessage}
+            cookie= {cookie}
+            setCookie={setCookie}
           ></Signin>
         </Wrapper>
         
@@ -142,6 +156,7 @@ export default function HomePage() {
           setView={setViewSetupMeeting}
           showMeeting={showMeeting}
           setShowMeeting={setShowMeeting}
+          cookie= {cookie}
         ></MeetingSetup>
       );
     } else if (viewJoinMeeting) {
@@ -151,10 +166,22 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
           setShowMeeting={setShowMeeting}
           showMeeting={showMeeting}
+          cookie= {cookie}
         ></JoinMeeting>
       );
     } else if (showMeeting) {
       return <Meeting></Meeting>;
     }
   }
+}
+
+
+
+function setAndReadCookie(){
+
+  document.cookie = "user_name=Deepa;expires=Fri, 29 Feb 2025 12:00:00 UTC";
+  console.log("Cookie 1: ",document.cookie);
+  document.cookie = "user_name=Deepa; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+  console.log("Cookie 2: ",document.cookie);
+
 }

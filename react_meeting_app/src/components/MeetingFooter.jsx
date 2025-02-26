@@ -114,12 +114,12 @@ function MeetingFooter({
           <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
         </div>
         <div>
-          {!isRecord && (
+          {/* {!isRecord && (
             <FaRecordVinyl
               className="changeColor"
               onClick={startRecording}
             ></FaRecordVinyl>
-          )}
+          )} */}
           {isRecord && (
             <FaCircleStop
               className="changeColor"

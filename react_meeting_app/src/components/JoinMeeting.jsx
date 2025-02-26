@@ -12,20 +12,37 @@ function JoinMeeting({
   setViewJoinMeeting,
   showMeeting,
   setShowMeeting,
+  cookie
 }) {
-  const { roomId, socketRef,   getMediaStream,initializeMediaStream ,user_name, user, user_id} = useAppContext();
+  const { roomId, socketRef, getMediaStream, initializeMediaStream, user_name, user_id } = useAppContext();
 
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   // const [name, setName] = useState("Kesavan");
   // const [roomInput, setRoomInput] = useState("");
 
-  const userName = useRef({current : user.current});
+  // console.log("Cookie exsisit : ",document.cookie);
+
+  const userName = useRef(null);
   const roomInput = useRef(null);
 
   const stream = useRef(null);
 
   const videoRef = useRef(null);
+
+  // if(document.cookie){
+  //   user_name.current =cookie.user_name;
+  //   user_id.current = cookie.user_id;
+  // }
+
+
+  useEffect(() => {
+    if (userName.current) {
+      userName.current.value = user_name.current; // Set input value manually
+    }
+  }, [user_name]);
+
+
 
   useEffect(() => {
     const startStream = async () => {
@@ -59,6 +76,7 @@ function JoinMeeting({
     console.log("Room: ", roomInput.current.value);
 
     if (roomInput.current.value.trim() !== "") {
+
       user_name.current = userName.current.value;
       roomId.current = roomInput.current.value;
 
@@ -75,6 +93,8 @@ function JoinMeeting({
     console.log(`Room exists check: ${res.exists}`);
     if (res.exists) {
       setShowMeeting(!showMeeting);
+
+      console.log("User name after changing : ", user_name);
       initializeMediaStream(user_name.current, user_id.current, false);
     } else {
       alert("Room does not exist!");

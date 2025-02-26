@@ -12,7 +12,6 @@ import { useAppContext } from "../Context";
 import Wrapper from "./Wrapper";
 import PollCreater from "./PollCreater";
 
-
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
 
@@ -69,11 +68,10 @@ function Meeting() {
   let [chatView, setChatView] = useState(true);
   const [showEmojis, setShowEmojis] = useState(false);
   const [allEmoji, setAllEmoji] = useState([]);
-  let [isPoll,setIsPoll] = useState(false);
+  let [isPoll, setIsPoll] = useState(false);
   let [allMessage, setAllMessage] = useState([]);
 
-
-  const[leaveMeeting, setLeaveMeeting] = useState(false);
+  const [leaveMeeting, setLeaveMeeting] = useState(false);
 
   const openPopup = () => {
     const newWindow = window.open("", "_blank", "width=1000,height=700");
@@ -97,6 +95,7 @@ function Meeting() {
     screenStream,
     startScreenShare,
     socketRef,
+    user_name,
   } = useAppContext();
 
   console.log("all streams: ", streams);
@@ -124,12 +123,55 @@ function Meeting() {
     console.log("Current streams:", streams);
   }, [streams]);
 
+  function handleClickOnEmoji(emojiObject) {
+    console.log("Emoji : ", emojiObject);
+    console.log("EMoji : ", emojiObject.emoji);
+    let emoji = emojiObject.emoji;
+    socketRef.current.emit("emojiSend", emoji);
+
+    setShowEmojis((prev) => (prev = !prev));
+  }
+
+  useEffect(() => {
+    console.log("All EMoji : ", allEmoji);
+  }, [allEmoji]);
+
+  useEffect(() => {
+    function handleEmoji({ emoji, name }) {
+      console.log("Emoji Received: ", emoji);
+      console.log("Socket id : ", user_name.current == name);
+      let emojiName = user_name.current == name;
+      console.log("User name : ", user_name.current);
+
+      const id = Date.now();
+      setAllEmoji((prev) => [
+        ...prev,
+        { id, emoji, name: emojiName ? "you" : name },
+      ]);
+
+      setTimeout(() => {
+        setAllEmoji((prev) => prev.filter((e) => e.id !== id));
+      }, 4400);
+    }
+    socketRef.current.on("showEmoji", handleEmoji);
+
+    return () => {
+      socketRef.current.off("showEmoji");
+    };
+  }, []);
+
   return (
     <div className="meetingContainer">
-      {isPoll && <Wrapper>
-          <PollCreater allMessage={allMessage}
-              setAllMessage={setAllMessage} isPoll={isPoll} setIsPoll={setIsPoll}></PollCreater>
-        </Wrapper>}
+      {isPoll && (
+        <Wrapper>
+          <PollCreater
+            allMessage={allMessage}
+            setAllMessage={setAllMessage}
+            isPoll={isPoll}
+            setIsPoll={setIsPoll}
+          ></PollCreater>
+        </Wrapper>
+      )}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
           <VideoRecord></VideoRecord>
@@ -176,6 +218,7 @@ function Meeting() {
                     { name: "Smileys & Emotion", category: "smileys_people" },
                   ]}
                   open={showEmojis}
+                  onEmojiClick={handleClickOnEmoji}
                 />
               </div>
             )}
