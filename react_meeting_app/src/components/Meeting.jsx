@@ -9,6 +9,10 @@ import EmojiPicker from "emoji-picker-react";
 import { createRoot } from "react-dom/client";
 import "../Meeting.css";
 import { useAppContext } from "../Context";
+import Wrapper from "./Wrapper";
+import PollCreater from "./PollCreater";
+
+
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
 
@@ -65,8 +69,11 @@ function Meeting() {
   let [chatView, setChatView] = useState(true);
   const [showEmojis, setShowEmojis] = useState(false);
   const [allEmoji, setAllEmoji] = useState([]);
+  let [isPoll,setIsPoll] = useState(false);
+  let [allMessage, setAllMessage] = useState([]);
 
-  const [leaveMeeting, setLeaveMeeting] = useState(false);
+
+  const[leaveMeeting, setLeaveMeeting] = useState(false);
 
   const openPopup = () => {
     const newWindow = window.open("", "_blank", "width=1000,height=700");
@@ -104,6 +111,9 @@ function Meeting() {
       streams.map((videoStream) => {
         if (videoStream.type == "screen")
           screenVideoRef.current.srcObject = videoStream.stream;
+        // screenVideoRef.current.play().catch((err) => {
+        //   console.error("Error playing screen stream:", err);
+        // });
       });
     } else if (screenVideoRef.current) {
       screenVideoRef.current.srcObject = null;
@@ -116,6 +126,10 @@ function Meeting() {
 
   return (
     <div className="meetingContainer">
+      {isPoll && <Wrapper>
+          <PollCreater allMessage={allMessage}
+              setAllMessage={setAllMessage} isPoll={isPoll} setIsPoll={setIsPoll}></PollCreater>
+        </Wrapper>}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
           <VideoRecord></VideoRecord>
@@ -173,6 +187,10 @@ function Meeting() {
               setShowChatBox={setShowChatBox}
               chatView={chatView}
               setChatView={setChatView}
+              setIsPoll={setIsPoll}
+              isPoll={isPoll}
+              allMessage={allMessage}
+              setAllMessage={setAllMessage}
             ></ChatParticipants>
           </div>
         )}

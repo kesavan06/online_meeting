@@ -6,12 +6,13 @@ import "../ChatBox.css";
 import ShowMessage from "./ShowMessages";
 import { useAppContext } from "../Context";
 import Emoji from "./Emoji";
+import Wrapper from "./Wrapper";
+import PollCreater from "./PollCreater";
 // import EmojiPicker from 'emoji-picker-react';
 
-function ChatBox({ view, setView }) {
+function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }) {
   let { user_name, socketRef, roomId } = useAppContext();
-
-  let [allMessage, setAllMessage] = useState([]);
+  // let [allMessage, setAllMessage] = useState([]);
 
   let messageRef = useRef("");
 
@@ -50,6 +51,7 @@ function ChatBox({ view, setView }) {
         sender_id: socketRef.current.id,
         room_id: roomId.current,
         time: day,
+        type: "msg"
       };
 
       // console.log("Object: ", newM);
@@ -106,7 +108,7 @@ function ChatBox({ view, setView }) {
         setAllMessage((prev) => [...prev, mess]);
       }
 
-    },100)
+    }, 100)
   }, [view])
 
   //   const handleNewMessage = (msg) => {
@@ -183,7 +185,7 @@ function ChatBox({ view, setView }) {
   //       body: JSON.stringify({ roomId: roomId.current }),
   //     })
 
-  //     // console.log("All mess : ",allMessGet);
+  //   console.log("All mess : ",allMessGet);
 
   //   }
 
@@ -221,6 +223,11 @@ function ChatBox({ view, setView }) {
               handleShowEmoji={handleShowEmoji}
             />
           )}
+
+          <button onClick={(() => setIsPoll(true))}>Poll</button>
+          {/* {isPoll && <Wrapper>
+              <PollCreater></PollCreater>
+            </Wrapper>} */}
         </div>
 
         <div className="sentInputBox">

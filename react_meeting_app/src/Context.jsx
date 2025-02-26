@@ -22,6 +22,7 @@ export const AppProvider = ({ children }) => {
   const peerConnectionsRef = useRef(new Map()); // Use Map for better key management
   const candidateQueues = useRef(new Map()); // Queue ICE candidates per peer
   let srceenSharer = useRef(null);
+  const [isShare, setIsShare] = useState(false);
   const user = useRef({});
   const key = useRef({});
   const user_id = useRef({});
@@ -356,6 +357,8 @@ export const AppProvider = ({ children }) => {
       });
 
       myScreenStream.current = screenStream;
+      console.log(myScreenStream)
+      setIsShare(true);
       srceenSharer.current = socketRef.current.id;
       // Add tracks from screen stream to all existing peer connections
       for (const [userId, peerConnection] of peerConnectionsRef.current) {
@@ -489,11 +492,13 @@ export const AppProvider = ({ children }) => {
         streams: streamState,
         screenStream: screenStreamState,
         myStream,
+        myScreenStream,
         user_name,
         user,
         key,
         user_id,
-        host,
+        setIsShare,
+        isShare
       }}
     >
       {children}

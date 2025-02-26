@@ -347,6 +347,14 @@ io.on("connection", (socket) => {
     // io.to(msgObject.room_id).emit("receivedMessage", roomObject.messages); //try in home here ----------------
   });
 
+
+  socket.on("sendPoll",(poll)=>{
+    console.log("User_name",poll.userName);
+    console.log("room id: ",poll.room_Id);
+    socket.to(poll.room_Id).emit("receivedPoll",poll);
+    console.log("after recieve")
+  })
+
   // Handle user disconnection
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
