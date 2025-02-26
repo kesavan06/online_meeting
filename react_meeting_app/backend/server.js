@@ -28,7 +28,7 @@ const mysql = require("mysql2");
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Deepa30",
+  password: "Vennila_Mysql",
 });
 
 connection.connect((err) => {
@@ -50,7 +50,7 @@ connection.end();
 const dbConnection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Deepa30",
+  password: "Vennila_Mysql",
   database: "users_db",
 });
 
@@ -356,6 +356,7 @@ io.on("connection", (socket) => {
     console.log(roomObject.messages);
 
     io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+
   });
 
   socket.on("emojiSend", (emoji)=>{
@@ -364,6 +365,15 @@ io.on("connection", (socket) => {
     io.to(socket.roomName).emit("showEmoji", {emoji, name : socket.userName});
 
   })
+
+
+  socket.on("sendPoll",(poll)=>{
+    console.log("User_name",poll.userName);
+    console.log("room id: ",poll.room_Id);
+    socket.to(poll.room_Id).emit("receivedPoll",poll);
+    console.log("after recieve")
+  })
+
   // Handle user disconnection
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);

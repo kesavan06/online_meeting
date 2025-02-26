@@ -12,7 +12,11 @@ import { FaRightFromBracket } from "react-icons/fa6";
 import { FaRegMessage } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { FaBars } from "react-icons/fa";
+import { FaCircleStop } from "react-icons/fa6";
 import { useAppContext } from "../Context";
+import { stopRecord } from "../Recording";
+import { startRecord } from "../Recording";
+import { FaRecordVinyl } from "react-icons/fa";
 
 function MeetingFooter({
   handleBoard,
@@ -26,13 +30,45 @@ function MeetingFooter({
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
+  const [isRecord, setIsRecord] = useState(false);
+  const { myStream, isShare, myScreenStream } = useAppContext();
 
   function handleClick() {
     handleBoard();
   }
 
-  function shareScreen() {
-    setIsShare(true);
+  // function shareScreen() {
+  //   setIsShare(true);
+  // }
+
+  function startRecording() {
+    try {
+      let localStream = myStream.current;
+      console.log(myScreenStream.current)
+      if (myScreenStream.current) {
+        localStream = myScreenStream.current;
+      }
+      let stream = startRecord(localStream);
+      if (stream) {
+        setIsRecord(true);
+      }
+    }
+    catch (err) {
+      console.log("Error: " + err);
+    }
+
+  }
+
+
+  function stopRecording() {
+    try {
+      stopRecord();
+      console.log("Recording stop!!!");
+      setIsRecord(false);
+    }
+    catch (err) {
+      console.log("Error: " + err);
+    }
   }
 
   function handleEmoji(){
@@ -77,6 +113,10 @@ function MeetingFooter({
         </div>
         <div className="controlBox" onClick={()=>handleEmoji()}>
           <FaRegFaceSmile className="changeColor" ></FaRegFaceSmile>
+        </div>
+        <div>
+          {!isRecord && <FaRecordVinyl className="changeColor" onClick={startRecording}></FaRecordVinyl>}
+          {isRecord && <FaCircleStop className="changeColor" onClick={stopRecording}></FaCircleStop>}
         </div>
         <div className="controlBox exitBox">
           <FaRightFromBracket className="exit"></FaRightFromBracket>
