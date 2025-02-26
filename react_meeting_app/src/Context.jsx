@@ -356,7 +356,6 @@ export const AppProvider = ({ children }) => {
       });
 
       myScreenStream.current = screenStream;
-      console.log(myScreenStream)
       setIsShare(true);
       srceenSharer.current = socketRef.current.id;
       // Add tracks from screen stream to all existing peer connections
@@ -414,7 +413,11 @@ export const AppProvider = ({ children }) => {
       prev = prev.filter((videoStream) => {
         console.log(videoStream.stream.id, screenStream.id);
         if (videoStream.stream.id == screenStream.id) {
-          console.log("after disconnected  screen: id", videoStream.stream.id, screenStream.id);
+          console.log(
+            "after disconnected  screen: id",
+            videoStream.stream.id,
+            screenStream.id
+          );
         }
 
         if (videoStream.stream.id !== screenStream.id) {
@@ -496,7 +499,7 @@ export const AppProvider = ({ children }) => {
         key,
         user_id,
         setIsShare,
-        isShare
+        isShare,
       }}
     >
       {children}

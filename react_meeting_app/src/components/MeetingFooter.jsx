@@ -114,20 +114,6 @@ function MeetingFooter({
           <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
         </div>
         <div>
-          {/* {!isRecord && (
-            <FaRecordVinyl
-              className="changeColor"
-              onClick={startRecording}
-            ></FaRecordVinyl>
-          )} */}
-          {isRecord && (
-            <FaCircleStop
-              className="changeColor"
-              onClick={stopRecording}
-            ></FaCircleStop>
-          )}
-        </div>
-        <div>
           {!isRecord && (
             <FaRecordVinyl
               className="changeColor"
@@ -153,7 +139,6 @@ function MeetingFooter({
             setShowChatBox((prev) => (prev = true));
             setChatView((prev) => (prev = true));
           }}
-          u
         >
           <FaRegMessage className="changeColor"></FaRegMessage>
         </div>
