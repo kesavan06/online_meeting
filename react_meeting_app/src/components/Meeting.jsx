@@ -63,8 +63,7 @@ function Meeting() {
   const [showChatBox, setShowChatBox] = useState(true);
   let [chatView, setChatView] = useState(true);
 
-  const { roomId, streams, myStream, screenStream, startScreenShare } =
-    useAppContext();
+  const { roomId, streams, myStream, screenStream, startScreenShare } = useAppContext();
 
   console.log("all streams: ", streams);
 

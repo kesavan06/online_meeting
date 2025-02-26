@@ -100,7 +100,7 @@ function Signup(probs) {
         console.log("uniqueNess: ", uniqueness);
         if (uniqueness) {
             setM(true);
-            setMessage("Username is valid and ready to use");
+            setMessage("Username is valid");
         }
         else {
             setM(false);
@@ -186,8 +186,8 @@ function Signup(probs) {
 
 
                 <div id="signupPage">
-                    <button className="signupCancel" onClick={cancelSignUp}>Cancel</button>
-                    <button className="signupButton" onClick={signUp}>Signup</button>
+                    <button className="signupCancel" onClick={(e) => cancelSignUp(e)}>Cancel</button>
+                    <button className="signupButton" onClick={(e) => signUp(e)}>Signup</button>
                 </div>
                 {/* <button id="signupButton">Create account</button> */}
             </form>
@@ -199,3 +199,5 @@ function Signup(probs) {
 }
 
 export default Signup;
+
+
