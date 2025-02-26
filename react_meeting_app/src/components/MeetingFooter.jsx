@@ -25,6 +25,8 @@ function MeetingFooter({
   setChatView,
   startScreenShare,
   isSharing,
+  showEmojis,
+  setShowEmojis
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
@@ -69,6 +71,10 @@ function MeetingFooter({
     }
   }
 
+  function handleEmoji(){
+    setShowEmojis((prev)=> prev=!prev)
+  }
+
   return (
     <div className="footerBox">
       <div className="micVideoConrol">
@@ -105,8 +111,8 @@ function MeetingFooter({
         <div className="controlBox" onClick={handleClick}>
           <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher>
         </div>
-        <div className="controlBox">
-          <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
+        <div className="controlBox" onClick={()=>handleEmoji()}>
+          <FaRegFaceSmile className="changeColor" ></FaRegFaceSmile>
         </div>
         <div>
           {!isRecord && <FaRecordVinyl className="changeColor" onClick={startRecording}></FaRecordVinyl>}

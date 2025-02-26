@@ -16,7 +16,7 @@ export default function Message({ user_name, message, time, classNow }) {
         <p id="time">{time}</p>
       </div>
 
-      <div className="message">
+      <div className="messages">
         <p className="messagePara">{message}</p>
       </div>
     </div>

@@ -23,6 +23,7 @@ export default function HomePage() {
   const [showMeeting, setShowMeeting] = useState(false);
   const [displayParent, setDisplayParent] = useState(false);
   const [displayShareScreen, setDisplayShareScreen] = useState(false);
+  const [displayMessage, setDisplayMessage] = useState(false);
 
   function handleShareScreen() {
     setDisplayShareScreen(!displayShareScreen);
@@ -57,6 +58,8 @@ export default function HomePage() {
           setView={setViewSetupMeeting}
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
+          setShowSignIn={setShowSignIn}
+          displayMessage={setDisplayMessage}
         />
 
         <FeatureList displayParent={handleParentShow} />
@@ -113,8 +116,11 @@ export default function HomePage() {
             setNameUnique={setNameUnique}
             password={password}
             setPassword={setPassword}
+            displayMessage={displayMessage}
+            setDisplayMessage={setDisplayMessage}
           ></Signin>
         </Wrapper>
+        
         <AboutMeeting
           view={viewSetupMeeting}
           setView={setViewSetupMeeting}
