@@ -4,12 +4,14 @@ import ChatParticipants from "./ChatParticipants";
 import MeetingFooter from "./MeetingFooter";
 import { useState, useEffect, useRef } from "react";
 import WhiteBoard from "./WhiteBoard";
+import EmojiPicker from 'emoji-picker-react';
 
 import "../Meeting.css";
 import { useAppContext } from "../Context";
 
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
+
 
   useEffect(() => {
     if (videoRef.current && stream) {
@@ -61,7 +63,9 @@ function Meeting() {
 
   const [showWhiteBoard, setShowWhiteBoard] = useState(false);
   const [showChatBox, setShowChatBox] = useState(true);
-  let [chatView, setChatView] = useState(true);
+  const [chatView, setChatView] = useState(true);
+  const [showEmojis, setShowEmojis] = useState(false);
+  const [allEmoji, setAllEmoji] = useState([]);
 
   const { roomId, streams, myStream, screenStream, startScreenShare } = useAppContext();
 
@@ -89,6 +93,9 @@ function Meeting() {
   useEffect(() => {
     console.log("Current streams:", streams);
   }, [streams]);
+
+ 
+
 
   return (
     <div className="meetingContainer">
@@ -126,6 +133,21 @@ function Meeting() {
                 autoPlay
               ></video>
             }
+
+            {showEmojis &&
+              <div className="emoji">
+                <EmojiPicker
+                  theme="dark"
+                  width={300}
+                  height={400}
+                  emojiStyle="native"
+                  categories={[
+                    { name: 'Smileys & Emotion', category: 'smileys_people' },
+                  ]}
+                  open={showEmojis} />
+
+              </div>
+            }
           </div>
           <div className="whiteBoardBox">
             {showWhiteBoard && (
@@ -150,6 +172,8 @@ function Meeting() {
           chatView={chatView}
           setChatView={setChatView}
           startScreenShare={startScreenShare}
+          showEmojis={showEmojis}
+          setShowEmojis={setShowEmojis}
         ></MeetingFooter>{" "}
       </div>
     </div>
