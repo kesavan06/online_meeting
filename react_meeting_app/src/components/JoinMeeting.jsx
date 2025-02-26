@@ -13,20 +13,14 @@ function JoinMeeting({
   showMeeting,
   setShowMeeting,
 }) {
-  const {
-    roomId,
-    socketRef,
-    getMediaStream,
-    initializeMediaStream,
-    user_name,
-  } = useAppContext();
+  const { roomId, socketRef,   getMediaStream,initializeMediaStream ,user_name, user, user_id} = useAppContext();
 
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   // const [name, setName] = useState("Kesavan");
   // const [roomInput, setRoomInput] = useState("");
 
-  const userName = useRef(null);
+  const userName = useRef({current : user.current});
   const roomInput = useRef(null);
 
   const stream = useRef(null);
@@ -81,7 +75,7 @@ function JoinMeeting({
     console.log(`Room exists check: ${res.exists}`);
     if (res.exists) {
       setShowMeeting(!showMeeting);
-      initializeMediaStream(user_name.current);
+      initializeMediaStream(user_name.current, user_id.current, false);
     } else {
       alert("Room does not exist!");
     }

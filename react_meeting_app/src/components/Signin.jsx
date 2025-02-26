@@ -1,11 +1,17 @@
-import "../Signin.css";
+import { useAppContext } from "../Context";
+import "../Signin.css"
 import Login from "./SignIn";
 
+
 export default function Signin(props) {
+
   let { nameUnique, setNameUnique } = props;
   let { password, setPassword } = props;
+  let { user, key, user_id } = useAppContext();
 
-  function cancelShowSignIn() {
+
+  function cancelShowSignIn(event) {
+    event.preventDefault();
     props.setShowSignIn(false);
   }
 
@@ -14,18 +20,40 @@ export default function Signin(props) {
     props.setShowSignIn(false);
   }
 
-  function signIn(event) {
+  async function signIn(event) {
     event.preventDefault();
+
     if (nameUnique != "" && password != "") {
-      handleUniqueName();
+      console.log(nameUnique, password);
+      let userLogin = await Login(nameUnique, password);
+
+      if (userLogin != null) {
+        // console.log("User Login Now : ",userLogin);
+        user.current = userLogin.user_name;
+        key.current = userLogin.user_key;
+        console.log("User ID: ", user_id);
+        user_id.current = userLogin.user_id;
+
+        console.log("User in sign in : -----", user, key, user_id);
+
+        props.setShowSignIn(false);
+      }
+      else{
+        console.log("User not correct");
+      }
+
     }
   }
 
-  function handleUniqueName() {
-    console.log(nameUnique, password);
-    let userLogin = Login(nameUnique, password);
-    console.log(userLogin);
-  }
+
+
+
+
+
+
+
+
+
 
   return (
     <div>
@@ -67,10 +95,10 @@ export default function Signin(props) {
         <p></p>
 
         <div className="signinButtons">
-          <button class="cancelBtn" onClick={cancelShowSignIn}>
+          <button className="cancelBtn" onClick={(e) => cancelShowSignIn(e)}>
             Cancel
           </button>
-          <button class="signinBtn" onClick={signIn}>
+          <button className="signinBtn" onClick={(e) => signIn(e)}>
             Signin
           </button>
         </div>

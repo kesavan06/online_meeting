@@ -9,18 +9,19 @@ import { useAppContext } from "../Context";
 // import { useSocketEvents } from "../socket";
 
 function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
-  const {
-    roomId,
-    socketRef,
-    getMediaStream,
-    initializeMediaStream,
-    user_name,
-  } = useAppContext();
+  const { roomId, socketRef, initializeMediaStream, user_name, user,user_id, getMediaStream } =
+    useAppContext();
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   // const [name, setName] = useState("Kesavan");
 
-  let userName = useRef();
+  const userName = useRef(null);
+
+  useEffect(() => {
+    if (userName.current) {
+      userName.current.value = user.current; // Set input value manually
+    }
+  }, [user]);
 
   const localStream = useRef(null);
 
@@ -54,7 +55,9 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
   };
 
   const createRoomClicked = () => {
-    user_name.current = userName.current.value;
+    console.log("UserName : ",userName.current.value);
+    user_name.current = userName.current.value; 
+
 
     const newRoomId = Math.random().toString(36).substring(2, 9);
     roomId.current = newRoomId;
@@ -65,10 +68,28 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
 
   socketRef.current.on("room-created", (newRoomId) => {
     console.log(`Room created: ${newRoomId}`);
-
+    
     setShowMeeting(!showMeeting);
-    initializeMediaStream(user_name.current);
+    initializeMediaStream(user_name.current, user_id.current, true);
   });
+
+
+
+  // async function cMeetingFetch() {
+  //   let create = await fetch("http://localhost:3002/create", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ room_name : roomId.current, user_name : user.current, isHost: true,user_id: user_id.current }),
+  //   })
+  
+  //   let res= await create.json();
+  //   console.log("Create : ",res);
+  
+  // }
+
+
 
   return (
     <div className="popupContainer">
@@ -131,3 +152,7 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
 }
 
 export default MeetingSetup;
+
+
+
+

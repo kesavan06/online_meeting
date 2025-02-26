@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaVideo } from "react-icons/fa";
 import { FaUserFriends } from "react-icons/fa";
 import "../AboutMeeting.css";
@@ -10,6 +10,8 @@ export default function AboutMeeting({
   viewJoinMeeting,
   setViewJoinMeeting,
 }) {
+  const { user } = useAppContext();
+
   return (
     <div className="homePageAboutMeeting">
     <h1>Welcome to ConvoSpace</h1>
@@ -17,7 +19,13 @@ export default function AboutMeeting({
     <div className="meetingButtons">
       <button
         onClick={() => {
-          setView(!view);
+          if(Object.keys(user.current).length > 0){
+            alert("Welcome "+user.current);
+            setView(!view);
+          }
+          else{
+            alert("You don't have an account. Please sign in!")
+          }
         }}
         className="newMeeting"
       >

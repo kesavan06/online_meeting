@@ -29,6 +29,8 @@ export default async function SignUp(name, password, unique_name) {
 
         console.log("User Add ; ", setUser);
 
+        let res = await setUser.json();
+        return res;
         
         // let user = await getDetailOfAPerson(encryptUnique);
         // console.log("User: ", user);

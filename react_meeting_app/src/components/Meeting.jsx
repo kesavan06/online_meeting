@@ -7,9 +7,12 @@ import WhiteBoard from "./WhiteBoard";
 
 import "../Meeting.css";
 import { useAppContext } from "../Context";
+import Wrapper from "./Wrapper";
+import PollCreater from "./PollCreater";
 
-const VideoComponent = ({ stream, isLocalStream, showWhiteBoard }) => {
+const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
+
 
   useEffect(() => {
     if (videoRef.current && stream) {
@@ -62,26 +65,33 @@ function Meeting() {
   const [showWhiteBoard, setShowWhiteBoard] = useState(false);
   const [showChatBox, setShowChatBox] = useState(true);
   let [chatView, setChatView] = useState(true);
+  let [isPoll,setIsPoll] = useState(false);
+  let [allMessage, setAllMessage] = useState([]);
+
 
   const { roomId, streams, myStream, screenStream, startScreenShare } =
     useAppContext();
+
+  console.log("all streams: ", streams);
 
   const screenVideoRef = useRef(null);
   function handleWhiteBoardShow() {
     setShowWhiteBoard(!showWhiteBoard);
   }
   useEffect(() => {
-    if (screenVideoRef.current && screenStream) {
+    if (screenVideoRef.current && streams) {
       console.log(screenStream);
-      screenVideoRef.current.srcObject = screenStream.stream;
-      screenVideoRef.current.play().catch((err) => {
-        console.error("Error playing screen stream:", err);
+      streams.map((videoStream) => {
+        if (videoStream.type == "screen")
+          screenVideoRef.current.srcObject = videoStream.stream;
+        // screenVideoRef.current.play().catch((err) => {
+        //   console.error("Error playing screen stream:", err);
+        // });
       });
-      console.log(screenVideoRef);
     } else if (screenVideoRef.current) {
       screenVideoRef.current.srcObject = null;
     }
-  }, [screenStream]);
+  }, [streams]);
 
   useEffect(() => {
     console.log("Current streams:", streams);
@@ -89,6 +99,10 @@ function Meeting() {
 
   return (
     <div className="meetingContainer">
+      {isPoll && <Wrapper>
+          <PollCreater allMessage={allMessage}
+              setAllMessage={setAllMessage} isPoll={isPoll} setIsPoll={setIsPoll}></PollCreater>
+        </Wrapper>}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
           <VideoRecord></VideoRecord>
@@ -98,25 +112,31 @@ function Meeting() {
       <div className="meetingContent">
         <div className={showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
           <div className="videoBoxes">
-            {streams.map((stream) => {
-              return (
-                <VideoComponent
-                  key={stream.id}
-                  stream={stream}
-                  isLocalStream={stream.id === myStream?.current?.id}
-                  showWhiteBoard={showWhiteBoard}
-                ></VideoComponent>
-              );
-            })}
+            {streams != null &&
+              streams.map((videoStream) => {
+                if (videoStream.type == "camera") {
+                  return (
+                    <VideoComponent
+                      key={videoStream.stream.id}
+                      stream={videoStream.stream}
+                      isLocalStream={
+                        videoStream.stream.id === myStream?.current?.id
+                      }
+                      showWhiteBoard={showWhiteBoard}
+                      type={videoStream.type}
+                    ></VideoComponent>
+                  );
+                }
+              })}
           </div>
           <div className="mainVideoBox">
-            {screenStream && (
+            {
               <video
                 ref={screenVideoRef}
                 className="shareScreenElement"
                 autoPlay
               ></video>
-            )}
+            }
           </div>
           <div className="whiteBoardBox">
             {showWhiteBoard && (
@@ -130,6 +150,10 @@ function Meeting() {
               setShowChatBox={setShowChatBox}
               chatView={chatView}
               setChatView={setChatView}
+              setIsPoll={setIsPoll}
+              isPoll={isPoll}
+              allMessage={allMessage}
+              setAllMessage={setAllMessage}
             ></ChatParticipants>
           </div>
         )}

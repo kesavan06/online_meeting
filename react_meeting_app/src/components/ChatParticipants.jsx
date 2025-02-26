@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useState } from "react";
 import { FaXmark } from "react-icons/fa6";
 import "../ChatParticipants.css";
@@ -6,9 +6,9 @@ import ChatBox from "./ChatBox";
 import Participants from "./Participants";
 import PollCreater from "./PollCreater";
 
-function ChatParticipants({ setShowChatBox, chatView, setChatView }) {
+function ChatParticipants({ setShowChatBox, chatView, setChatView ,setIsPoll,isPoll,allMessage,setAllMessage} ) {
   const [viewPoll,setViewPoll] = useState(false);
-
+  let [view, setView] = useState(true);
   return (
     <div className="chatContainer">
       <div className="toggleBox">
@@ -17,27 +17,19 @@ function ChatParticipants({ setShowChatBox, chatView, setChatView }) {
             className={chatView ? "activeBtnColor" : "nonActiveBtnColor"}
             onClick={() => {
               setChatView(true);
-              setViewPoll(false);
             }}
           >
             Chat
           </button>
           <button
             className={
-              !chatView && !viewPoll ? "activeBtnColor" : "nonActiveBtnColor"
+              chatView == false ? "activeBtnColor" : "nonActiveBtnColor"
             }
             onClick={() => {
               setChatView(false);
-              setViewPoll(false);
             }}
           >
             Participants
-          </button>
-          <button className={viewPoll ? "activeBtnColor" : "nonActiveBtnColor"} onClick={()=>{
-            setViewPoll(true);
-            setChatView(false);
-          }}>
-            Poll
           </button>
         </div>
         <FaXmark
@@ -46,7 +38,7 @@ function ChatParticipants({ setShowChatBox, chatView, setChatView }) {
           className="closeChatBox"
         ></FaXmark>
       </div>
-      {chatView ? <ChatBox></ChatBox> : !chatView && viewPoll ? <PollCreater></PollCreater> : <Participants></Participants>}
+      {chatView ? <ChatBox view={view} setView = {setView} setIsPoll={setIsPoll} isPoll={isPoll} allMessage={allMessage} setAllMessage={setAllMessage}></ChatBox> : <Participants view={view} setView = {setView}></Participants>}
     </div>
   );
 }

@@ -27,28 +27,19 @@ function validatePassword(password) {
 
 
 function Signup(probs) {
-    // const dialogRef=useRef(null);
-    // if(probs.showSignUp)
-    // {
-    //     dialogRef.current.open();
-    // }
-    // if(!probs.showSignUp)
-    // {
-    //     dialogRef.current.close();
-    // }
+
+
+    let { setShowSignUp, setShowSignIn } = probs;
+
     const [showPass, setShowPass] = useState(false);
 
     let [messageUnique, setMessage] = useState("");
     const [showPassMessage, setShowPassMess] = useState("");
     const [samePassMessage, setSamePassMessage] = useState("");
 
-    // let []
     const [showM, setM] = useState(false);
     const [isStrongPass, setIsStrongPass] = useState(false);
     const [isSamePass, setSamePass] = useState(false);
-
-
-    // const signUPFunction = probs.signUpFunction;
 
 
     const { name, setName } = probs;
@@ -56,35 +47,42 @@ function Signup(probs) {
     const { password, setPassword } = probs;
 
     const [passFirst, setPassFirst] = useState("");
-    const { socketRef } = useAppContext();
+    const { socketRef, user, key, user_id } = useAppContext();
 
     function cancelSignUp() {
-        probs.setShowSignUp(false);
+        setShowSignUp(false);
     }
 
     function showSignIn() {
-        probs.setShowSignIn(true);
-        probs.setShowSignUp(false);
+        setShowSignIn(true);
+        setShowSignUp(false);
     }
 
-    function signUp(event) {
+    async function signUp(event) {
         event.preventDefault()
 
-        if (passFirst != password) {
+        if (showM && isSamePass && isStrongPass) {
 
-            setSamePass(false);
-            setSamePassMessage("Your confirm password must match the original password");
-        }
-        else {
-            setSamePass(true);
-            setSamePassMessage("✅ Password confirmed!");
             console.log(name, password, nameUnique);
 
             if (name != "" && password != "" && nameUnique != "") {
-                let signupUser =SignUp(name, password, nameUnique)
+                let signupUser = await SignUp(name, password, nameUnique)
                 console.log(signupUser);
+
+                if (signupUser != null) {
+
+                    user.current = signupUser.data.user_name;
+                    key.current = signupUser.data.user_key;
+                    user_id.current = signupUser.data.user_id;
+
+                    console.log("Info : ", user, key, user_id);
+                    setShowSignUp((prev) => prev = false);
+
+                }
+
+
             }
-            else{
+            else {
                 console.log("Enter all the required datas");
             }
 
@@ -125,6 +123,20 @@ function Signup(probs) {
         }
     }
 
+    function handleSamePass(pass) {
+        console.log("Password : ", pass);
+        console.log("Pass Up : ", passFirst);
+
+        if (passFirst != password) {
+
+            setSamePass(false);
+            setSamePassMessage("Your confirm password must match the original password");
+        }
+        else {
+            setSamePass(true);
+            setSamePassMessage("✅ Password confirmed!");
+        }
+    }
 
     return (
 
@@ -165,7 +177,7 @@ function Signup(probs) {
 
                 <div className="parent">
                     <label className="labelTag">Confirm password
-                        <input type="password" className="inputTag" autoComplete="off" onChange={(e) => setPassword(e.target.value)} required />
+                        <input type="password" className="inputTag" autoComplete="off" onChange={(e) => setPassword(e.target.value)} onBlur={() => handleSamePass(password)} required />
                     </label>
                     <p className="messageToShow" style={{ color: !isSamePass ? "red" : "green" }}>{samePassMessage}</p>
 
