@@ -5,6 +5,7 @@ import { RiEyeCloseFill } from "react-icons/ri";
 import useUniqueName from "./UniqueCheck";
 import { useAppContext } from "../Context";
 import SignUp from "./SignUp";
+import { useCookies } from 'react-cookie';
 
 
 function validatePassword(password) {
@@ -47,7 +48,7 @@ function Signup(probs) {
     const { password, setPassword } = probs;
 
     const [passFirst, setPassFirst] = useState("");
-    const { socketRef, user, key, user_id } = useAppContext();
+    const { socketRef, user_name, key, user_id } = useAppContext();
 
     function cancelSignUp() {
         setShowSignUp(false);
@@ -71,11 +72,15 @@ function Signup(probs) {
 
                 if (signupUser != null) {
 
-                    user.current = signupUser.data.user_name;
+                    user_name.current = signupUser.data.user_name;
                     key.current = signupUser.data.user_key;
                     user_id.current = signupUser.data.user_id;
 
-                    console.log("Info : ", user, key, user_id);
+                    const expires = new Date(Date.now() + 86400000);
+                    probs.setCookie('user_name', user_name.current, {expires});
+                    probs.setCookie('user_id', user_id.current, {expires});
+
+                    console.log("Info : ", user_name, key, user_id);
                     setShowSignUp((prev) => prev = false);
 
                 }

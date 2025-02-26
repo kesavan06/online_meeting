@@ -33,6 +33,7 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   }, [stream]);
 
   useEffect(() => {
+
     const handleBeforeUnload = (event) => {
       event.preventDefault();
       event.returnValue = "";
@@ -61,6 +62,7 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
 function Meeting() {
   // let {videoGridRed} = useAppContext();
 
+  const { socketRef, user_name } = useAppContext();
   const [showWhiteBoard, setShowWhiteBoard] = useState(false);
   const [showChatBox, setShowChatBox] = useState(true);
   const [chatView, setChatView] = useState(true);
@@ -70,6 +72,7 @@ function Meeting() {
   const { roomId, streams, myStream, screenStream, startScreenShare } = useAppContext();
 
   console.log("all streams: ", streams);
+
 
   const screenVideoRef = useRef(null);
   function handleWhiteBoardShow() {
@@ -94,8 +97,49 @@ function Meeting() {
     console.log("Current streams:", streams);
   }, [streams]);
 
- 
 
+
+
+  function handleClickOnEmoji(emojiObject) {
+    console.log("Emoji : ", emojiObject);
+    console.log("EMoji : ", emojiObject.emoji)
+    let emoji = emojiObject.emoji;
+    socketRef.current.emit("emojiSend", (emoji));
+
+    setShowEmojis((prev) => prev = !prev)
+  }
+
+  useEffect(() => {
+    console.log("All EMoji : ", allEmoji);
+
+  }, [allEmoji])
+
+
+  useEffect(() => {
+
+
+    function handleEmoji({ emoji, name }) {
+
+      console.log("Emoji Received: ", emoji);
+      console.log("Socket id : ",user_name.current == name);
+      let emojiName = user_name.current == name;
+      console.log("User name : ",user_name.current);
+
+      const id = Date.now();
+      setAllEmoji((prev) => [...prev, { id, emoji, name: emojiName ? "you" : name }]);
+
+
+      setTimeout(() => {
+        setAllEmoji((prev) => prev.filter((e) => e.id !== id));
+      }, 4400);
+
+    }
+    socketRef.current.on("showEmoji", handleEmoji);
+
+    return () => {
+      socketRef.current.off("showEmoji");
+    };
+  }, []);
 
   return (
     <div className="meetingContainer">
@@ -144,11 +188,24 @@ function Meeting() {
                   categories={[
                     { name: 'Smileys & Emotion', category: 'smileys_people' },
                   ]}
-                  open={showEmojis} />
-
+                  open={showEmojis}
+                  onEmojiClick={handleClickOnEmoji}
+                />
               </div>
             }
+
+            {allEmoji.map(({ id, emoji, name }) => {
+              return (
+
+                <span className="emojiDiv" id={id}>
+                  <p style={{fontSize : "1rem", textAlign: "center"}}>{name}</p>
+                  {emoji}
+                </span>)
+            })}
+
+
           </div>
+
           <div className="whiteBoardBox">
             {showWhiteBoard && (
               <WhiteBoard controlBoard={handleWhiteBoardShow} />
@@ -181,3 +238,11 @@ function Meeting() {
 }
 
 export default Meeting;
+
+
+
+
+
+
+
+

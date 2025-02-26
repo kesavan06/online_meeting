@@ -20,7 +20,6 @@ export const AppProvider = ({ children }) => {
   const peerConnectionsRef = useRef(new Map()); // Use Map for better key management
   const candidateQueues = useRef(new Map()); // Queue ICE candidates per peer
   let srceenSharer = useRef(null);
-  const user = useRef({});
   const key = useRef({});
   const user_id = useRef({});
   const configuration = {
@@ -470,7 +469,6 @@ export const AppProvider = ({ children }) => {
         screenStream: screenStreamState,
         myStream,
         user_name,
-        user, 
         key,
         user_id,
       }}

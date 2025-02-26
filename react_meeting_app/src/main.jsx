@@ -11,9 +11,12 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { Routes, Route, Link } from "react-router-dom";
 import MeetingSetup from "./components/MeetingSetup.jsx";
 import App from "./components/App.jsx";
+import { CookiesProvider } from 'react-cookie';
 
 createRoot(document.getElementById("root")).render(
   <>
-    <App></App>
+    <CookiesProvider>
+      <App></App>
+    </CookiesProvider>
   </>
 );

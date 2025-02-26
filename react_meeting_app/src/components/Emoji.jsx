@@ -53,9 +53,9 @@ export default function Emoji({ emojiHandle, handleOpen,handleShowEmoji }) {
         //     </div>
         // </>
 
-        <div className={style.emojiContainer} > 
+        <div className={style.emojiContainer} onBlur={()=> handleOpen()}> 
 
-            <div className={style.emojiWrapper}  ref={emojiRef} onBlur={()=> console.log(handleOpen())}> 
+            <div className={style.emojiWrapper}  ref={emojiRef} > 
                 <EmojiPicker
                    
                     theme="dark"

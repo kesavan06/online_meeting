@@ -163,7 +163,20 @@ app.post("/signUp", async (req, res) => {
         }
       );
     });
-    let user = { user_name, user_key };
+
+    let userNow = await getUserDetails();
+    let user1;
+
+    for(let user of userNow){
+      if(user.user_name == user_name){
+        user1 = user;
+        break;
+      }
+    }
+
+    console.log("User Now : ",user1);
+
+    let user = { user_name, user_key , user_id: user1.user_id};
 
     res.status(200).send({ message: "Success", data: user });
   } catch (err) {
@@ -337,19 +350,20 @@ io.on("connection", (socket) => {
       time,
       sender_id,
     });
-    // let isMine = sender_id == socket.id ? true : false;
-
     roomObject.messages.push({ user_name, sender_id, message, time });
-    // roomObject.messages.push({user_name,sender_id, message, time,isMine});
 
     console.log("ALl messages: ", allMessages);
     console.log(roomObject.messages);
 
     io.to(msgObject.room_id).emit("receivedMessage", msgObject);
-
-    // io.to(msgObject.room_id).emit("receivedMessage", roomObject.messages); //try in home here ----------------
   });
 
+  socket.on("emojiSend", (emoji)=>{
+    console.log("EMoji Received : ",emoji);
+
+    io.to(socket.roomName).emit("showEmoji", {emoji, name : socket.userName});
+
+  })
   // Handle user disconnection
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
