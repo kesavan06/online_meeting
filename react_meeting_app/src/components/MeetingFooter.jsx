@@ -33,11 +33,14 @@ function MeetingFooter({
   const [video, setVideo] = useState(true);
   const [isRecord, setIsRecord] = useState(false);
   const { myStream, isShare, myScreenStream } = useAppContext();
-  const [showLeaveMeetingBtn, setShowLeaveMeetingBtn] = useState(false);
+  // const [showLeaveMeetingBtn, setShowLeaveMeetingBtn] = useState(false);
 
   // function handleClick() {
   //   handleBoard();
   // }
+  const [puaseVideo, setPauseVideo] = useState(false);
+  const [puaseAudio, setPauseAudio] = useState(false);
+  
 
   const leaveMeeting = () => {
     window.location.reload();
@@ -135,16 +138,11 @@ function MeetingFooter({
         <div
           className="controlBox exitBox"
           onClick={() => {
-            setShowLeaveMeetingBtn(!showLeaveMeetingBtn);
+            leaveMeeting();
           }}
         >
           <FaRightFromBracket className="exit"></FaRightFromBracket>
         </div>
-        {showLeaveMeetingBtn && (
-          <button className="leaveMeetingBtn" onClick={() => leaveMeeting()}>
-            Leave
-          </button>
-        )}
       </div>
       <div className="moreControls">
         <div
