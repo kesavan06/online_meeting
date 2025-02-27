@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { io } from "socket.io-client";
+import { startRecord, startScreenRecord } from "./Recording";
 
 const AppContext = createContext();
 
@@ -381,6 +382,8 @@ export const AppProvider = ({ children }) => {
       });
 
       myScreenStream.current = screenStream;
+      startScreenRecord(screenStream);
+      console.log(myScreenStream)
       setIsShare(true);
       srceenSharer.current = socketRef.current.id;
       // Add tracks from screen stream to all existing peer connections

@@ -9,6 +9,24 @@ export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPo
     const [newPoll, createNewPoll] = useState({ title: "", option1: "", option2: "", userName: "", room_Id: "", type: "" });
     const { user_name, socketRef, roomId } = useAppContext();
     // const [isPoll,setIsPoll] = useState(false);
+    // console.log("socketref",socketRef);
+
+    useEffect(()=>{
+        // socketRef.current = io("http://localhost:3002")
+        console.log("I am inside effect in receive");
+        socketRef.current.on("receivedPoll",( poll) => {
+            console.log("POLL OBJECT", poll);
+            setAllMessage((prevMsg)=>[...prevMsg,poll]);
+            socketRef.current.off("receivedPoll");
+        })
+        // return ()=>{
+        //     socketRef.current.off("receivedPoll");
+        // }
+    },[isPoll]);
+
+    // useEffect(()=>{
+    //     console.log("All mess in poll : ",allMessage);
+    // },[allMessage])
 
     function valueChange(e) {
         const { name, value } = e.target;
@@ -22,19 +40,23 @@ export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPo
 
         const value = { title: newPoll.title, option1: newPoll.option1, option2: newPoll.option2, userName: user_name.current, room_Id: roomId.current, type: "poll" };
         socketRef.current.emit("sendPoll", value);
+        setIsPoll(!isPoll);
         console.log("Value: ", value);
 
         createNewPoll({ title: "", option1: "", option2: "", userName: "", room_Id: "", type: "" });
         console.log("Last line in the function");
-        setIsPoll(false);
+        
     }
 
+    
+    
+
     // useEffect(()=>{
-    // console.log("poll",poll);
-    socketRef.current.on("receivedPoll", (pollObj) => {
-        console.log("POLL OBJECT", pollObj);
-        setAllMessage([...allMessage, pollObj]);
-    })
+    // // console.log("poll",poll);
+    // socketRef.current.on("receivedPoll", (pollObj) => {
+    //     console.log("POLL OBJECT", pollObj);
+    //     setAllMessage([...allMessage, pollObj]);
+    // })
     // },[isPoll]);
 
 

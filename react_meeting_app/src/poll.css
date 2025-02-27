@@ -6,3 +6,31 @@
 }
 
 
+#pollDiv{
+    width: 240px;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding-left: 15px;
+    padding-right: 10px;
+    background-color: white;
+}
+
+input{
+    color: black;
+}
+
+label{
+    color: black;
+}
+
+h1{
+    color: black;
+}
+
+.option{
+    margin-top: 10px;
+}

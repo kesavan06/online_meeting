@@ -161,6 +161,9 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
       console.log("Message received: ", msg);
       handleNewMessage(msg);
     });
+
+    console.log("Message: ",allMessage);
+
   }, [allMessage]);
 
   return (

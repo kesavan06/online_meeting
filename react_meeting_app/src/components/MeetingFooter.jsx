@@ -29,13 +29,21 @@ function MeetingFooter({
   setShowEmojis,
   openPopup,
   participantLength,
+  setSec,
+  sec,
+  min,
+  setMin,
+  isRecord,
+  setIsRecord,
+  isRun,
+  setIsRun
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   const [isRecord, setIsRecord] = useState(false);
-  const { roomId, myStream, isShare, myScreenStream, socketRef } =
-    useAppContext();
+  const { myStream, isShare, myScreenStream } = useAppContext();
   // const [showLeaveMeetingBtn, setShowLeaveMeetingBtn] = useState(false);
+  let interval;
 
   // function handleClick() {
   //   handleBoard();
@@ -70,7 +78,12 @@ function MeetingFooter({
       if (myScreenStream.current) {
         localStream = myScreenStream.current;
       }
+      else{
+        localStream = myStream.current
+      }
       let stream = startRecord(localStream);
+      setIsRun(true);
+      // timer();
       if (stream) {
         setIsRecord(true);
       }
@@ -83,6 +96,7 @@ function MeetingFooter({
     try {
       stopRecord();
       console.log("Recording stop!!!");
+      stopTimer();
       setIsRecord(false);
     } catch (err) {
       console.log("Error: " + err);
@@ -92,6 +106,84 @@ function MeetingFooter({
   function handleEmoji() {
     setShowEmojis((prev) => (prev = !prev));
   }
+
+  // function timer()
+  // {
+    // if(isRun)
+    // {
+    //   interval = setInterval(()=>{
+    //     setSec((prev)=>prev+1);
+
+    //   },1000);
+    // }
+
+  // }
+
+useEffect(()=>{
+  if(isRun && !interval)
+  {
+    setSec(0);
+    interval = setInterval(() => {
+      setSec((prev) => prev + 1);
+
+    }, 1000);
+  }
+},[isRun])
+
+  useEffect(()=>{
+    if(sec==59)
+    {
+      setMin((prev)=>prev+1);
+      setSec(0);
+    }
+  },[sec])
+
+  function stopTimer()
+  {
+    clearInterval(interval);
+    setIsRun(false);
+    setSec(0);
+    setMin(0);
+  }
+
+  // function timer()
+  // {
+    // if(isRun)
+    // {
+    //   interval = setInterval(()=>{
+    //     setSec((prev)=>prev+1);
+
+    //   },1000);
+    // }
+
+  // }
+
+  useEffect(()=>{
+    if(isRun && !interval)
+    {
+      setSec(0);
+      interval = setInterval(() => {
+        setSec((prev) => prev + 1);
+  
+      }, 1000);
+    }
+  },[isRun])
+  
+    useEffect(()=>{
+      if(sec==59)
+      {
+        setMin((prev)=>prev+1);
+        setSec(0);
+      }
+    },[sec])
+  
+    function stopTimer()
+    {
+      clearInterval(interval);
+      setIsRun(false);
+      setSec(0);
+      setMin(0);
+    }
 
   return (
     <div className="footerBox">
@@ -194,5 +286,6 @@ function MeetingFooter({
     </div>
   );
 }
+
 
 export default MeetingFooter;

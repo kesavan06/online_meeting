@@ -365,12 +365,12 @@ io.on("connection", (socket) => {
     io.to(socket.roomName).emit("showEmoji", { emoji, name: socket.userName });
   });
 
-  socket.on("sendPoll", (poll) => {
-    console.log("User_name", poll.userName);
-    console.log("room id: ", poll.room_Id);
-    socket.to(poll.room_Id).emit("receivedPoll", poll);
-    console.log("after recieve");
-  });
+  socket.on("sendPoll",(poll)=>{
+    console.log("User_name",poll.userName);
+    console.log("room id: ",poll.room_Id);
+    socket.to(poll.room_Id).emit("receivedPoll",poll);
+    console.log("after recieve")
+  })
 
   // Handle user disconnection
   socket.on("disconnect", () => {
