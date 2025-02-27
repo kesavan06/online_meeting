@@ -1,9 +1,8 @@
-import React, {  useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../Participants.css";
 import ShowParticipant from "./ShowPartipants";
 
 import { useAppContext } from "../Context";
-
 
 function Participants({ view, setView }) {
   let [allParticipants, setParticipants] = useState([]);
@@ -24,11 +23,15 @@ function Participants({ view, setView }) {
     }, 100);
   }, [!view]);
 
-
   return (
     <div className="participantsBox">
-    {allParticipants.map((participant) => {
-        return <ShowParticipant name={participant} index={allParticipants.indexOf(participant) + 1} />
+      {allParticipants.map((participant) => {
+        return (
+          <ShowParticipant
+            name={participant}
+            index={allParticipants.indexOf(participant) + 1}
+          />
+        );
       })}
     </div>
   );
@@ -36,30 +39,26 @@ function Participants({ view, setView }) {
 
 export default Participants;
 
-
 async function getPaticipants(roomId) {
   try {
     let fetchP = await fetch("http://localhost:3002/getP", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ roomId: roomId })
-    })
+      body: JSON.stringify({ roomId: roomId }),
+    });
 
     console.log("Fetch : ", fetchP);
-
 
     let par = await fetchP.json();
     if (par != null) {
       console.log("Paticicpants : ", par);
-    }
-    else {
+    } else {
       console.log("Error : ", par);
     }
     return par;
-  }
-  catch (err) {
+  } catch (err) {
     console.log("Error : \n", err);
   }
 }
