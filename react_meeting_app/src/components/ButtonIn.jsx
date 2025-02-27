@@ -83,7 +83,7 @@ export default function ButtonDiv(props) {
   }
 
   return (
-    <div className={style.parent}>
+    <div className={style.parent} style={{width: "100%", height: "10%", display : "flex",  alignItems: "center", gap: "2%", position : "relative",background:  "#1f2937",}}>
       <Button
         value={<FaPaintBrush style={{ fontSize: "1.6rem" }} />}
         onClick={startDrawing}
@@ -99,6 +99,7 @@ export default function ButtonDiv(props) {
           value={widthOfBrush}
           onChange={handleWidthChange}
           onClick={handleClick}
+          style={{position: "absolute", bottom: "-1.5%", width: "6%"}}
         ></input>
       )}
 
@@ -109,22 +110,6 @@ export default function ButtonDiv(props) {
         title="Distable Drawing"
       ></Button>
 
-      <Button
-        value={"shape"}
-        onClick={selectShapes}
-        type="button"
-        title="Shapes"
-      ></Button>
-      {showShape && (
-        <div className={style.shapeDiv}>
-          <button id="line" onClick={() => setTool("line")}>
-            line
-          </button>
-          <button id="rectangle" onClick={() => setTool("rectangle")}>
-            rectangle
-          </button>
-        </div>
-      )}
 
       <Button
         value={<FaEraser style={{ fontSize: "1.6rem" }} />}
@@ -144,15 +129,16 @@ export default function ButtonDiv(props) {
           value={widthOfEraser}
           onChange={handleWidthForEraser}
           onClick={handleClickInEraser}
+          style={{position: "absolute", bottom: "0.5%", width: "6%", left: "24%", marginTop: "1%"}}
         ></input>
       )}
 
       <button
         style={{
-          width: "70%",
+          width: "6%",
           border: "1px solid black",
           cursor: "pointer",
-          height: "52px",
+          height: "53%",
           backgroundColor: "#111827",
           borderRadius: "5px",
         }}
@@ -179,11 +165,6 @@ export default function ButtonDiv(props) {
         title="Clear"
       ></Button>
 
-      <Button
-        value={<MdCancel style={{ fontSize: "1.6rem" }} />}
-        onClick={props.parentShow}
-        type="button"
-      ></Button>
     </div>
   );
 }

@@ -171,10 +171,10 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
 
       <div className="sentBox">
         <div className="msgPermision">
-          <p>To</p>
+          {/* <p>To</p>
           <select className="selectUser">
             <option>Everyone</option>
-          </select>
+          </select> */}
 
           {showEmoji && (
             <Emoji
@@ -184,7 +184,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
             />
           )}
 
-          <button onClick={(() => setIsPoll(true))}>Poll</button>
+          {/* <button onClick={(() => setIsPoll(true))}>Poll</button> */}
           {/* {isPoll && <Wrapper>
               <PollCreater></PollCreater>
             </Wrapper>} */}

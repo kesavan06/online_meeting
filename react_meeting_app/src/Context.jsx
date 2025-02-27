@@ -2,7 +2,6 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useReducer,
   useRef,
   useState,
 } from "react";
@@ -36,7 +35,7 @@ export const AppProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    socketRef.current = io("http://172.17.20.22:3002");
+    socketRef.current = io("http://localhost:3002");
     setupSocketListeners();
 
     return () => {
@@ -59,7 +58,7 @@ export const AppProvider = ({ children }) => {
     });
 
     socketRef.current.on("user-connected", async (userId) => {
-      if (userId === socketRef.current.id) return; // Ignore self
+      if (userId === socketRef.current.id) return;
       console.log("User connected:", userId);
       if (myStream.current || myScreenStream.current) {
         await createPeerConnection(userId, true); // Create peer connection and include screen share if active
@@ -124,10 +123,30 @@ export const AppProvider = ({ children }) => {
       }
     });
 
-    socketRef.current.on("screen-sharing-stopped", (userId) => {
+    socketRef.current.on("screen-sharing-stopped", (userId, streamId) => {
+      console.log("Hello");
       if (screenStreamState?.userId === userId) {
         setScreenStreamState(null);
       }
+      setStreamsState((prev) => {
+        prev = prev.filter((videoStream) => {
+          console.log(videoStream.stream.id, streamId);
+          if (videoStream.stream.id == streamId) {
+            // removePeerConnection(videoStream.userId);
+            console.log(
+              "after disconnected  screen: id",
+              videoStream.stream.id,
+              streamId
+            );
+          }
+
+          if (videoStream.stream.id !== streamId) {
+            return videoStream;
+          }
+        });
+        console.log("After remove the screen share:", prev);
+        return prev;
+      });
     });
 
     socketRef.current.on("offer", async ({ offer, from }) => {
@@ -427,29 +446,21 @@ export const AppProvider = ({ children }) => {
       console.log("After remove the screen share:", prev);
       return prev;
     });
-    if (myScreenStream.current) {
-      myScreenStream.current.getTracks().forEach((track) => track.stop());
-
-      // Remove screen sharing tracks from peer connections
-      peerConnectionsRef.current.forEach((peerConnection) => {
-        peerConnection.getSenders().forEach((sender) => {
-          if (sender.track && sender.track.kind === "video") {
-            peerConnection.removeTrack(sender);
-          }
-        });
-      });
-    }
 
     myScreenStream.current = null;
     srceenSharer.current = null;
     setScreenStreamState(null);
-    socketRef.current.emit("screen-share-stopped", roomId.current);
+    socketRef.current.emit("screen-share-stopped", {
+      roomId: roomId.current,
+      screenId: screenStream.id,
+    });
   };
   useEffect(() => {
     console.log("screenStreamState updated:", screenStreamState);
   }, [screenStreamState]);
 
   const getMediaStream = async () => {
+    console.log(navigator);
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,

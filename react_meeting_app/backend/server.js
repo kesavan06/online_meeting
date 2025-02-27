@@ -73,7 +73,8 @@ dbConnection.query(tableCreateQuery, (err, result) => {
   console.log('Table "users" created or already exists');
 });
 
-let meetingTQuery = "create table if not exists meetings(meeting_id smallint auto_increment primary key, user_name varchar(60) not null, room_name varchar(10) not null unique, host_id smallint unique, foreign key (host_id) references users(user_id)  );";
+let meetingTQuery =
+  "create table if not exists meetings(meeting_id smallint auto_increment primary key, user_name varchar(60) not null, room_name varchar(10) not null unique, host_id smallint unique, foreign key (host_id) references users(user_id)  );";
 
 dbConnection.query(meetingTQuery, (err, result) => {
   if (err) {
@@ -83,7 +84,8 @@ dbConnection.query(meetingTQuery, (err, result) => {
   console.log('Table "meetings" created or already exists');
 });
 
-let meetingParicipantQuery = "create table if not exists meetings_participant(participant_id smallint auto_increment primary key, participant_name varchar(60) not null, user_id smallint null, room_name varchar(10) not null,foreign key (room_name) references meetings(room_name)  );";
+let meetingParicipantQuery =
+  "create table if not exists meetings_participant(participant_id smallint auto_increment primary key, participant_name varchar(60) not null, user_id smallint null, room_name varchar(10) not null,foreign key (room_name) references meetings(room_name)  );";
 
 dbConnection.query(meetingParicipantQuery, (err, result) => {
   if (err) {
@@ -93,10 +95,7 @@ dbConnection.query(meetingParicipantQuery, (err, result) => {
   console.log('Table "meetings_participant" created or already exists');
 });
 
-
-
-
-app.use(cors({origin: "*"}));
+app.use(cors({ origin: "*" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -104,11 +103,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello from Backend!" });
 });
 
-app.post("/allMessages", (req, res) => {
+app.post("/allMessages", async (req, res) => {
   //   console.log("In messObj post-R Details : ",allRoomDetails);
   let { roomId } = req.body;
   console.log("Room ID : ", roomId);
-  let theRoom = getRoom(roomId);
+  let theRoom = await getRoom(roomId);
   console.log("Selected Room : ", theRoom);
 
   if (theRoom != null) {
@@ -139,7 +138,8 @@ app.post("/signUp", async (req, res) => {
     console.log("Data3 : ", unique_name);
     console.log("Data4 : ", user_key);
 
-    let query = "insert into users(user_name, unique_name ,password, user_key ) values(?,?,?, ?)";
+    let query =
+      "insert into users(user_name, unique_name ,password, user_key ) values(?,?,?, ?)";
 
     let insertUser = await new Promise((resolve, reject) => {
       dbConnection.query(
@@ -189,11 +189,11 @@ app.get("/secretKey", async (req, res) => {
   }
 });
 
-app.post("/getP", async (req, res) => {
+app.post("/getP", (req, res) => {
   try {
     let { roomId } = req.body;
     console.log("I am inside oarticipant : ", roomId);
-    let participants = await getRoom(roomId);
+    let participants =  getRoom(roomId);
     console.log("Participants : ", participants);
 
     let p = participants.participants;
@@ -240,7 +240,7 @@ io.on("connection", (socket) => {
       // }
 
       let roomCheck = checkTheRoomToId(roomId); //true- exsists
-
+  console.log("Room exsist : ",roomCheck)
       if (roomCheck) {
         // join room
 
@@ -324,8 +324,8 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("screen-sharing-started", userId);
   });
 
-  socket.on("screen-sharing-stopped", (roomId) => {
-    socket.to(roomId).emit("screen-sharing-stopped", socket.id);
+  socket.on("screen-share-stopped", ({ roomId, screenId }) => {
+    socket.to(roomId).emit("screen-sharing-stopped", socket.id, screenId);
   });
 
   // send Message
@@ -358,17 +358,15 @@ io.on("connection", (socket) => {
   socket.on("emojiSend", (emoji) => {
     console.log("EMoji Received : ", emoji);
 
-    io.to(socket.roomName).emit("showEmoji", {emoji, name : socket.userName});
+    io.to(socket.roomName).emit("showEmoji", { emoji, name: socket.userName });
+  });
 
-  })
-
-
-  socket.on("sendPoll",(poll)=>{
-    console.log("User_name",poll.userName);
-    console.log("room id: ",poll.room_Id);
-    socket.to(poll.room_Id).emit("receivedPoll",poll);
+  socket.on("sendPoll", (poll) => {
+    console.log("User_name", poll.userName);
+    console.log("room id: ", poll.room_Id);
+    socket.to(poll.room_Id).emit("receivedPoll", poll);
     console.log("after recieve");
-  })
+  });
 
   // Handle user disconnection
   socket.on("disconnect", () => {
@@ -438,7 +436,7 @@ function checkTheRoomToId(roomId) {
 }
 
 function getRoom(roomID) {
-  // console.log("All Rooms : I came inside -",allRoomDetails);
+  console.log("All Rooms : I came inside -",allRoomDetails);
   for (let room of allRoomDetails) {
     console.log("Room: ", room);
     if (room.roomId == roomID) {
@@ -483,9 +481,7 @@ async function deleteUser(roomName, socket) {
     });
 
     console.log("Delete : ", dataDelete);
-
-  }
-  catch (err) {
+  } catch (err) {
     console.log("Error in gettting user data : \nInternal Server Error\n", err);
   }
 }

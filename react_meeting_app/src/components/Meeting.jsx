@@ -11,6 +11,8 @@ import "../Meeting.css";
 import { useAppContext } from "../Context";
 import Wrapper from "./Wrapper";
 import PollCreater from "./PollCreater";
+import { FaCopy } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
@@ -60,7 +62,7 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   );
 };
 
-function Meeting({showMeeting}) {
+function Meeting({ showMeeting }) {
   // let {videoGridRed} = useAppContext();
 
   // const [showWhiteBoard, setShowWhiteBoard] = useState(false);
@@ -73,13 +75,41 @@ function Meeting({showMeeting}) {
 
   const [participantLength, setParticiapantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
+  const [copyText, setCopyText] = useState(false);
+
+  const copyRoomId = async (roomId) => {
+    await navigator.clipboard.writeText(roomId);
+    setCopyText(true);
+  };
+  const copyComponent = () => {
+    if (copyText) {
+      return setTimeout(() => {
+        <FaCheck></FaCheck>;
+      }, 1000);
+    } else {
+      return <FaCopy></FaCopy>;
+    }
+  };
 
   const openPopup = () => {
     const newWindow = window.open("", "_blank", "width=1000,height=700");
     newWindow.document.title = "Kadhaikalaam - whiteboard";
 
     if (newWindow) {
+
+      const style = newWindow.document.createElement("style");
+      style.innerHTML = `
+        body {
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          background-color: white;
+        }`;
+
+      newWindow.document.head.appendChild(style);
+      
       newWindow.document.body.innerHTML = "<div id='popup-root'></div>";
+
       const popupRoot = newWindow.document.getElementById("popup-root");
 
       if (popupRoot) {
@@ -176,7 +206,21 @@ function Meeting({showMeeting}) {
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
           <VideoRecord></VideoRecord>
-          <p style={{ color: "white" }}>Meeting ID: {roomId.current}</p>
+          <p
+            style={{
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            Meeting ID: {roomId.current}
+            { }
+            <FaCopy
+              onClick={() => copyRoomId(roomId.current)}
+              style={{ marginLeft: "10px", cursor: "pointer" }}
+            ></FaCopy>
+          </p>
         </div>
       </div>
       <div className="meetingContent">
@@ -261,7 +305,7 @@ function Meeting({showMeeting}) {
           openPopup={openPopup}
           setShowEmojis={setShowEmojis}
           participantLength={participantLength}
-          
+
         ></MeetingFooter>{" "}
       </div>
     </div>

@@ -262,7 +262,7 @@ export default function Canvas(props) {
 
     return (
         <>
-            <canvas ref={canvasRef} className={props.class} width={610} height={560} style={{ position: "relative", cursor: "none" }}> </canvas>
+            <canvas ref={canvasRef} className={props.class} width={1010} height={1060} style={{ position: "relative", cursor: "none",border: "1px solid white",borderLeft: "0px solid" }}> </canvas>
 
             <div style={{ transition: "transform 0.05s linear", pointerEvents: "none", position: "absolute", left: position.x, top: position.y }} >
                 {isDrawingRef.current && !isErasing.current && <FaPencilAlt style={{ fontSize: "1.7rem", rotate: "180deg" }} />}
