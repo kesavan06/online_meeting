@@ -28,7 +28,7 @@ function MeetingFooter({
   showEmojis,
   setShowEmojis,
   openPopup,
-  participantLength
+  participantLength,
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
@@ -46,12 +46,18 @@ function MeetingFooter({
   useEffect(() => {
     console.log(pauseAudio);
     if (pauseAudio) {
-      console.log("mic off")
-    }
-    else{
-      console.log("mic on")
+      setTimeout(() => {
+        socketRef.current.emit("disable-audio", roomId.current);
+      }, 1000);
+      console.log("mic off");
+    } else {
+      console.log("mic on");
     }
   }, [pauseAudio]);
+
+  useEffect(() => {
+    
+  })
 
   const leaveMeeting = () => {
     window.location.reload();

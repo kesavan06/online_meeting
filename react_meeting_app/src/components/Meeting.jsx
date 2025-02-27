@@ -96,7 +96,6 @@ function Meeting({ showMeeting }) {
     newWindow.document.title = "Kadhaikalaam - whiteboard";
 
     if (newWindow) {
-
       const style = newWindow.document.createElement("style");
       style.innerHTML = `
         body {
@@ -107,7 +106,7 @@ function Meeting({ showMeeting }) {
         }`;
 
       newWindow.document.head.appendChild(style);
-      
+
       newWindow.document.body.innerHTML = "<div id='popup-root'></div>";
 
       const popupRoot = newWindow.document.getElementById("popup-root");
@@ -128,6 +127,15 @@ function Meeting({ showMeeting }) {
     socketRef,
     user_name,
   } = useAppContext();
+
+
+
+
+  socketRef.current.on("disable-audio", (roomId, userId) => {
+    streams.map(() => {
+      
+    })
+  });
 
   console.log("all streams: ", streams);
 
@@ -215,7 +223,7 @@ function Meeting({ showMeeting }) {
             }}
           >
             Meeting ID: {roomId.current}
-            { }
+            {}
             <FaCopy
               onClick={() => copyRoomId(roomId.current)}
               style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -305,7 +313,6 @@ function Meeting({ showMeeting }) {
           openPopup={openPopup}
           setShowEmojis={setShowEmojis}
           participantLength={participantLength}
-
         ></MeetingFooter>{" "}
       </div>
     </div>

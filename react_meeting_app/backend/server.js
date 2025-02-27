@@ -28,7 +28,7 @@ const mysql = require("mysql2");
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Deepa30",
+  password: "kesavan@123",
 });
 
 connection.connect((err) => {
@@ -50,7 +50,7 @@ connection.end();
 const dbConnection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Deepa30",
+  password: "kesavan@123",
   database: "users_db",
 });
 
@@ -306,6 +306,10 @@ io.on("connection", (socket) => {
     if (!to || !answer) return socket.emit("error", "Missing answer or target");
     console.log(`Answer from ${socket.id} to ${to}`);
     io.to(to).emit("answer", { answer, from: socket.id });
+  });
+
+  socket.on("disable-audio", (roomId) => {
+    io.to(roomId).emit("disable-audio", roomId, socket.id);
   });
 
   socket.on("screen-offer", ({ offer, to }) => {

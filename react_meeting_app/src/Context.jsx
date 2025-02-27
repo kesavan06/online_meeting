@@ -35,6 +35,10 @@ export const AppProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log(streamState);
+  }, [streamState]);
+
+  useEffect(() => {
     socketRef.current = io("http://localhost:3002");
     setupSocketListeners();
 
@@ -357,6 +361,7 @@ export const AppProvider = ({ children }) => {
 
         return [...prevStreams, videoStream];
       }
+      return prevStreams;
     });
   };
 
