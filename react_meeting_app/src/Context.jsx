@@ -353,9 +353,10 @@ export const AppProvider = ({ children }) => {
     setStreamsState((prevStreams) => {
       if (!prevStreams.some((s) => s.stream.id === videoStream.stream.id)) {
         console.log("Stream added:", videoStream.stream.id);
+        console.log("bOTH sTREAM ", prevStreams, videoStream);
+
         return [...prevStreams, videoStream];
       }
-      return prevStreams;
     });
   };
 
@@ -455,6 +456,7 @@ export const AppProvider = ({ children }) => {
       screenId: screenStream.id,
     });
   };
+
   useEffect(() => {
     console.log("screenStreamState updated:", screenStreamState);
   }, [screenStreamState]);
@@ -472,11 +474,13 @@ export const AppProvider = ({ children }) => {
   const initializeMediaStream = async (userShowName, userId, isHost) => {
     try {
       const tempMyStream = myStream.current;
+      console.log("initialize stream:", tempMyStream);
       addVideoStream({
         stream: tempMyStream,
         type: "camera",
         userId: socketRef.current.id,
       });
+      console.log("After set stream:", streamState);
       if (roomId.current) {
         socketRef.current.emit(
           "join-room",

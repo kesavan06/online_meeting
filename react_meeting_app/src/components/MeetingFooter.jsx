@@ -32,15 +32,25 @@ function MeetingFooter({
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   const [isRecord, setIsRecord] = useState(false);
-  const { myStream, isShare, myScreenStream } = useAppContext();
+  const { roomId, myStream, isShare, myScreenStream, socketRef } =
+    useAppContext();
   // const [showLeaveMeetingBtn, setShowLeaveMeetingBtn] = useState(false);
 
   // function handleClick() {
   //   handleBoard();
   // }
-  const [puaseVideo, setPauseVideo] = useState(false);
-  const [puaseAudio, setPauseAudio] = useState(false);
-  
+  const [pauseVideo, setPauseVideo] = useState(false);
+  const [pauseAudio, setPauseAudio] = useState(false);
+
+  useEffect(() => {
+    console.log(pauseAudio);
+    if (pauseAudio) {
+      console.log("mic off")
+    }
+    else{
+      console.log("mic on")
+    }
+  }, [pauseAudio]);
 
   const leaveMeeting = () => {
     window.location.reload();
@@ -84,9 +94,15 @@ function MeetingFooter({
           className="controlBox"
         >
           {mic ? (
-            <FaMicrophone className="changeColor"></FaMicrophone>
+            <FaMicrophone
+              className="changeColor"
+              onClick={() => setPauseAudio((prev) => (prev = true))}
+            ></FaMicrophone>
           ) : (
-            <FaMicrophoneSlash className="changeColor"></FaMicrophoneSlash>
+            <FaMicrophoneSlash
+              className="changeColor"
+              onClick={() => setPauseAudio((prev) => (prev = false))}
+            ></FaMicrophoneSlash>
           )}
         </div>
         <div
@@ -135,7 +151,7 @@ function MeetingFooter({
             ></FaCircleStop>
           )}
         </div>
-       
+
         <div
           className="controlBox exitBox"
           onClick={() => {
