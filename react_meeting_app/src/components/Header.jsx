@@ -1,5 +1,6 @@
 // import Signin from "./Signin";
 // import Signup from "./Signup";
+import { useAppContext } from "../Context";
 import "../Header.css";
 // import { useState } from "react";
 
@@ -8,7 +9,15 @@ export default function Header({
   setShowSignUp,
   showSignIn,
   setShowSignIn,
+  cookie,
+  setCookie,
+  hasCookie,
+  setHasCookie,
+  removeCookie
 }) {
+
+  const { user_name, user_id } = useAppContext();
+
   function showSignUp() {
     setShowSignUp(true);
     setShowSignIn(false);
@@ -23,14 +32,38 @@ export default function Header({
     setShowSignUp(false);
   }
 
+  if (document.cookie) {
+    console.log("Cookie in header: ", cookie);
+    setHasCookie(prev => prev = true);
+  }
+
+  function handleLogOut() {
+    console.log("Log out confirmed");
+    let keys = Object.keys(cookie);
+    for (let k of keys) {
+      removeCookie(k);
+    }
+
+    user_name.current = "";
+    user_id.current = "";
+
+    setHasCookie(prev => prev = false);
+
+  }
+
+
   return (
     <div className="homePageHeader">
       <div className="iconAndName">
-        <h1>Kathaikalaam</h1>
+      <h1>Kathaikalaam</h1>
       </div>
       <div className="navLogin">
-        <p onClick={showSignUp}>Signup</p>
-        <p onClick={showSignIn}>Signin</p>
+        {!hasCookie &&
+          <p onClick={showSignIn}>Signin</p>
+        }
+        {hasCookie &&
+          <p onClick={() => handleLogOut()}>Logout</p>
+        }
       </div>
     </div>
   );

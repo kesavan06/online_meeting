@@ -5,9 +5,10 @@ import Login from "./SignIn";
 
 export default function Signin(props) {
 
+
   let { nameUnique, setNameUnique } = props;
   let { password, setPassword } = props;
-  let { user, key, user_id } = useAppContext();
+  let { user_name, key, user_id } = useAppContext();
   let {displayMessage, setDisplayMessage} = props
 
   function cancelShowSignIn(event) {
@@ -29,12 +30,18 @@ export default function Signin(props) {
 
       if (userLogin != null) {
         // console.log("User Login Now : ",userLogin);
-        user.current = userLogin.user_name;
+        user_name.current = userLogin.user_name;
         key.current = userLogin.user_key;
+
+        const expires = new Date(Date.now() + 86400000);
+        props.setCookie('user_name', user_name.current, {expires});
+        props.setCookie('user_id', userLogin.user_id, {expires});
+
+
         console.log("User ID: ", user_id);
         user_id.current = userLogin.user_id;
 
-        console.log("User in sign in : -----", user, key, user_id);
+        console.log("User in sign in : -----", user_name, key, user_id);
 
         props.setShowSignIn(false);
       }

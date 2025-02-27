@@ -12,7 +12,7 @@ export default function WhiteBoard({ controlBoard }) {
     let canvasRef = useRef(null);
     let eraserRef = useRef(false);
     const colorRef = useRef("#000000")
-    let brushRef = useRef(5);
+    let brushRef = useRef(1);
     let eraserWidthRef = useRef(10);
     const [display, setDisplay] = useState(false);
 

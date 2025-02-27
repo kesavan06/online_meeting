@@ -14,6 +14,7 @@ export const AppProvider = ({ children }) => {
   const roomId = useRef(null);
   const socketRef = useRef(null);
   const [streamState, setStreamsState] = useState([]);
+
   const [screenStreamState, setScreenStreamState] = useState(null);
   const user_name = useRef({});
   const myStream = useRef(null);
@@ -22,9 +23,10 @@ export const AppProvider = ({ children }) => {
   const candidateQueues = useRef(new Map()); // Queue ICE candidates per peer
   let srceenSharer = useRef(null);
   const [isShare, setIsShare] = useState(false);
-  const user = useRef({});
   const key = useRef({});
   const user_id = useRef({});
+  let host = useRef(null);
+
   const configuration = {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
@@ -57,7 +59,7 @@ export const AppProvider = ({ children }) => {
     });
 
     socketRef.current.on("user-connected", async (userId) => {
-      if (userId === socketRef.current.id) return; // Ignore self
+      if (userId === socketRef.current.id) return;
       console.log("User connected:", userId);
       if (myStream.current || myScreenStream.current) {
         await createPeerConnection(userId, true); // Create peer connection and include screen share if active
@@ -122,10 +124,30 @@ export const AppProvider = ({ children }) => {
       }
     });
 
-    socketRef.current.on("screen-sharing-stopped", (userId) => {
+    socketRef.current.on("screen-sharing-stopped", (userId, streamId) => {
+      console.log("Hello");
       if (screenStreamState?.userId === userId) {
         setScreenStreamState(null);
       }
+      setStreamsState((prev) => {
+        prev = prev.filter((videoStream) => {
+          console.log(videoStream.stream.id, streamId);
+          if (videoStream.stream.id == streamId) {
+            // removePeerConnection(videoStream.userId);
+            console.log(
+              "after disconnected  screen: id",
+              videoStream.stream.id,
+              streamId
+            );
+          }
+
+          if (videoStream.stream.id !== streamId) {
+            return videoStream;
+          }
+        });
+        console.log("After remove the screen share:", prev);
+        return prev;
+      });
     });
 
     socketRef.current.on("offer", async ({ offer, from }) => {
@@ -337,12 +359,14 @@ export const AppProvider = ({ children }) => {
       return prevStreams;
     });
   };
+
   const startScreenShare = async () => {
-    if (screenStreamState) {
-      console.log(
-        "Screen sharing already active by:",
-        screenStreamState.userId
-      );
+    let isScreenShare = streamState.some(
+      (videoStream) => videoStream.type == "screen"
+    );
+    console.log(isScreenShare);
+    if (isScreenShare) {
+      console.log("Screen sharing already active");
       return;
     }
 
@@ -353,7 +377,6 @@ export const AppProvider = ({ children }) => {
 
       myScreenStream.current = screenStream;
       startScreenRecord(screenStream);
-      // startRecord(screenStream);
       console.log(myScreenStream)
       setIsShare(true);
       srceenSharer.current = socketRef.current.id;
@@ -400,37 +423,47 @@ export const AppProvider = ({ children }) => {
       });
       // Handle stream stop
       screenStream.getVideoTracks()[0].onended = () => {
-        stopScreenSharing();
+        stopScreenSharing(screenStream);
       };
     } catch (err) {
       console.error("Error starting screen share:", err);
     }
   };
 
-  const stopScreenSharing = () => {
-    if (myScreenStream.current) {
-      myScreenStream.current.getTracks().forEach((track) => track.stop());
+  const stopScreenSharing = (screenStream) => {
+    setStreamsState((prev) => {
+      prev = prev.filter((videoStream) => {
+        console.log(videoStream.stream.id, screenStream.id);
+        if (videoStream.stream.id == screenStream.id) {
+          console.log(
+            "after disconnected  screen: id",
+            videoStream.stream.id,
+            screenStream.id
+          );
+        }
 
-      // Remove screen sharing tracks from peer connections
-      peerConnectionsRef.current.forEach((peerConnection) => {
-        peerConnection.getSenders().forEach((sender) => {
-          if (sender.track && sender.track.kind === "video") {
-            peerConnection.removeTrack(sender);
-          }
-        });
+        if (videoStream.stream.id !== screenStream.id) {
+          return videoStream;
+        }
       });
-    }
+      console.log("After remove the screen share:", prev);
+      return prev;
+    });
 
     myScreenStream.current = null;
     srceenSharer.current = null;
     setScreenStreamState(null);
-    socketRef.current.emit("screen-share-stopped", roomId.current);
+    socketRef.current.emit("screen-share-stopped", {
+      roomId: roomId.current,
+      screenId: screenStream.id,
+    });
   };
   useEffect(() => {
     console.log("screenStreamState updated:", screenStreamState);
   }, [screenStreamState]);
 
   const getMediaStream = async () => {
+    console.log(navigator);
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,
@@ -454,7 +487,7 @@ export const AppProvider = ({ children }) => {
           socketRef.current.id,
           userShowName,
           userId,
-          isHost,
+          isHost
         );
       } else {
         console.warn("Room ID not set!");
@@ -477,11 +510,10 @@ export const AppProvider = ({ children }) => {
         myStream,
         myScreenStream,
         user_name,
-        user,
         key,
         user_id,
         setIsShare,
-        isShare
+        isShare,
       }}
     >
       {children}

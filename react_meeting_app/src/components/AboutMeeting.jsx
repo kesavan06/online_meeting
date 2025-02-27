@@ -10,9 +10,24 @@ export default function AboutMeeting({
   viewJoinMeeting,
   setViewJoinMeeting,
   setShowSignIn,
-  displayMessage
+  displayMessage,
+  cookie,
+  oneTimeCookie,
+  setOneTimeCookie
 }) {
-  const { user } = useAppContext();
+  const { user_name, user_id } = useAppContext();
+
+  useEffect(() => {
+
+    if (document.cookie && !oneTimeCookie) { 
+      console.log("Cookie : ", cookie);
+      user_name.current = cookie.user_name;
+      user_id.current = cookie.user_id;
+
+      console.log("User name, id About meeting in: ", user_id, user_name);
+      setOneTimeCookie((prev) => prev = !prev)
+    }
+  })
 
   return (
     <div className="homePageAboutMeeting">
@@ -21,8 +36,8 @@ export default function AboutMeeting({
     <div className="meetingButtons">
       <button
         onClick={() => {
-          if(Object.keys(user.current).length > 0){
-            alert("Welcome "+user.current);
+          if(Object.keys(user_name.current).length > 0){
+            // alert("Welcome "+user.current);
             displayMessage((prev)=> prev=false)
             setView(!view);
           }

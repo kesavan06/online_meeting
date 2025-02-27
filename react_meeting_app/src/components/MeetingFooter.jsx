@@ -27,31 +27,37 @@ function MeetingFooter({
   isSharing,
   showEmojis,
   setShowEmojis,
+  openPopup,
+  participantLength,
   setSec,
   sec,
   min,
   setMin,
   isRecord,
-  setIsRecord
+  setIsRecord,
+  isRun,
+  setIsRun
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
-  const { myStream, isShare, myScreenStream,socketRef } = useAppContext();
+  // const [isRecord, setIsRecord] = useState(false);
+  const { myStream, isShare, myScreenStream } = useAppContext();
   let interval;
-  const [isRun,setIsRun] = useState(false);
+
+  // function handleClick() {
+  //   handleBoard();
+  // }
+  const [puaseVideo, setPauseVideo] = useState(false);
+  const [puaseAudio, setPauseAudio] = useState(false);
   
 
-  function handleClick() {
-    handleBoard();
-  }
-
-  // function shareScreen() {
-  //   setIsShare(true);
-  // }
+  const leaveMeeting = () => {
+    window.location.reload();
+  };
 
   function startRecording() {
     try {
-      let localStream;
+      let localStream = myStream.current;
       console.log(myScreenStream.current);
       if (myScreenStream.current) {
         localStream = myScreenStream.current;
@@ -65,13 +71,10 @@ function MeetingFooter({
       if (stream) {
         setIsRecord(true);
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.log("Error: " + err);
     }
-
   }
-
 
   function stopRecording() {
     try {
@@ -79,14 +82,13 @@ function MeetingFooter({
       console.log("Recording stop!!!");
       stopTimer();
       setIsRecord(false);
-    }
-    catch (err) {
+    } catch (err) {
       console.log("Error: " + err);
     }
   }
 
-  function handleEmoji(){
-    setShowEmojis((prev)=> prev=!prev)
+  function handleEmoji() {
+    setShowEmojis((prev) => (prev = !prev));
   }
 
   // function timer()
@@ -128,6 +130,45 @@ useEffect(()=>{
     setMin(0);
   }
 
+  // function timer()
+  // {
+    // if(isRun)
+    // {
+    //   interval = setInterval(()=>{
+    //     setSec((prev)=>prev+1);
+
+    //   },1000);
+    // }
+
+  // }
+
+  useEffect(()=>{
+    if(isRun && !interval)
+    {
+      setSec(0);
+      interval = setInterval(() => {
+        setSec((prev) => prev + 1);
+  
+      }, 1000);
+    }
+  },[isRun])
+  
+    useEffect(()=>{
+      if(sec==59)
+      {
+        setMin((prev)=>prev+1);
+        setSec(0);
+      }
+    },[sec])
+  
+    function stopTimer()
+    {
+      clearInterval(interval);
+      setIsRun(false);
+      setSec(0);
+      setMin(0);
+    }
+
   return (
     <div className="footerBox">
       <div className="micVideoConrol">
@@ -161,17 +202,39 @@ useEffect(()=>{
         >
           <FaShareFromSquare className="changeColor"></FaShareFromSquare>
         </div>
-        <div className="controlBox" onClick={handleClick}>
+        <div
+          className="controlBox"
+          onClick={() => {
+            startScreenShare();
+            openPopup();
+          }}
+        >
           <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher>
         </div>
-        <div className="controlBox" onClick={()=>handleEmoji()}>
-          <FaRegFaceSmile className="changeColor" ></FaRegFaceSmile>
+        <div className="controlBox" onClick={() => handleEmoji()}>
+          <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
         </div>
-        <div>
-          {!isRecord && <FaRecordVinyl className="changeColor" onClick={startRecording}></FaRecordVinyl>}
-          {isRecord && <FaCircleStop className="changeColor" onClick={stopRecording}></FaCircleStop>}
+        <div div className="controlBox">
+          {!isRecord && (
+            <FaRecordVinyl
+              className="changeColor"
+              onClick={startRecording}
+            ></FaRecordVinyl>
+          )}
+          {isRecord && (
+            <FaCircleStop
+              className="changeColor"
+              onClick={stopRecording}
+            ></FaCircleStop>
+          )}
         </div>
-        <div className="controlBox exitBox">
+       
+        <div
+          className="controlBox exitBox"
+          onClick={() => {
+            leaveMeeting();
+          }}
+        >
           <FaRightFromBracket className="exit"></FaRightFromBracket>
         </div>
       </div>
@@ -183,7 +246,6 @@ useEffect(()=>{
             setShowChatBox((prev) => (prev = true));
             setChatView((prev) => (prev = true));
           }}
-          u
         >
           <FaRegMessage className="changeColor"></FaRegMessage>
         </div>
@@ -196,7 +258,7 @@ useEffect(()=>{
           }}
         >
           <FaUsers className="changeColor"></FaUsers>
-          <p>5</p>
+          <p>{participantLength}</p>
         </div>
       </div>
     </div>

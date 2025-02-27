@@ -92,9 +92,9 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
       // console.log("All Messages: ",fetchAllMessages );
 
       let allM = await fetchAllMessages.json();
-      console.log("AllMEssages:  ", allM);
-      console.log("AllMEssages:  ", allM.data.messages);
-      console.log("Participants:  ", allM.data.participants);
+      // console.log("AllMEssages:  ", allM);
+      // console.log("AllMEssages:  ", allM.data.messages);
+      // console.log("Participants:  ", allM.data.participants);
       let message = allM.data.messages;
 
       for (let mess of message) {
@@ -152,47 +152,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
     // }
   };
 
-  // const handleNewMessageFirstTime = (allMess) => {
-
-  //   // setAllMessage("")
-  //   setAllMessage((prev) => console.log(prev));
-
-  //   for (let msg of allMess) {
-  //     let isMyMessage = false;
-
-  //     let { user_name, message, sender_id, time } = msg;
-  //     let msgGot = { user_name, message, time };
-
-  //     if (socketRef.current.id == sender_id) {
-  //       isMyMessage = true;
-  //     }
-
-  //     let sendClass = isMyMessage;
-  //     console.log("Message is mine : ", isMyMessage);
-
-  //     setAllMessage((exsistingMessages) => [...(exsistingMessages), { ...msgGot, isMine: sendClass }]);
-  //   }
-
-  // }
-
-  // useEffect(() => {
-  //   async function getMess() {
-  //     let allMessGet = await fetch("http://localhost:3002/messObject", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ roomId: roomId.current }),
-  //     })
-
-  //   console.log("All mess : ",allMessGet);
-
-  //   }
-
-  //   getMess();
-  //   // handleNewMessageFirstTime();
-  // }, [])
-
+  
   useEffect(() => {
     console.log("All messages: ", allMessage);
     socketRef.current.off("receivedMessage");
@@ -214,10 +174,10 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
 
       <div className="sentBox">
         <div className="msgPermision">
-          <p>To</p>
+          {/* <p>To</p>
           <select className="selectUser">
             <option>Everyone</option>
-          </select>
+          </select> */}
 
           {showEmoji && (
             <Emoji
@@ -227,7 +187,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
             />
           )}
 
-          <button onClick={(() => setIsPoll(true))}>Poll</button>
+          {/* <button onClick={(() => setIsPoll(true))}>Poll</button> */}
           {/* {isPoll && <Wrapper>
               <PollCreater></PollCreater>
             </Wrapper>} */}

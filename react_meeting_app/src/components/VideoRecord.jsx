@@ -5,7 +5,7 @@ import { FaCircleStop } from "react-icons/fa6";
 import "../VideoRecord.css";
 import { stopRecord } from "../Recording";
 
-function VideoRecord({sec,min,setMin,setSec,setIsRecord,isRecord}) {
+function VideoRecord({sec,min,setMin,setSec,setIsRecord,isRecord,isRun,setIsRun}) {
 
   // function recordingTimer()
   // {

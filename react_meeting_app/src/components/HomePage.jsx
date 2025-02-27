@@ -13,6 +13,11 @@ import { useAppContext } from "../Context";
 import ShareScreen from "./ShareScreen";
 import SignUp from "./SignUp.js";
 import "../HomePage.css";
+import { useCookies } from 'react-cookie';
+
+
+
+// setAndReadCookie();
 
 export default function HomePage() {
   <FeatureList displayParent={handleParentShow} />;
@@ -24,6 +29,12 @@ export default function HomePage() {
   const [displayParent, setDisplayParent] = useState(false);
   const [displayShareScreen, setDisplayShareScreen] = useState(false);
   const [displayMessage, setDisplayMessage] = useState(false);
+
+  const [hasCookie, setHasCookie] = useState(false);
+  const [cookie, setCookie, removeCookie] = useCookies(['user_name', 'user_id', ]);
+  // console.log("Cookie exsisit : ",document.cookie);
+  const [oneTimeCookie, setOneTimeCookie] = useState(false);
+
 
   function handleShareScreen() {
     setDisplayShareScreen(!displayShareScreen);
@@ -47,12 +58,20 @@ export default function HomePage() {
   ) {
     return (
       <div className="homeContainer homePageContainer">
+
         <Header
           showSignUp={showSignUp}
           setShowSignUp={setShowSignUp}
           showSignIn={showSignIn}
           setShowSignIn={setShowSignIn}
+          cookie={cookie}
+          setCookie={setCookie}
+          removeCookie={removeCookie}
+
+          hasCookie={hasCookie}
+          setHasCookie={setHasCookie}
         />
+
         <AboutMeeting
           view={viewSetupMeeting}
           setView={setViewSetupMeeting}
@@ -60,6 +79,11 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
           setShowSignIn={setShowSignIn}
           displayMessage={setDisplayMessage}
+          cookie={cookie}
+          oneTimeCookie={oneTimeCookie}
+          setOneTimeCookie={setOneTimeCookie}
+          hasCookie={hasCookie}
+          setHasCookie={setHasCookie}
         />
 
         <FeatureList displayParent={handleParentShow} />
@@ -87,6 +111,8 @@ export default function HomePage() {
             password={password}
             setPassword={setPassword}
             signUpFunction={SignUp}
+            cookie= {cookie}
+            setCookie={setCookie}
           ></Signup>
         </Wrapper>
         <AboutMeeting
@@ -94,6 +120,9 @@ export default function HomePage() {
           setView={setViewSetupMeeting}
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
+          cookie={cookie}
+          oneTimeCookie={oneTimeCookie}
+          setOneTimeCookie={setOneTimeCookie}
         />
         <FeatureList />
       </div>
@@ -118,6 +147,9 @@ export default function HomePage() {
             setPassword={setPassword}
             displayMessage={displayMessage}
             setDisplayMessage={setDisplayMessage}
+            cookie= {cookie}
+            setCookie={setCookie}
+            
           ></Signin>
         </Wrapper>
         
@@ -126,6 +158,9 @@ export default function HomePage() {
           setView={setViewSetupMeeting}
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
+          cookie={cookie}
+          oneTimeCookie={oneTimeCookie}
+          setOneTimeCookie={setOneTimeCookie}
         />
         <FeatureList />
       </div>
@@ -142,6 +177,7 @@ export default function HomePage() {
           setView={setViewSetupMeeting}
           showMeeting={showMeeting}
           setShowMeeting={setShowMeeting}
+          cookie= {cookie}
         ></MeetingSetup>
       );
     } else if (viewJoinMeeting) {
@@ -151,10 +187,13 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
           setShowMeeting={setShowMeeting}
           showMeeting={showMeeting}
+          cookie= {cookie}
         ></JoinMeeting>
       );
     } else if (showMeeting) {
-      return <Meeting></Meeting>;
+      return <Meeting showMeeting={showMeeting}></Meeting>;
     }
   }
 }
+
+

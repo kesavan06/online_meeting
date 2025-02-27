@@ -1,13 +1,12 @@
-import React, {  useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../Participants.css";
 import ShowParticipant from "./ShowPartipants";
 
 import { useAppContext } from "../Context";
 
-
-function Participants({ view, setView }) {
+function Participants({ view, setView, setParticipantLength, getPaticipants }) {
+  
   let [allParticipants, setParticipants] = useState([]);
-  // let [count, setCount] = useState(0);
   let { socketRef, roomId } = useAppContext();
 
   useEffect(() => {
@@ -16,6 +15,9 @@ function Participants({ view, setView }) {
       let participant = await getPaticipants(roomId.current);
       console.log("Participants : ", participant.data);
 
+      setParticipantLength((prev) => prev = participant.data.length);
+
+
       for (let p of participant.data) {
         let name = p.name;
         console.log("Name : ", name);
@@ -23,7 +25,6 @@ function Participants({ view, setView }) {
       }
     }, 100);
   }, [!view]);
-
 
   return (
     <div className="participantsBox">
@@ -36,30 +37,26 @@ function Participants({ view, setView }) {
 
 export default Participants;
 
-
 async function getPaticipants(roomId) {
   try {
     let fetchP = await fetch("http://localhost:3002/getP", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ roomId: roomId })
-    })
+      body: JSON.stringify({ roomId: roomId }),
+    });
 
     console.log("Fetch : ", fetchP);
-
 
     let par = await fetchP.json();
     if (par != null) {
       console.log("Paticicpants : ", par);
-    }
-    else {
+    } else {
       console.log("Error : ", par);
     }
     return par;
-  }
-  catch (err) {
+  } catch (err) {
     console.log("Error : \n", err);
   }
 }
