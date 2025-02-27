@@ -31,7 +31,7 @@ export default async function useUniqueName(uName) {
         return rare;
     }
     catch (err) {
-        console.log("Err in email Check : \n", err);
+        console.log("Err in Unique Check : \n", err);
     }
 }
 

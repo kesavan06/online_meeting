@@ -32,6 +32,7 @@ export default function HomePage() {
 
   const [cookie, setCookie] = useCookies(['user_name', 'user_id', ]);
   // console.log("Cookie exsisit : ",document.cookie);
+  const [oneTimeCookie, setOneTimeCookie] = useState(false);
 
 
   function handleShareScreen() {
@@ -70,6 +71,8 @@ export default function HomePage() {
           setShowSignIn={setShowSignIn}
           displayMessage={setDisplayMessage}
           cookie={cookie}
+          oneTimeCookie={oneTimeCookie}
+          setOneTimeCookie={setOneTimeCookie}
         />
 
         <FeatureList displayParent={handleParentShow} />
@@ -106,6 +109,8 @@ export default function HomePage() {
           setView={setViewSetupMeeting}
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
+          cookie={cookie}
+
         />
         <FeatureList />
       </div>
@@ -132,6 +137,7 @@ export default function HomePage() {
             setDisplayMessage={setDisplayMessage}
             cookie= {cookie}
             setCookie={setCookie}
+            
           ></Signin>
         </Wrapper>
         
@@ -140,6 +146,8 @@ export default function HomePage() {
           setView={setViewSetupMeeting}
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
+          cookie={cookie}
+
         />
         <FeatureList />
       </div>

@@ -10,56 +10,63 @@ export default function AboutMeeting({
   viewJoinMeeting,
   setViewJoinMeeting,
   setShowSignIn,
-  displayMessage,cookie
+  displayMessage,
+  cookie,
+  oneTimeCookie,
+  setOneTimeCookie
 }) {
   const { user_name, user_id } = useAppContext();
 
-  if(document.cookie){
-    console.log("Cookie : ",cookie);
-    user_name.current = cookie.user_name;
-    user_id.current = cookie.user_id;
+  useEffect(() => {
 
-    console.log("User name, id About meeting in: ",user_id, user_name);
-  }
+    if (document.cookie && !oneTimeCookie) { //
+      console.log("Cookie : ", cookie);
+      user_name.current = cookie.user_name;
+      user_id.current = cookie.user_id;
+
+      console.log("User name, id About meeting in: ", user_id, user_name);
+      setOneTimeCookie((prev) => prev = !prev)
+    }
+  })
 
   return (
     <div className="homePageAboutMeeting">
-    <h1>Welcome to ConvoSpace</h1>
-    <p>Connect with your team anytime, anywhere!</p>
-    <div className="meetingButtons">
-      <button
-        onClick={() => {
-          if(Object.keys(user_name.current).length > 0){
-            // alert("Welcome "+user.current);
-            displayMessage((prev)=> prev=false)
-            setView(!view);
-          }
-          else{
-            displayMessage((prev)=> prev=true)
-            setShowSignIn((prev)=> prev=true);
-          }
-        }}
-        className="newMeeting"
-      >
-        <FaVideo
-          className="icon"
-          style={{ margin: "0px 10px 0px 0px" }}
-        ></FaVideo>
-        New
-      </button>
-      <button
-        onClick={() => {
-          setViewJoinMeeting(!viewJoinMeeting);
-        }}
-        className="joinMeeting"
-      >
-        <FaUserFriends
-          style={{ margin: "0px 10px 0px 0px" }}
-          className="icon"
-        ></FaUserFriends>
-        Join
-      </button>
+      <h1>Welcome to ConvoSpace</h1>
+      <p>Connect with your team anytime, anywhere!</p>
+      <div className="meetingButtons">
+        <button
+          onClick={() => {
+            if (Object.keys(user_name.current).length > 0) {
+              // alert("Welcome "+user.current);
+              displayMessage((prev) => prev = false)
+              setView(!view);
+            }
+            else {
+              displayMessage((prev) => prev = true)
+              setShowSignIn((prev) => prev = true);
+            }
+          }}
+          className="newMeeting"
+        >
+          <FaVideo
+            className="icon"
+            style={{ margin: "0px 10px 0px 0px" }}
+          ></FaVideo>
+          New
+        </button>
+        <button
+          onClick={() => {
+            setViewJoinMeeting(!viewJoinMeeting);
+          }}
+          className="joinMeeting"
+        >
+          <FaUserFriends
+            style={{ margin: "0px 10px 0px 0px" }}
+            className="icon"
+          ></FaUserFriends>
+          Join
+        </button>
+      </div>
     </div>
-  </div>
   );
 }

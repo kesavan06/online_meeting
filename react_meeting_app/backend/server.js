@@ -28,7 +28,7 @@ const mysql = require("mysql2");
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Vennila_Mysql",
+  password: "Deepa30",
 });
 
 connection.connect((err) => {
@@ -50,7 +50,7 @@ connection.end();
 const dbConnection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Vennila_Mysql",
+  password: "Deepa30",
   database: "users_db",
 });
 
@@ -148,8 +148,7 @@ app.post("/signUp", async (req, res) => {
     console.log("Data3 : ", unique_name);
     console.log("Data4 : ", user_key);
 
-    let query =
-      "insert into users(user_name, unique_name ,password, user_key ) values(?,?,?, ?)";
+    let query = "insert into users(user_name, unique_name ,password, user_key ) values(?,?,?, ?)";
 
     let insertUser = await new Promise((resolve, reject) => {
       dbConnection.query(
@@ -167,16 +166,16 @@ app.post("/signUp", async (req, res) => {
     let userNow = await getUserDetails();
     let user1;
 
-    for(let user of userNow){
-      if(user.user_name == user_name){
+    for (let user of userNow) {
+      if (user.user_name == user_name) {
         user1 = user;
         break;
       }
     }
 
-    console.log("User Now : ",user1);
+    console.log("User Now : ", user1);
 
-    let user = { user_name, user_key , user_id: user1.user_id};
+    let user = { user_name, user_key, user_id: user1.user_id };
 
     res.status(200).send({ message: "Success", data: user });
   } catch (err) {
@@ -359,18 +358,18 @@ io.on("connection", (socket) => {
 
   });
 
-  socket.on("emojiSend", (emoji)=>{
-    console.log("EMoji Received : ",emoji);
+  socket.on("emojiSend", (emoji) => {
+    console.log("EMoji Received : ", emoji);
 
-    io.to(socket.roomName).emit("showEmoji", {emoji, name : socket.userName});
+    io.to(socket.roomName).emit("showEmoji", { emoji, name: socket.userName });
 
   })
 
 
-  socket.on("sendPoll",(poll)=>{
-    console.log("User_name",poll.userName);
-    console.log("room id: ",poll.room_Id);
-    socket.to(poll.room_Id).emit("receivedPoll",poll);
+  socket.on("sendPoll", (poll) => {
+    console.log("User_name", poll.userName);
+    console.log("room id: ", poll.room_Id);
+    socket.to(poll.room_Id).emit("receivedPoll", poll);
     console.log("after recieve")
   })
 
@@ -492,7 +491,7 @@ async function deleteUser(roomName, socket) {
 
   }
   catch (err) {
-    console.log("Error in gettting user data : \nInternal Server Error\n", err);
+    console.log("Error in getting user data : \nInternal Server Error\n", err);
   }
 }
 

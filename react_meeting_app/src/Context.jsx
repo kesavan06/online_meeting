@@ -32,7 +32,7 @@ export const AppProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:3002");
+    socketRef.current = io("http://172.17.20.22:3002");
     setupSocketListeners();
 
     return () => {
