@@ -21,7 +21,8 @@ export default function AboutMeeting({
       console.log("Cookie : ", cookie);
       user_name.current = cookie.user_name;
       user_id.current = cookie.user_id;
-
+      console.log("check changes");
+      
       console.log("User name, id About meeting in: ", user_id, user_name);
     }
   }, []);
