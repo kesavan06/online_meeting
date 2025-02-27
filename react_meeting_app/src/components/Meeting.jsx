@@ -60,7 +60,7 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   );
 };
 
-function Meeting() {
+function Meeting({showMeeting}) {
   // let {videoGridRed} = useAppContext();
 
   // const [showWhiteBoard, setShowWhiteBoard] = useState(false);
@@ -71,6 +71,7 @@ function Meeting() {
   let [isPoll, setIsPoll] = useState(false);
   let [allMessage, setAllMessage] = useState([]);
 
+  const [participantLength, setParticiapantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
 
   const openPopup = () => {
@@ -244,6 +245,8 @@ function Meeting() {
               isPoll={isPoll}
               allMessage={allMessage}
               setAllMessage={setAllMessage}
+              setParticiapantLength={setParticiapantLength}
+              showMeeting={showMeeting}
             ></ChatParticipants>
           </div>
         )}
@@ -257,6 +260,8 @@ function Meeting() {
           startScreenShare={startScreenShare}
           openPopup={openPopup}
           setShowEmojis={setShowEmojis}
+          participantLength={participantLength}
+          
         ></MeetingFooter>{" "}
       </div>
     </div>

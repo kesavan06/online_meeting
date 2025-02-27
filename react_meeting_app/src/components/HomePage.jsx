@@ -30,7 +30,8 @@ export default function HomePage() {
   const [displayShareScreen, setDisplayShareScreen] = useState(false);
   const [displayMessage, setDisplayMessage] = useState(false);
 
-  const [cookie, setCookie] = useCookies(['user_name', 'user_id', ]);
+  const [hasCookie, setHasCookie] = useState(false);
+  const [cookie, setCookie, removeCookie] = useCookies(['user_name', 'user_id', ]);
   // console.log("Cookie exsisit : ",document.cookie);
   const [oneTimeCookie, setOneTimeCookie] = useState(false);
 
@@ -57,12 +58,20 @@ export default function HomePage() {
   ) {
     return (
       <div className="homeContainer homePageContainer">
+
         <Header
           showSignUp={showSignUp}
           setShowSignUp={setShowSignUp}
           showSignIn={showSignIn}
           setShowSignIn={setShowSignIn}
+          cookie={cookie}
+          setCookie={setCookie}
+          removeCookie={removeCookie}
+
+          hasCookie={hasCookie}
+          setHasCookie={setHasCookie}
         />
+
         <AboutMeeting
           view={viewSetupMeeting}
           setView={setViewSetupMeeting}
@@ -73,6 +82,8 @@ export default function HomePage() {
           cookie={cookie}
           oneTimeCookie={oneTimeCookie}
           setOneTimeCookie={setOneTimeCookie}
+          hasCookie={hasCookie}
+          setHasCookie={setHasCookie}
         />
 
         <FeatureList displayParent={handleParentShow} />
@@ -110,6 +121,8 @@ export default function HomePage() {
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
           cookie={cookie}
+          oneTimeCookie={oneTimeCookie}
+          setOneTimeCookie={setOneTimeCookie}
         />
         <FeatureList />
       </div>
@@ -146,6 +159,8 @@ export default function HomePage() {
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
           cookie={cookie}
+          oneTimeCookie={oneTimeCookie}
+          setOneTimeCookie={setOneTimeCookie}
         />
         <FeatureList />
       </div>
@@ -176,7 +191,7 @@ export default function HomePage() {
         ></JoinMeeting>
       );
     } else if (showMeeting) {
-      return <Meeting></Meeting>;
+      return <Meeting showMeeting={showMeeting}></Meeting>;
     }
   }
 }
