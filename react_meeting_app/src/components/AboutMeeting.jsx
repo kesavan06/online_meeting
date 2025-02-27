@@ -31,7 +31,7 @@ export default function AboutMeeting({
 
   return (
     <div className="homePageAboutMeeting">
-    <h1>Welcome to ConvoSpace</h1>
+    <h1>Welcome to KathaiKalaam</h1>
     <p>Connect with your team anytime, anywhere!</p>
     <div className="meetingButtons">
       <button
