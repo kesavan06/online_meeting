@@ -11,6 +11,8 @@ import "../Meeting.css";
 import { useAppContext } from "../Context";
 import Wrapper from "./Wrapper";
 import PollCreater from "./PollCreater";
+import { FaCopy } from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
@@ -72,6 +74,21 @@ function Meeting() {
   let [allMessage, setAllMessage] = useState([]);
 
   const [leaveMeeting, setLeaveMeeting] = useState(false);
+  const [copyText, setCopyText] = useState(false);
+
+  const copyRoomId = async (roomId) => {
+    await navigator.clipboard.writeText(roomId);
+    setCopyText(true);
+  };
+  const copyComponent = () => {
+    if (copyText) {
+      return setTimeout(() => {
+        <FaCheck></FaCheck>;
+      }, 1000);
+    } else {
+      return <FaCopy></FaCopy>;
+    }
+  };
 
   const openPopup = () => {
     const newWindow = window.open("", "_blank", "width=1000,height=700");
@@ -175,7 +192,21 @@ function Meeting() {
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
           <VideoRecord></VideoRecord>
-          <p style={{ color: "white" }}>Meeting ID: {roomId.current}</p>
+          <p
+            style={{
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            Meeting ID: {roomId.current}
+            {}
+            <FaCopy
+              onClick={() => copyRoomId(roomId.current)}
+              style={{ marginLeft: "10px", cursor: "pointer" }}
+            ></FaCopy>
+          </p>
         </div>
       </div>
       <div className="meetingContent">

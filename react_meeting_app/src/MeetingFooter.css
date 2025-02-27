@@ -19,7 +19,7 @@
 }
 
 .controlBox {
-  width: 60px;
+  width:60px;
   height: 50px;
   border: 1px solid rgb(42, 42, 40);
   display: flex;
@@ -37,10 +37,22 @@
 }
 
 .meetingControl {
-  width: 18%;
+  width: 24%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+}
+
+.leaveMeetingBtn{
+  width: 100px;
+  height: 40px;
+  background-color: rgb(255, 98, 58);
+  color: rgb(241, 241, 241);
+  font-size: 1em;
+  margin: 0px 0px 0px 10px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+
 }
 
 .moreControls {

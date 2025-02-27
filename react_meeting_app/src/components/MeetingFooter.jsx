@@ -33,10 +33,15 @@ function MeetingFooter({
   const [video, setVideo] = useState(true);
   const [isRecord, setIsRecord] = useState(false);
   const { myStream, isShare, myScreenStream } = useAppContext();
+  const [showLeaveMeetingBtn, setShowLeaveMeetingBtn] = useState(false);
 
   // function handleClick() {
   //   handleBoard();
   // }
+
+  const leaveMeeting = () => {
+    window.location.reload();
+  };
 
   function startRecording() {
     try {
@@ -113,7 +118,7 @@ function MeetingFooter({
         <div className="controlBox" onClick={() => handleEmoji()}>
           <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
         </div>
-        <div>
+        <div className="controlBox">
           {!isRecord && (
             <FaRecordVinyl
               className="changeColor"
@@ -127,9 +132,19 @@ function MeetingFooter({
             ></FaCircleStop>
           )}
         </div>
-        <div className="controlBox exitBox">
+        <div
+          className="controlBox exitBox"
+          onClick={() => {
+            setShowLeaveMeetingBtn(!showLeaveMeetingBtn);
+          }}
+        >
           <FaRightFromBracket className="exit"></FaRightFromBracket>
         </div>
+        {showLeaveMeetingBtn && (
+          <button className="leaveMeetingBtn" onClick={() => leaveMeeting()}>
+            Leave
+          </button>
+        )}
       </div>
       <div className="moreControls">
         <div
