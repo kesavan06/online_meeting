@@ -4,9 +4,9 @@ import ShowParticipant from "./ShowPartipants";
 
 import { useAppContext } from "../Context";
 
-function Participants({ view, setView }) {
+function Participants({ view, setView, setParticipantLength, getPaticipants }) {
+  
   let [allParticipants, setParticipants] = useState([]);
-  // let [count, setCount] = useState(0);
   let { socketRef, roomId } = useAppContext();
 
   useEffect(() => {
@@ -14,6 +14,9 @@ function Participants({ view, setView }) {
       setParticipants([]);
       let participant = await getPaticipants(roomId.current);
       console.log("Participants : ", participant.data);
+
+      setParticipantLength((prev) => prev = participant.data.length);
+
 
       for (let p of participant.data) {
         let name = p.name;
@@ -25,13 +28,8 @@ function Participants({ view, setView }) {
 
   return (
     <div className="participantsBox">
-      {allParticipants.map((participant) => {
-        return (
-          <ShowParticipant
-            name={participant}
-            index={allParticipants.indexOf(participant) + 1}
-          />
-        );
+    {allParticipants.map((participant) => {
+        return <ShowParticipant name={participant} index={allParticipants.indexOf(participant) + 1} />
       })}
     </div>
   );

@@ -28,6 +28,7 @@ function MeetingFooter({
   showEmojis,
   setShowEmojis,
   openPopup,
+  participantLength
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
@@ -181,7 +182,7 @@ function MeetingFooter({
           }}
         >
           <FaUsers className="changeColor"></FaUsers>
-          <p>5</p>
+          <p>{participantLength}</p>
         </div>
       </div>
     </div>

@@ -62,7 +62,7 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   );
 };
 
-function Meeting() {
+function Meeting({ showMeeting }) {
   // let {videoGridRed} = useAppContext();
 
   // const [showWhiteBoard, setShowWhiteBoard] = useState(false);
@@ -73,6 +73,7 @@ function Meeting() {
   let [isPoll, setIsPoll] = useState(false);
   let [allMessage, setAllMessage] = useState([]);
 
+  const [participantLength, setParticiapantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
   const [copyText, setCopyText] = useState(false);
 
@@ -95,7 +96,20 @@ function Meeting() {
     newWindow.document.title = "Kadhaikalaam - whiteboard";
 
     if (newWindow) {
+
+      const style = newWindow.document.createElement("style");
+      style.innerHTML = `
+        body {
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          background-color: white;
+        }`;
+
+      newWindow.document.head.appendChild(style);
+      
       newWindow.document.body.innerHTML = "<div id='popup-root'></div>";
+
       const popupRoot = newWindow.document.getElementById("popup-root");
 
       if (popupRoot) {
@@ -201,7 +215,7 @@ function Meeting() {
             }}
           >
             Meeting ID: {roomId.current}
-            {}
+            { }
             <FaCopy
               onClick={() => copyRoomId(roomId.current)}
               style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -275,6 +289,8 @@ function Meeting() {
               isPoll={isPoll}
               allMessage={allMessage}
               setAllMessage={setAllMessage}
+              setParticiapantLength={setParticiapantLength}
+              showMeeting={showMeeting}
             ></ChatParticipants>
           </div>
         )}
@@ -288,6 +304,8 @@ function Meeting() {
           startScreenShare={startScreenShare}
           openPopup={openPopup}
           setShowEmojis={setShowEmojis}
+          participantLength={participantLength}
+
         ></MeetingFooter>{" "}
       </div>
     </div>
