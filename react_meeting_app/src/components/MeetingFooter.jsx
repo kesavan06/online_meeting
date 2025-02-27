@@ -26,12 +26,19 @@ function MeetingFooter({
   startScreenShare,
   isSharing,
   showEmojis,
-  setShowEmojis
+  setShowEmojis,
+  setSec,
+  sec,
+  min,
+  setMin,
+  isRecord,
+  setIsRecord
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
-  const [isRecord, setIsRecord] = useState(false);
-  const { myStream, isShare, myScreenStream } = useAppContext();
+  const { myStream, isShare, myScreenStream,socketRef } = useAppContext();
+  let interval;
+  const [isRun,setIsRun] = useState(false);
   
 
   function handleClick() {
@@ -53,6 +60,8 @@ function MeetingFooter({
         localStream = myStream.current
       }
       let stream = startRecord(localStream);
+      setIsRun(true);
+      // timer();
       if (stream) {
         setIsRecord(true);
       }
@@ -68,6 +77,7 @@ function MeetingFooter({
     try {
       stopRecord();
       console.log("Recording stop!!!");
+      stopTimer();
       setIsRecord(false);
     }
     catch (err) {
@@ -77,6 +87,45 @@ function MeetingFooter({
 
   function handleEmoji(){
     setShowEmojis((prev)=> prev=!prev)
+  }
+
+  // function timer()
+  // {
+    // if(isRun)
+    // {
+    //   interval = setInterval(()=>{
+    //     setSec((prev)=>prev+1);
+
+    //   },1000);
+    // }
+
+  // }
+
+useEffect(()=>{
+  if(isRun && !interval)
+  {
+    setSec(0);
+    interval = setInterval(() => {
+      setSec((prev) => prev + 1);
+
+    }, 1000);
+  }
+},[isRun])
+
+  useEffect(()=>{
+    if(sec==59)
+    {
+      setMin((prev)=>prev+1);
+      setSec(0);
+    }
+  },[sec])
+
+  function stopTimer()
+  {
+    clearInterval(interval);
+    setIsRun(false);
+    setSec(0);
+    setMin(0);
   }
 
   return (
@@ -153,5 +202,6 @@ function MeetingFooter({
     </div>
   );
 }
+
 
 export default MeetingFooter;

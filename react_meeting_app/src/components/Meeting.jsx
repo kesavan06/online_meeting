@@ -70,6 +70,9 @@ function Meeting() {
   const [allEmoji, setAllEmoji] = useState([]);
   let [isPoll,setIsPoll] = useState(false);
   let [allMessage, setAllMessage] = useState([]);
+  const [isRecord, setIsRecord] = useState(false);
+  const [sec,setSec] = useState(0);
+  const [min,setMin] = useState(0);
 
 
   const { roomId, streams, myStream, screenStream, startScreenShare } = useAppContext();
@@ -99,8 +102,6 @@ function Meeting() {
     console.log("Current streams:", streams);
   }, [streams]);
 
- 
-
 
   return (
     <div className="meetingContainer">
@@ -110,7 +111,7 @@ function Meeting() {
         </Wrapper>}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
-          <VideoRecord></VideoRecord>
+          {isRecord && <VideoRecord sec={sec} setIsRecord={setIsRecord} isRecord={isRecord} setMin={setMin} setSec={setSec} min={min}></VideoRecord>}
           <p style={{ color: "white" }}>Meeting ID: {roomId.current}</p>
         </div>
       </div>
@@ -195,6 +196,12 @@ function Meeting() {
           startScreenShare={startScreenShare}
           showEmojis={showEmojis}
           setShowEmojis={setShowEmojis}
+          setSec={setSec}
+          sec={sec}
+          min={min}
+          setMin={setMin}
+          isRecord={isRecord}
+          setIsRecord={setIsRecord}
         ></MeetingFooter>{" "}
       </div>
     </div>
