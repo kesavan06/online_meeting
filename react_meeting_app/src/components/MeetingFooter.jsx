@@ -32,6 +32,7 @@ function MeetingFooter({
   const [video, setVideo] = useState(true);
   const [isRecord, setIsRecord] = useState(false);
   const { myStream, isShare, myScreenStream } = useAppContext();
+  
 
   function handleClick() {
     handleBoard();
@@ -43,10 +44,13 @@ function MeetingFooter({
 
   function startRecording() {
     try {
-      let localStream = myStream.current;
-      console.log(myScreenStream.current)
+      let localStream;
+      console.log(myScreenStream.current);
       if (myScreenStream.current) {
         localStream = myScreenStream.current;
+      }
+      else{
+        localStream = myStream.current
       }
       let stream = startRecord(localStream);
       if (stream) {

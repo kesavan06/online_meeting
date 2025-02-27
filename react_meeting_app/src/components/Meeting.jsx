@@ -157,6 +157,14 @@ function Meeting() {
 
               </div>
             }
+            {allEmoji.map(({ id, emoji, name }) => {
+              return (
+
+                <span className="emojiDiv" id={id}>
+                  <p style={{fontSize : "1rem", textAlign: "center"}}>{name}</p>
+                  {emoji}
+                </span>)
+            })}
           </div>
           <div className="whiteBoardBox">
             {showWhiteBoard && (

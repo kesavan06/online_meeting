@@ -1,14 +1,17 @@
-
+import "../poll.css"
 
 export default function Poll({title,option1,option2})
 {
     return(
-        <div>
+        <div id="pollDiv">
             <h1>{title}</h1>
-            <input type="radio" name="poll"></input>
-            <label>{option1}</label>
-            <input type="radio" name="poll"></input>
-            <label>{option2}</label>
+            <label className="option">
+                <input type="radio" name="poll"></input>
+            {option1}</label>
+            <label className="option">
+                <input type="radio" name="poll"></input>    
+            {option2}</label>
         </div>
     )
 }
+

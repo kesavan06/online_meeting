@@ -10,14 +10,14 @@ export default function ShowMessage(props) {
         console.log(message.type)
 
         return (
-          message.type !== "msg" ?
-            <Message
-              user_name={message.user_name}
-              message={message.message}
-              time={message.time}
-              classNow={message.isMine}
-            ></Message>
-            : <Poll title={message.title} option1={message.option1} option2={message.option2} user_name={message.user_name}></Poll>
+          message.type == "poll" ?
+             <Poll title={message.title} option1={message.option1} option2={message.option2} user_name={message.user_name}></Poll>
+             :<Message
+             user_name={message.user_name}
+             message={message.message}
+             time={message.time}
+             classNow={message.isMine}
+           ></Message>
         );
       })}
     </>

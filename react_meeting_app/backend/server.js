@@ -354,8 +354,10 @@ io.on("connection", (socket) => {
   socket.on("sendPoll",(poll)=>{
     console.log("User_name",poll.userName);
     console.log("room id: ",poll.room_Id);
-    socket.to(poll.room_Id).emit("receivedPoll",poll);
-    console.log("after recieve")
+    console.log('Poll : ',poll);
+    // allMessages.push(poll);
+    io.to(poll.room_Id).emit("receivedPoll",poll);
+    console.log("after recieve");
   })
 
   // Handle user disconnection

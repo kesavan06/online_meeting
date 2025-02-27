@@ -26,7 +26,7 @@ export default function Header({
   return (
     <div className="homePageHeader">
       <div className="iconAndName">
-        <h1>ConvoSpace</h1>
+        <h1>Kathaikalaam</h1>
       </div>
       <div className="navLogin">
         <p onClick={showSignUp}>Signup</p>
@@ -35,3 +35,4 @@ export default function Header({
     </div>
   );
 }
+
