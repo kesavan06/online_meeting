@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 //const  = require("react")
 // const { io } = require("socket.io-client");
 
-const socket=io("http://localhost:3444");
+// const socket=io("http://localhost:3444");
 
 let peerConnection;
 // let local=document.getElementById("localVideo");

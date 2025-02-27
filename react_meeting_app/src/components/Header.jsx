@@ -26,10 +26,9 @@ export default function Header({
   return (
     <div className="homePageHeader">
       <div className="iconAndName">
-        <h1>ConvoSpace</h1>
+        <h1>KadhaiKalaam</h1>
       </div>
       <div className="navLogin">
-        <p onClick={showSignUp}>Signup</p>
         <p onClick={showSignIn}>Signin</p>
       </div>
     </div>

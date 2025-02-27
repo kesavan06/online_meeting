@@ -4,8 +4,9 @@ import ChatParticipants from "./ChatParticipants";
 import MeetingFooter from "./MeetingFooter";
 import { useState, useEffect, useRef } from "react";
 import WhiteBoard from "./WhiteBoard";
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker from "emoji-picker-react";
 
+import { createRoot } from "react-dom/client";
 import "../Meeting.css";
 import { useAppContext } from "../Context";
 import Wrapper from "./Wrapper";
@@ -13,7 +14,6 @@ import PollCreater from "./PollCreater";
 
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
-
 
   useEffect(() => {
     if (videoRef.current && stream) {
@@ -35,7 +35,6 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   }, [stream]);
 
   useEffect(() => {
-
     const handleBeforeUnload = (event) => {
       event.preventDefault();
       event.returnValue = "";
@@ -64,25 +63,47 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
 function Meeting() {
   // let {videoGridRed} = useAppContext();
 
-  const { socketRef, user_name } = useAppContext();
-  const [showWhiteBoard, setShowWhiteBoard] = useState(false);
+  // const [showWhiteBoard, setShowWhiteBoard] = useState(false);
   const [showChatBox, setShowChatBox] = useState(true);
   let [chatView, setChatView] = useState(true);
   const [showEmojis, setShowEmojis] = useState(false);
   const [allEmoji, setAllEmoji] = useState([]);
-  let [isPoll,setIsPoll] = useState(false);
+  let [isPoll, setIsPoll] = useState(false);
   let [allMessage, setAllMessage] = useState([]);
 
+  const [leaveMeeting, setLeaveMeeting] = useState(false);
 
-  const { roomId, streams, myStream, screenStream, startScreenShare } = useAppContext();
+  const openPopup = () => {
+    const newWindow = window.open("", "_blank", "width=1000,height=700");
+    newWindow.document.title = "Kadhaikalaam - whiteboard";
+
+    if (newWindow) {
+      newWindow.document.body.innerHTML = "<div id='popup-root'></div>";
+      const popupRoot = newWindow.document.getElementById("popup-root");
+
+      if (popupRoot) {
+        const root = createRoot(popupRoot);
+        root.render(<WhiteBoard />);
+      }
+    }
+  };
+
+  const {
+    roomId,
+    streams,
+    myStream,
+    screenStream,
+    startScreenShare,
+    socketRef,
+    user_name,
+  } = useAppContext();
 
   console.log("all streams: ", streams);
 
-
   const screenVideoRef = useRef(null);
-  function handleWhiteBoardShow() {
-    setShowWhiteBoard(!showWhiteBoard);
-  }
+  // function handleWhiteBoardShow() {
+  //   // setShowWhiteBoard(!showWhiteBoard);
+  // }
   useEffect(() => {
     if (screenVideoRef.current && streams) {
       console.log(screenStream);
@@ -102,42 +123,35 @@ function Meeting() {
     console.log("Current streams:", streams);
   }, [streams]);
 
-
-
-
   function handleClickOnEmoji(emojiObject) {
     console.log("Emoji : ", emojiObject);
-    console.log("EMoji : ", emojiObject.emoji)
+    console.log("EMoji : ", emojiObject.emoji);
     let emoji = emojiObject.emoji;
-    socketRef.current.emit("emojiSend", (emoji));
+    socketRef.current.emit("emojiSend", emoji);
 
-    setShowEmojis((prev) => prev = !prev)
+    setShowEmojis((prev) => (prev = !prev));
   }
 
   useEffect(() => {
     console.log("All EMoji : ", allEmoji);
-
-  }, [allEmoji])
-
+  }, [allEmoji]);
 
   useEffect(() => {
-
-
     function handleEmoji({ emoji, name }) {
-
       console.log("Emoji Received: ", emoji);
-      console.log("Socket id : ",user_name.current == name);
+      console.log("Socket id : ", user_name.current == name);
       let emojiName = user_name.current == name;
-      console.log("User name : ",user_name.current);
+      console.log("User name : ", user_name.current);
 
       const id = Date.now();
-      setAllEmoji((prev) => [...prev, { id, emoji, name: emojiName ? "you" : name }]);
-
+      setAllEmoji((prev) => [
+        ...prev,
+        { id, emoji, name: emojiName ? "you" : name },
+      ]);
 
       setTimeout(() => {
         setAllEmoji((prev) => prev.filter((e) => e.id !== id));
       }, 4400);
-
     }
     socketRef.current.on("showEmoji", handleEmoji);
 
@@ -148,10 +162,16 @@ function Meeting() {
 
   return (
     <div className="meetingContainer">
-      {isPoll && <Wrapper>
-          <PollCreater allMessage={allMessage}
-              setAllMessage={setAllMessage} isPoll={isPoll} setIsPoll={setIsPoll}></PollCreater>
-        </Wrapper>}
+      {isPoll && (
+        <Wrapper>
+          <PollCreater
+            allMessage={allMessage}
+            setAllMessage={setAllMessage}
+            isPoll={isPoll}
+            setIsPoll={setIsPoll}
+          ></PollCreater>
+        </Wrapper>
+      )}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
           <VideoRecord></VideoRecord>
@@ -171,7 +191,7 @@ function Meeting() {
                       isLocalStream={
                         videoStream.stream.id === myStream?.current?.id
                       }
-                      showWhiteBoard={showWhiteBoard}
+                      // showWhiteBoard={showWhiteBoard}
                       type={videoStream.type}
                     ></VideoComponent>
                   );
@@ -179,15 +199,15 @@ function Meeting() {
               })}
           </div>
           <div className="mainVideoBox">
-            {
+            {streams.some((videoStream) => videoStream.type == "screen") && (
               <video
                 ref={screenVideoRef}
                 className="shareScreenElement"
                 autoPlay
               ></video>
-            }
+            )}
 
-            {showEmojis &&
+            {showEmojis && (
               <div className="emoji">
                 <EmojiPicker
                   theme="dark"
@@ -195,30 +215,23 @@ function Meeting() {
                   height={400}
                   emojiStyle="native"
                   categories={[
-                    { name: 'Smileys & Emotion', category: 'smileys_people' },
+                    { name: "Smileys & Emotion", category: "smileys_people" },
                   ]}
                   open={showEmojis}
                   onEmojiClick={handleClickOnEmoji}
                 />
               </div>
-            }
-
+            )}
             {allEmoji.map(({ id, emoji, name }) => {
               return (
-
                 <span className="emojiDiv" id={id}>
-                  <p style={{fontSize : "1rem", textAlign: "center"}}>{name}</p>
+                  <p style={{ fontSize: "1rem", textAlign: "center" }}>
+                    {name}
+                  </p>
                   {emoji}
-                </span>)
+                </span>
+              );
             })}
-
-
-          </div>
-
-          <div className="whiteBoardBox">
-            {showWhiteBoard && (
-              <WhiteBoard controlBoard={handleWhiteBoardShow} />
-            )}
           </div>
         </div>
         {showChatBox && (
@@ -238,11 +251,11 @@ function Meeting() {
       <div className="meetingFooter">
         <MeetingFooter
           setShowChatBox={setShowChatBox}
-          handleBoard={handleWhiteBoardShow}
+          // handleBoard={handleWhiteBoardShow}
           chatView={chatView}
           setChatView={setChatView}
           startScreenShare={startScreenShare}
-          showEmojis={showEmojis}
+          openPopup={openPopup}
           setShowEmojis={setShowEmojis}
         ></MeetingFooter>{" "}
       </div>
@@ -251,11 +264,3 @@ function Meeting() {
 }
 
 export default Meeting;
-
-
-
-
-
-
-
-

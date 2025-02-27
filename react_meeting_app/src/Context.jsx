@@ -2,6 +2,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
+  useReducer,
   useRef,
   useState,
 } from "react";
@@ -13,6 +14,7 @@ export const AppProvider = ({ children }) => {
   const roomId = useRef(null);
   const socketRef = useRef(null);
   const [streamState, setStreamsState] = useState([]);
+
   const [screenStreamState, setScreenStreamState] = useState(null);
   const user_name = useRef({});
   const myStream = useRef(null);
@@ -23,6 +25,8 @@ export const AppProvider = ({ children }) => {
   const [isShare, setIsShare] = useState(false);
   const key = useRef({});
   const user_id = useRef({});
+  let host = useRef(null);
+
   const configuration = {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
@@ -335,12 +339,14 @@ export const AppProvider = ({ children }) => {
       return prevStreams;
     });
   };
+
   const startScreenShare = async () => {
-    if (screenStreamState) {
-      console.log(
-        "Screen sharing already active by:",
-        screenStreamState.userId
-      );
+    let isScreenShare = streamState.some(
+      (videoStream) => videoStream.type == "screen"
+    );
+    console.log(isScreenShare);
+    if (isScreenShare) {
+      console.log("Screen sharing already active");
       return;
     }
 
@@ -350,7 +356,6 @@ export const AppProvider = ({ children }) => {
       });
 
       myScreenStream.current = screenStream;
-      console.log(myScreenStream)
       setIsShare(true);
       srceenSharer.current = socketRef.current.id;
       // Add tracks from screen stream to all existing peer connections
@@ -396,14 +401,32 @@ export const AppProvider = ({ children }) => {
       });
       // Handle stream stop
       screenStream.getVideoTracks()[0].onended = () => {
-        stopScreenSharing();
+        stopScreenSharing(screenStream);
       };
     } catch (err) {
       console.error("Error starting screen share:", err);
     }
   };
 
-  const stopScreenSharing = () => {
+  const stopScreenSharing = (screenStream) => {
+    setStreamsState((prev) => {
+      prev = prev.filter((videoStream) => {
+        console.log(videoStream.stream.id, screenStream.id);
+        if (videoStream.stream.id == screenStream.id) {
+          console.log(
+            "after disconnected  screen: id",
+            videoStream.stream.id,
+            screenStream.id
+          );
+        }
+
+        if (videoStream.stream.id !== screenStream.id) {
+          return videoStream;
+        }
+      });
+      console.log("After remove the screen share:", prev);
+      return prev;
+    });
     if (myScreenStream.current) {
       myScreenStream.current.getTracks().forEach((track) => track.stop());
 
@@ -450,7 +473,7 @@ export const AppProvider = ({ children }) => {
           socketRef.current.id,
           userShowName,
           userId,
-          isHost,
+          isHost
         );
       } else {
         console.warn("Room ID not set!");
@@ -476,7 +499,7 @@ export const AppProvider = ({ children }) => {
         key,
         user_id,
         setIsShare,
-        isShare
+        isShare,
       }}
     >
       {children}

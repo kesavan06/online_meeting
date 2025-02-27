@@ -1,40 +1,34 @@
 import CryptoJS from "crypto-js";
 
 export default async function useUniqueName(uName) {
+  console.log("U name: ", uName);
 
-    console.log("U name: ",uName);
+  try {
+    console.log("Unique Name : ", uName);
+    let uniqueCheck = await fetch("http://localhost:3002/unique");
 
-    try {
+    let rare = true;
 
-        console.log("Unique Name : ", uName);
-        let uniqueCheck = await fetch("http://localhost:3002/unique");
+    if (uniqueCheck.status == 201) {
+      let res = await uniqueCheck.json();
+      let allUsers = res.data;
 
-        let rare =true;
+      for (let user of allUsers) {
+        let k = user.user_key;
+        let decUnique = decrptData(user.unique_name, k);
 
-        if (uniqueCheck.status == 201) {
-            let res = await uniqueCheck.json();
-            let allUsers = res.data;
-
-            for(let user of allUsers){
-                let k= user.user_key;
-                let decUnique = decrptData(user.unique_name, k);
-
-                if(decUnique == uName){
-                    rare=false;
-                    break;
-                }
-            }
+        if (decUnique == uName) {
+          rare = false;
+          break;
         }
+      }
+    }
 
-        console.log("Unique ness : ",rare);
+    console.log("Unique ness : ", rare);
 
         return rare;
     }
     catch (err) {
         console.log("Err in Unique Check : \n", err);
     }
-}
-
-function decrptData(data, secKey) {
-    return CryptoJS.AES.decrypt(data, secKey).toString(CryptoJS.enc.Utf8);
 }

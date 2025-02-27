@@ -9,8 +9,15 @@ import { useAppContext } from "../Context";
 // import { useSocketEvents } from "../socket";
 
 function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
-  const { roomId, socketRef, initializeMediaStream, user_name, user_id, getMediaStream } =
-    useAppContext();
+  const {
+    roomId,
+    socketRef,
+    initializeMediaStream,
+    user_name,
+    host,
+    user_id,
+    getMediaStream,
+  } = useAppContext();
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   // const [name, setName] = useState("Kesavan");
@@ -18,14 +25,12 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
   const userName = useRef(null);
 
   useEffect(() => {
-    console.log("U in current : ",user_name.current);
+    console.log("U in current : ", user_name.current);
     if (userName.current) {
       userName.current.value = user_name.current; // Set input value manually
     }
   }, [user_name]);
 
-
-  
   const localStream = useRef(null);
 
   const videoRef = useRef(null);
@@ -58,11 +63,12 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
   };
 
   const createRoomClicked = () => {
-    console.log("UserName : ",userName.current.value);
-    user_name.current = userName.current.value; 
-    console.log("UserName IN change : ",user_name.current);
+    console.log("UserName : ", userName.current.value);
+    user_name.current = userName.current.value;
+    console.log("UserName IN change : ", user_name.current);
 
     // console.log("User name after changing : ",user_name);
+
     const newRoomId = Math.random().toString(36).substring(2, 9);
     roomId.current = newRoomId;
     setView(!view);
@@ -72,16 +78,24 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
 
   socketRef.current.on("room-created", (newRoomId) => {
     console.log(`Room created: ${newRoomId}`);
-    console.log("UserName After change : ",user_name.current);
 
-    
     setShowMeeting(!showMeeting);
     initializeMediaStream(user_name.current, user_id.current, true);
   });
 
+  // async function cMeetingFetch() {
+  //   let create = await fetch("http://localhost:3002/create", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({ room_name : roomId.current, user_name : user.current, isHost: true,user_id: user_id.current }),
+  //   })
 
+  //   let res= await create.json();
+  //   console.log("Create : ",res);
 
-
+  // }
 
   return (
     <div className="popupContainer">
@@ -144,7 +158,3 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
 }
 
 export default MeetingSetup;
-
-
-
-

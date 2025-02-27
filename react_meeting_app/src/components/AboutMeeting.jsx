@@ -19,7 +19,7 @@ export default function AboutMeeting({
 
   useEffect(() => {
 
-    if (document.cookie && !oneTimeCookie) { //
+    if (document.cookie && !oneTimeCookie) { 
       console.log("Cookie : ", cookie);
       user_name.current = cookie.user_name;
       user_id.current = cookie.user_id;
@@ -31,42 +31,42 @@ export default function AboutMeeting({
 
   return (
     <div className="homePageAboutMeeting">
-      <h1>Welcome to ConvoSpace</h1>
-      <p>Connect with your team anytime, anywhere!</p>
-      <div className="meetingButtons">
-        <button
-          onClick={() => {
-            if (Object.keys(user_name.current).length > 0) {
-              // alert("Welcome "+user.current);
-              displayMessage((prev) => prev = false)
-              setView(!view);
-            }
-            else {
-              displayMessage((prev) => prev = true)
-              setShowSignIn((prev) => prev = true);
-            }
-          }}
-          className="newMeeting"
-        >
-          <FaVideo
-            className="icon"
-            style={{ margin: "0px 10px 0px 0px" }}
-          ></FaVideo>
-          New
-        </button>
-        <button
-          onClick={() => {
-            setViewJoinMeeting(!viewJoinMeeting);
-          }}
-          className="joinMeeting"
-        >
-          <FaUserFriends
-            style={{ margin: "0px 10px 0px 0px" }}
-            className="icon"
-          ></FaUserFriends>
-          Join
-        </button>
-      </div>
+    <h1>Welcome to ConvoSpace</h1>
+    <p>Connect with your team anytime, anywhere!</p>
+    <div className="meetingButtons">
+      <button
+        onClick={() => {
+          if(Object.keys(user_name.current).length > 0){
+            // alert("Welcome "+user.current);
+            displayMessage((prev)=> prev=false)
+            setView(!view);
+          }
+          else{
+            displayMessage((prev)=> prev=true)
+            setShowSignIn((prev)=> prev=true);
+          }
+        }}
+        className="newMeeting"
+      >
+        <FaVideo
+          className="icon"
+          style={{ margin: "0px 10px 0px 0px" }}
+        ></FaVideo>
+        New
+      </button>
+      <button
+        onClick={() => {
+          setViewJoinMeeting(!viewJoinMeeting);
+        }}
+        className="joinMeeting"
+      >
+        <FaUserFriends
+          style={{ margin: "0px 10px 0px 0px" }}
+          className="icon"
+        ></FaUserFriends>
+        Join
+      </button>
     </div>
+  </div>
   );
 }

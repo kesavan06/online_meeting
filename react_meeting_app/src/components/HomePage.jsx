@@ -110,7 +110,6 @@ export default function HomePage() {
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
           cookie={cookie}
-
         />
         <FeatureList />
       </div>
@@ -147,7 +146,6 @@ export default function HomePage() {
           viewJoinMeeting={viewJoinMeeting}
           setViewJoinMeeting={setViewJoinMeeting}
           cookie={cookie}
-
         />
         <FeatureList />
       </div>
@@ -184,12 +182,3 @@ export default function HomePage() {
 }
 
 
-
-function setAndReadCookie(){
-
-  document.cookie = "user_name=Deepa;expires=Fri, 29 Feb 2025 12:00:00 UTC";
-  console.log("Cookie 1: ",document.cookie);
-  document.cookie = "user_name=Deepa; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-  console.log("Cookie 2: ",document.cookie);
-
-}

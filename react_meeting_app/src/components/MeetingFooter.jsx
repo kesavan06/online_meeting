@@ -26,25 +26,22 @@ function MeetingFooter({
   startScreenShare,
   isSharing,
   showEmojis,
-  setShowEmojis
+  setShowEmojis,
+  openPopup,
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
   const [isRecord, setIsRecord] = useState(false);
   const { myStream, isShare, myScreenStream } = useAppContext();
 
-  function handleClick() {
-    handleBoard();
-  }
-
-  // function shareScreen() {
-  //   setIsShare(true);
+  // function handleClick() {
+  //   handleBoard();
   // }
 
   function startRecording() {
     try {
       let localStream = myStream.current;
-      console.log(myScreenStream.current)
+      console.log(myScreenStream.current);
       if (myScreenStream.current) {
         localStream = myScreenStream.current;
       }
@@ -52,27 +49,23 @@ function MeetingFooter({
       if (stream) {
         setIsRecord(true);
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.log("Error: " + err);
     }
-
   }
-
 
   function stopRecording() {
     try {
       stopRecord();
       console.log("Recording stop!!!");
       setIsRecord(false);
-    }
-    catch (err) {
+    } catch (err) {
       console.log("Error: " + err);
     }
   }
 
-  function handleEmoji(){
-    setShowEmojis((prev)=> prev=!prev)
+  function handleEmoji() {
+    setShowEmojis((prev) => (prev = !prev));
   }
 
   return (
@@ -108,15 +101,31 @@ function MeetingFooter({
         >
           <FaShareFromSquare className="changeColor"></FaShareFromSquare>
         </div>
-        <div className="controlBox" onClick={handleClick}>
+        <div
+          className="controlBox"
+          onClick={() => {
+            startScreenShare();
+            openPopup();
+          }}
+        >
           <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher>
         </div>
-        <div className="controlBox" onClick={()=>handleEmoji()}>
-          <FaRegFaceSmile className="changeColor" ></FaRegFaceSmile>
+        <div className="controlBox" onClick={() => handleEmoji()}>
+          <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
         </div>
         <div>
-          {!isRecord && <FaRecordVinyl className="changeColor" onClick={startRecording}></FaRecordVinyl>}
-          {isRecord && <FaCircleStop className="changeColor" onClick={stopRecording}></FaCircleStop>}
+          {!isRecord && (
+            <FaRecordVinyl
+              className="changeColor"
+              onClick={startRecording}
+            ></FaRecordVinyl>
+          )}
+          {isRecord && (
+            <FaCircleStop
+              className="changeColor"
+              onClick={stopRecording}
+            ></FaCircleStop>
+          )}
         </div>
         <div className="controlBox exitBox">
           <FaRightFromBracket className="exit"></FaRightFromBracket>
@@ -130,7 +139,6 @@ function MeetingFooter({
             setShowChatBox((prev) => (prev = true));
             setChatView((prev) => (prev = true));
           }}
-          u
         >
           <FaRegMessage className="changeColor"></FaRegMessage>
         </div>
