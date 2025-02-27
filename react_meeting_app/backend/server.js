@@ -95,7 +95,7 @@ dbConnection.query(meetingParicipantQuery, (err, result) => {
   console.log('Table "meetings_participant" created or already exists');
 });
 
-app.use(cors({origin: "*"}));
+app.use(cors({ origin: "*" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -324,8 +324,8 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("screen-sharing-started", userId);
   });
 
-  socket.on("screen-sharing-stopped", (roomId) => {
-    socket.to(roomId).emit("screen-sharing-stopped", socket.id);
+  socket.on("screen-share-stopped", ({ roomId, screenId }) => {
+    socket.to(roomId).emit("screen-sharing-stopped", socket.id, screenId);
   });
 
   // send Message
