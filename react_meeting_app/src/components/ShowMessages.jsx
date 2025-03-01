@@ -7,8 +7,7 @@ export default function ShowMessage(props) {
   return (
     <>
       {props.newMessages.map((message) => {
-        console.log(message.type)
-
+        // console.log("Is private to send message : ", message.isPrivate, message);
         return (
           message.type !== "msg" ?
             <Message
@@ -16,6 +15,7 @@ export default function ShowMessage(props) {
               message={message.message}
               time={message.time}
               classNow={message.isMine}
+              isPrivate={message.isPrivate}
             ></Message>
             : <Poll title={message.title} option1={message.option1} option2={message.option2} user_name={message.user_name}></Poll>
         );

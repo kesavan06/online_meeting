@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const socketio = require("socket.io");
-let allMessages = [];
 
 const app = express();
 const server = http.createServer(app);
@@ -104,14 +103,14 @@ app.get("/", (req, res) => {
 });
 
 app.post("/allMessages", async (req, res) => {
-  //   console.log("In messObj post-R Details : ",allRoomDetails);
+
   let { roomId } = req.body;
   console.log("Room ID : ", roomId);
   let theRoom = await getRoom(roomId);
   console.log("Selected Room : ", theRoom);
 
   if (theRoom != null) {
-    res.status(201).send({ message: true, data: theRoom });
+    res.status(201).send({ message: true, data: theRoom.messages });
   } else {
     res.status(504).send({ message: false, data: theRoom });
   }
@@ -193,7 +192,7 @@ app.post("/getP", (req, res) => {
   try {
     let { roomId } = req.body;
     console.log("I am inside oarticipant : ", roomId);
-    let participants =  getRoom(roomId);
+    let participants = getRoom(roomId);
     console.log("Participants : ", participants);
 
     let p = participants.participants;
@@ -206,6 +205,44 @@ app.post("/getP", (req, res) => {
     console.log("Error : \n", err);
   }
 });
+
+
+
+app.post("/changeName", (req, res) => {
+  let { name, roomId, socketId } = req.body;
+  console.log("Change Name ", name, roomId);
+
+  let room = getRoom(roomId);
+  // console.log("Got Room Participants : ",room.participants);
+
+  for (let p of room.participants) {
+    if (socketId == p.socketId) {
+      p.name = name;
+    }
+  }
+
+  let room2 = getRoom(roomId);
+  console.log("After change : ", room2.participants);
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const rooms = {};
 
@@ -240,18 +277,21 @@ io.on("connection", (socket) => {
       // }
 
       let roomCheck = checkTheRoomToId(roomId); //true- exsists
-  console.log("Room exsist : ",roomCheck)
+      console.log("Room exsist : ", roomCheck)
       if (roomCheck) {
         // join room
 
         let roomObject = getRoom(roomId);
         let userId = user_id;
-        roomObject.participants.push({
-          socketId: socketId,
-          name: userNameShow,
-          user_id: userId,
-          isHost: isHost,
-        });
+
+        if (!roomObject.participants.some(participant=> participant.socketId == socketId)) {
+          roomObject.participants.push({
+            socketId: socketId,
+            name: userNameShow,
+            user_id: userId,
+            isHost: isHost,
+          });
+        }
         // console.log("RoomObject: ", roomObject);
       } else {
         //create room
@@ -328,31 +368,43 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("screen-sharing-stopped", socket.id, screenId);
   });
 
+
+
   // send Message
 
   socket.on("sendMessage", (msgObject) => {
     console.log("Message Received from ", socket.id, " Message: ", msgObject);
     console.log("SenderId: ", msgObject.sender_id);
     console.log("Room: ", msgObject.room_id);
+    console.log("Private Message : ", msgObject.isPrivate);
 
-    console.log("Room Details : ", allMessages);
-    let roomObject = getRoom(msgObject.room_id);
+
+    let roomObject = getRoom(msgObject.room_id, msgObject.isPrivate);
     console.log("Room obj: ", roomObject);
 
-    let { user_name, message, time, sender_id } = msgObject;
+    let { user_name, message, time, sender_id, isPrivate } = msgObject;
 
-    allMessages.push({
-      user_name,
-      message,
-      time,
-      sender_id,
-    });
-    roomObject.messages.push({ user_name, sender_id, message, time });
+    if (isPrivate == true) {
+      roomObject.messages.push({ user_name, sender_id, message, time, receiver_id: msgObject.receiver_id, isPrivate });
 
-    console.log("ALl messages: ", allMessages);
-    console.log(roomObject.messages);
+      console.log("Private message from ", msgObject.sender_id, " to ", msgObject.receiver_id, isPrivate);
+      console.log("The given message : ", msgObject.message);
 
-    io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+      io.to(msgObject.sender_id).emit("receivedMessage", msgObject);
+      io.to(msgObject.receiver_id).emit("receivedMessage", msgObject);
+   
+
+    }
+    else {
+      roomObject.messages.push({ user_name, sender_id, message, time,isPrivate });
+      console.log("This is a public message : ", { user_name, sender_id, message, time });
+
+      io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+
+    }
+
+    // console.log(roomObject.messages);
+
   });
 
   socket.on("emojiSend", (emoji) => {
@@ -367,6 +419,21 @@ io.on("connection", (socket) => {
     socket.to(poll.room_Id).emit("receivedPoll", poll);
     console.log("after recieve");
   });
+
+  socket.on("getParticiapants", (roomId) => {
+    let room = getRoom(roomId);
+    console.log('Room in part : ', room.participants);
+
+    io.to(roomId).emit("giveParticicpant", room.participants);
+  })
+
+
+
+
+
+
+
+
 
   // Handle user disconnection
   socket.on("disconnect", () => {
@@ -384,7 +451,13 @@ io.on("connection", (socket) => {
     if (socket.roomName != undefined) {
       deleteUser(socket.roomName, socket);
       removeParticipant(allRoomDetails, socket.roomName, socket.id);
+
+      let room = getRoom(socket.roomName);
+      console.log('Room in part delete : ', room.participants);
+  
+      io.to(socket.roomName).emit("giveParticicpant", room.participants);
     }
+  
 
     for (const roomId in rooms) {
       if (rooms[roomId].has(socket.id)) {
@@ -436,9 +509,9 @@ function checkTheRoomToId(roomId) {
 }
 
 function getRoom(roomID) {
-  console.log("All Rooms : I came inside -",allRoomDetails);
+  console.log("All Rooms : I came inside -", allRoomDetails);
   for (let room of allRoomDetails) {
-    console.log("Room: ", room);
+    // console.log("Room: ", room);
     if (room.roomId == roomID) {
       return room;
     }
@@ -453,8 +526,11 @@ async function deleteUser(roomName, socket) {
 
   let par = room.participants;
   let userDetail;
+
+  console.log("U name : ", socket.userName);
+
   for (let p of par) {
-    if (socket.userName == p.name) {
+    if (socket.id == p.socketId) {
       userDetail = p;
       break;
     }
@@ -554,7 +630,7 @@ async function addPaticipants(room_name, user_name, user_id) {
 }
 
 function removeParticipant(allRoomDetails, roomId, socketId) {
-  // Find the room with the given roomId
+
   const room = allRoomDetails.find((room) => room.roomId === roomId);
 
   if (room) {
@@ -564,8 +640,9 @@ function removeParticipant(allRoomDetails, roomId, socketId) {
     );
 
     if (participantIndex !== -1) {
-      // Remove the participant
+
       room.participants.splice(participantIndex, 1);
+
       console.log(
         `Participant with socketId ${socketId} removed from room ${roomId}`
       );

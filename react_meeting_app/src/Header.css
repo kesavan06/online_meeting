@@ -8,12 +8,12 @@
   padding: 10px; ;
 }
 
-.iconAndName {
+/* .iconAndName {
   width: 20%;
   display: flex;
   align-items: center;
   justify-content: center;
-}
+} */
 
 .navLogin {
   color: rgb(241, 241, 241);
@@ -33,3 +33,15 @@
   text-align: center;
 }
 
+
+
+.iconAndName {
+  width: 3%;
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgb(241, 241, 241);
+  cursor: pointer;
+}

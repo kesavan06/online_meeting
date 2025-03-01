@@ -20,7 +20,7 @@ export default function AboutMeeting({
   useEffect(() => {
 
     if (document.cookie && !oneTimeCookie) { 
-      console.log("Cookie : ", cookie);
+      // console.log("Cookie : ", cookie);
       user_name.current = cookie.user_name;
       user_id.current = cookie.user_id;
 
@@ -31,7 +31,7 @@ export default function AboutMeeting({
 
   return (
     <div className="homePageAboutMeeting">
-    <h1>Welcome to ConvoSpace</h1>
+    <h1>Welcome to KathaiKalaam</h1>
     <p>Connect with your team anytime, anywhere!</p>
     <div className="meetingButtons">
       <button

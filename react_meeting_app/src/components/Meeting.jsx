@@ -73,9 +73,14 @@ function Meeting({ showMeeting }) {
   let [isPoll, setIsPoll] = useState(false);
   let [allMessage, setAllMessage] = useState([]);
 
-  const [participantLength, setParticiapantLength] = useState(0);
+  const [participantLength, setParticipantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
   const [copyText, setCopyText] = useState(false);
+
+  const [allParticipants, setAllParticipants] = useState([]);
+
+
+  const isPrivate = useRef(false );
 
   const copyRoomId = async (roomId) => {
     await navigator.clipboard.writeText(roomId);
@@ -93,7 +98,7 @@ function Meeting({ showMeeting }) {
 
   const openPopup = () => {
     const newWindow = window.open("", "_blank", "width=1000,height=700");
-    newWindow.document.title = "Kadhaikalaam - whiteboard";
+    newWindow.document.title = "Kathaikalaam - whiteboard";
 
     if (newWindow) {
 
@@ -205,7 +210,7 @@ function Meeting({ showMeeting }) {
       )}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
-          <VideoRecord></VideoRecord>
+          {/* <VideoRecord></VideoRecord> */}
           <p
             style={{
               color: "white",
@@ -289,8 +294,11 @@ function Meeting({ showMeeting }) {
               isPoll={isPoll}
               allMessage={allMessage}
               setAllMessage={setAllMessage}
-              setParticiapantLength={setParticiapantLength}
+              setParticipantLength={setParticipantLength}
               showMeeting={showMeeting}
+              isPrivate={isPrivate}
+              allParticipants={allParticipants}
+              setAllParticipants={setAllParticipants}
             ></ChatParticipants>
           </div>
         )}

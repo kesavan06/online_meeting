@@ -2,6 +2,7 @@ import CryptoJS from "crypto-js";
 
 export default async function useUniqueName(uName) {
   console.log("U name: ", uName);
+  uName = uName.trim();
 
   try {
     console.log("Unique Name : ", uName);
@@ -31,4 +32,9 @@ export default async function useUniqueName(uName) {
     catch (err) {
         console.log("Err in Unique Check : \n", err);
     }
+}
+
+
+function decrptData(data, secKey) {
+  return CryptoJS.AES.decrypt(data, secKey).toString(CryptoJS.enc.Utf8);
 }

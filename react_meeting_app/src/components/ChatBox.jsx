@@ -8,11 +8,13 @@ import { useAppContext } from "../Context";
 import Emoji from "./Emoji";
 import Wrapper from "./Wrapper";
 import PollCreater from "./PollCreater";
+import ShowOptions from "./ShowOptions";
 // import EmojiPicker from 'emoji-picker-react';
 
-function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }) {
-  let { user_name, socketRef, roomId } = useAppContext();
+function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, allParticipants, isPrivate }) {
+  let { user_name, socketRef, roomId, toSocket } = useAppContext();
   // let [allMessage, setAllMessage] = useState([]);
+
 
   let messageRef = useRef("");
 
@@ -29,21 +31,20 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
     messageText = messageText.trim();
 
     const today = new Date();
-    console.log(today.toLocaleString());
 
     let getTodayTime = today.toLocaleTimeString();
     let splitDay = getTodayTime.split(":");
 
-    let day =
-      +splitDay[0] > 12
-        ? +splitDay[0] - 12 + "." + splitDay[1] + " PM"
-        : splitDay[0] + "." + splitDay[1] + " AM";
+
+    let day = (+splitDay[0] > 12) ? +splitDay[0] - 12 + "." + splitDay[1] + " PM" : splitDay[0] + "." + splitDay[1] + " AM";
+
     if (splitDay[0] == 12) {
       day = splitDay[0] + "." + splitDay[1] + " PM";
     }
+
+    console.log("Is A private message : ", isPrivate);
+
     if (messageText != "") {
-      console.log("Room : ", roomId.current);
-      console.log("Message : ", messageRef.current);
 
       newM = {
         user_name: user_name.current,
@@ -51,12 +52,22 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
         sender_id: socketRef.current.id,
         room_id: roomId.current,
         time: day,
+        isPrivate: isPrivate.current,
         type: "msg"
       };
 
-      // console.log("Object: ", newM);
+      if (isPrivate.current == true) {
+        newM.receiver_id = toSocket.current;
+      }
+
+      console.log("To Socket : ", toSocket);
+
+
+      // console.log("I am sending message : ", newM);
+
       socketRef.current.emit("sendMessage", newM);
       messageRef.current.value = "";
+
     }
   }
 
@@ -65,7 +76,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
   }
 
   function handlekeyDown(e) {
-    console.log(e.key);
+
     if (e.key == "Enter") {
       if (messageRef.current.value != "") {
         handleSendMessage();
@@ -89,13 +100,32 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
       });
       setAllMessage([]);
 
-      // console.log("All Messages: ",fetchAllMessages );
 
       let allM = await fetchAllMessages.json();
-      // console.log("AllMEssages:  ", allM);
-      // console.log("AllMEssages:  ", allM.data.messages);
-      // console.log("Participants:  ", allM.data.participants);
-      let message = allM.data.messages;
+      let message;
+
+      // console.log("All mess  - Public : ", allM.data);
+
+      let allMNow = [];
+      for (let m of allM.data) {
+        if (m.sender_id == socketRef.current.id && m.isPrivate && m.receiver_id !== undefined) {
+          console.log(1);
+          allMNow.push(m);
+        }
+        if (m.receiver_id == socketRef.current.id && m.isPrivate ) {
+          console.log(2);
+          allMNow.push(m);
+        }
+        if ( !m.isPrivate && m.receiver_id == undefined) {
+          console.log(3);
+          allMNow.push(m)
+        }
+      }
+
+      console.log("All grouped messages : ", allMNow);
+
+
+      message = allMNow
 
       for (let mess of message) {
         let isMine = false;
@@ -103,65 +133,71 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
           isMine = true;
         }
         mess.isMine = isMine;
-        console.log("Is mine : ", isMine);
-        console.log("Mess Final : ", mess);
+
         setAllMessage((prev) => [...prev, mess]);
       }
 
     }, 100)
   }, [view])
 
-  //   const handleNewMessage = (msg) => {
-
-  //     let isMyMessage = false;
-
-  //     let { user_name, message, sender_id, time } = msg;
-  //     let msgGot = { user_name, message,time };
-
-  //     if (socketRef.current.id == sender_id) {
-  //         isMyMessage = true;
-  //     }
-
-  //     let sendClass = isMyMessage;
-  //     console.log("Message is mine : ",isMyMessage);
-
-  //     setAllMessage((exsistingMessages) => [...(exsistingMessages), { ...msgGot, isMine: sendClass }]);
-
-  // }
 
   const handleNewMessage = (msg) => {
-    // setAllMessage("")
-    // for (let msg of allMess) {
 
     let isMyMessage = false;
 
-    let { user_name, message, sender_id, time } = msg;
-    let msgGot = { user_name, message, time };
+    let { user_name, message, sender_id, time, isPrivate } = msg;
+    let msgGot = { user_name, message, time, isPrivate };
 
     if (socketRef.current.id == sender_id) {
       isMyMessage = true;
     }
 
     let sendClass = isMyMessage;
-    console.log("Message is mine : ", isMyMessage);
+    // console.log("Received Message is private : ", isPrivate);
 
     setAllMessage((exsistingMessages) => [
       ...exsistingMessages,
       { ...msgGot, isMine: sendClass },
     ]);
-    // }
+
   };
 
-  
+
+  // useEffect(() => {
+  //   // console.log("All messages: ", allMessage);
+  //   socketRef.current.off("receivedMessage");
+
+  //   socketRef.current.on("receivedMessage", (msg) => {
+  //     console.log("Message received: ", msg);
+  //     handleNewMessage(msg);
+  //   });
+  // }, [allMessage]);
+
+
+  // useEffect(() => {
+  //   console.log("All particiapnt in chat : ", allParticipants);
+  // }, [])
+
+
+  // useEffect(() => {
+  //   console.log("Message to : ", toSocket);
+  // }, [toSocket]);
+
+
+  // useEffect(() => {
+  //   console.log("Private variable changed");
+  // }, [isPrivate])
+
   useEffect(() => {
-    console.log("All messages: ", allMessage);
+
     socketRef.current.off("receivedMessage");
 
     socketRef.current.on("receivedMessage", (msg) => {
       console.log("Message received: ", msg);
       handleNewMessage(msg);
     });
-  }, [allMessage]);
+
+  }, [])
 
   return (
     <div className="chatBox">
@@ -171,10 +207,9 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
 
       <div className="sentBox">
         <div className="msgPermision">
-          {/* <p>To</p>
-          <select className="selectUser">
-            <option>Everyone</option>
-          </select> */}
+          <p>To</p>
+
+          <ShowOptions parArray={allParticipants} isPrivate={isPrivate} ></ShowOptions>
 
           {showEmoji && (
             <Emoji
@@ -184,10 +219,6 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
             />
           )}
 
-          {/* <button onClick={(() => setIsPoll(true))}>Poll</button> */}
-          {/* {isPoll && <Wrapper>
-              <PollCreater></PollCreater>
-            </Wrapper>} */}
         </div>
 
         <div className="sentInputBox">
@@ -198,7 +229,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
             onKeyDown={handlekeyDown}
           ></input>
 
-          <button onClick={handleShowEmoji}>
+          <button onClick={(msg) => handleShowEmoji(msg)}>
             <FaFaceSmile className="invert"></FaFaceSmile>
           </button>
 

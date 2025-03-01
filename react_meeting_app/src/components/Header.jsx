@@ -1,5 +1,6 @@
 // import Signin from "./Signin";
 // import Signup from "./Signup";
+import { useEffect } from "react";
 import { useAppContext } from "../Context";
 import "../Header.css";
 // import { useState } from "react";
@@ -32,10 +33,13 @@ export default function Header({
     setShowSignUp(false);
   }
 
-  if (document.cookie) {
-    console.log("Cookie in header: ", cookie);
-    setHasCookie(prev => prev = true);
-  }
+  useEffect(()=>{
+    if (document.cookie) {
+      console.log("Cookie in header: ", cookie);
+      setHasCookie(prev => prev = true);
+    }
+  }, [])
+
 
   function handleLogOut() {
     console.log("Log out confirmed");
@@ -55,7 +59,8 @@ export default function Header({
   return (
     <div className="homePageHeader">
       <div className="iconAndName">
-        <h1>KadhaiKalaam</h1>
+          <img style={{ width: "70px" }} src="meetingLogo2.png"></img>
+
       </div>
       <div className="navLogin">
         {!hasCookie &&
