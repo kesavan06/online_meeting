@@ -12,7 +12,7 @@ export default function Message({ user_name, message, time, classNow , isPrivate
   return (
     <div className={classNow ? "chatThread right" : "chatThread"}>
       <div className="userDetail">
-        <p id="name">{user_name}</p>
+        <p id="userName">{user_name}</p>
         <p id="time">{time}</p>
         {isPrivate && <p style={{color: "#117F56", }}>(Private <IoIosLock/>) </p>}
       </div>
@@ -23,3 +23,4 @@ export default function Message({ user_name, message, time, classNow , isPrivate
     </div>
   );
 }
+

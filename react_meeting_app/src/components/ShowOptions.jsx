@@ -22,7 +22,6 @@ export default function ShowOptions({ parArray , isPrivate}) {
         if (selectedUser) {
 
             isPrivate.current = true;
-
             console.log("Selected User:", selectedUser.name, "Socket ID:", userId);
 
             toSocket.current = userId;
@@ -33,19 +32,6 @@ export default function ShowOptions({ parArray , isPrivate}) {
             console.log("Everyone selected ", "Socket ID:", userId);
         }
     }
-
-
-    useEffect(() => {
-        console.log("All particiapnt in chat : ", parArray);
-    }, [])
-
-    useEffect(() => {
-        console.log("ToSocket : ", toSocket);
-    }, [toSocket.current])
-
-    useEffect(() => {
-        console.log("Private change  : ", isPrivate);
-    }, [isPrivate])
 
 
     return (

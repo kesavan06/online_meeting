@@ -21,6 +21,7 @@ const corsOptions = {
 };
 
 let allRoomDetails = [];
+let pollIndex = 0;
 
 const mysql = require("mysql2");
 
@@ -277,14 +278,14 @@ io.on("connection", (socket) => {
       // }
 
       let roomCheck = checkTheRoomToId(roomId); //true- exsists
-      console.log("Room exsist : ",roomCheck)
+      console.log("Room exsist : ", roomCheck);
       if (roomCheck) {
         // join room
 
         let roomObject = getRoom(roomId);
         let userId = user_id;
 
-        if (!roomObject.participants.some(participant=> participant.socketId == socketId)) {
+        if (!roomObject.participants.some(participant => participant.socketId == socketId)) {
           roomObject.participants.push({
             socketId: socketId,
             name: userNameShow,
@@ -377,39 +378,67 @@ io.on("connection", (socket) => {
   // send Message
 
   socket.on("sendMessage", (msgObject) => {
+
     console.log("Message Received from ", socket.id, " Message: ", msgObject);
     console.log("SenderId: ", msgObject.sender_id);
     console.log("Room: ", msgObject.room_id);
     console.log("Private Message : ", msgObject.isPrivate);
 
 
-    let roomObject = getRoom(msgObject.room_id, msgObject.isPrivate);
-    console.log("Room obj: ", roomObject);
-
-    let { user_name, message, time, sender_id, isPrivate } = msgObject;
-
-    if (isPrivate == true) {
-      roomObject.messages.push({ user_name, sender_id, message, time, receiver_id: msgObject.receiver_id, isPrivate });
-
-      console.log("Private message from ", msgObject.sender_id, " to ", msgObject.receiver_id, isPrivate);
-      console.log("The given message : ", msgObject.message);
-
-      io.to(msgObject.sender_id).emit("receivedMessage", msgObject);
-      io.to(msgObject.receiver_id).emit("receivedMessage", msgObject);
-   
-
+    if (msgObject.type == "vote1") {
+      let room = getRoom(msgObject.room_id);
+      console.log("Room in vote1", room);
+      let roomDetail = room.messages;
+      for (let poll of roomDetail) {
+        if (poll.type == "poll" && poll.message.index == msgObject.index) {
+          console.log(typeof (poll.message.answer1));
+          poll.message.answer1 += 1;
+        }
+      }
+      console.log(room.messages);
+      io.to(msgObject.roomID).emit("receivedMessage", msgObject)
+    }
+    else if (msgObject.type == "vote2") {
+      let room = getRoom(msgObject.roomID);
+      let roomDetail = room.messages;
+      for (let poll of roomDetail) {
+        if (poll.type == "poll" && poll.message.index == msgObject.index) {
+          poll.message.answer2 += 1;
+        }
+      }
+      io.to(msgObject.roomID).emit("receivedMessage", msgObject);
     }
     else {
-      roomObject.messages.push({ user_name, sender_id, message, time,isPrivate });
-      console.log("This is a public message : ", { user_name, sender_id, message, time });
+      let roomObject = getRoom(msgObject.room_id, msgObject.isPrivate);
+      console.log("Room obj: ", roomObject);
 
-      io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+      let { user_name, message, time, sender_id, isPrivate, type } = msgObject;
 
+      if (isPrivate == true) {
+        roomObject.messages.push({ user_name, sender_id, message, time, receiver_id: msgObject.receiver_id, isPrivate, type });
+
+        console.log("Private message from ", msgObject.sender_id, " to ", msgObject.receiver_id, isPrivate);
+        console.log("The given message : ", msgObject.message);
+
+        io.to(msgObject.sender_id).emit("receivedMessage", msgObject);
+        io.to(msgObject.receiver_id).emit("receivedMessage", msgObject);
+
+
+      }
+      else {
+        roomObject.messages.push({ user_name, sender_id, message, time, isPrivate, type });
+        console.log("This is a public message : ", { user_name, sender_id, message, time });
+
+        io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+
+      }
     }
 
-    // console.log(roomObject.messages);
+
+
 
   });
+
 
   socket.on("emojiSend", (emoji) => {
     console.log("EMoji Received : ", emoji);
@@ -453,10 +482,10 @@ io.on("connection", (socket) => {
 
       let room = getRoom(socket.roomName);
       console.log('Room in part delete : ', room.participants);
-  
+
       io.to(socket.roomName).emit("giveParticicpant", room.participants);
     }
-  
+
 
     for (const roomId in rooms) {
       if (rooms[roomId].has(socket.id)) {

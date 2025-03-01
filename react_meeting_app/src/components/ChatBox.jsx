@@ -60,10 +60,8 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
         newM.receiver_id = toSocket.current;
       }
 
-      console.log("To Socket : ", toSocket);
+     console.log("Is A private message 2 : ", newM);
 
-
-      // console.log("I am sending message : ", newM);
 
       socketRef.current.emit("sendMessage", newM);
       messageRef.current.value = "";
@@ -109,21 +107,20 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
       let allMNow = [];
       for (let m of allM.data) {
         if (m.sender_id == socketRef.current.id && m.isPrivate && m.receiver_id !== undefined) {
-          console.log(1);
+          // console.log(1);
           allMNow.push(m);
         }
-        if (m.receiver_id == socketRef.current.id && m.isPrivate ) {
-          console.log(2);
+        if (m.receiver_id == socketRef.current.id && m.isPrivate) {
+          // console.log(2);
           allMNow.push(m);
         }
-        if ( !m.isPrivate && m.receiver_id == undefined) {
-          console.log(3);
+        if (!m.isPrivate && m.receiver_id == undefined) {
+          // console.log(3);
           allMNow.push(m)
         }
       }
 
       console.log("All grouped messages : ", allMNow);
-
 
       message = allMNow
 
@@ -142,24 +139,43 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
 
 
   const handleNewMessage = (msg) => {
+    // console.log("MSG TYPE: ", msg.type);
 
+    if (msg.type == "vote1") {
+      for (let chat of allMessage) {
+        if (chat.type == "poll" && chat.message.index == msg.index) {
+          chat.message.answer1 += 1;
+          chat.message.totalVote += 1;
+        }
+      }
+    }
+    else if (msg.type == "vote2") {
+      for (let pollMsg of allMessage) {
+        if (pollMsg.type == "poll" && pollMsg.message.index == msg.index) {
+          pollMsg.message.answer2 += 1;
+          pollMsg.message.totalVote += 1;
+        }
+      }
+    }
+   
     let isMyMessage = false;
+    let { user_name, message, sender_id, time, type, isPrivate } = msg;
+    let msgGot = { user_name, message, time, type, isPrivate };
 
-    let { user_name, message, sender_id, time, isPrivate } = msg;
-    let msgGot = { user_name, message, time, isPrivate };
 
     if (socketRef.current.id == sender_id) {
       isMyMessage = true;
     }
 
     let sendClass = isMyMessage;
-    // console.log("Received Message is private : ", isPrivate);
+    // console.log("Message is mine : ", isMyMessage);
 
     setAllMessage((exsistingMessages) => [
       ...exsistingMessages,
       { ...msgGot, isMine: sendClass },
     ]);
 
+    // }
   };
 
 
@@ -169,10 +185,9 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
     socketRef.current.off("receivedMessage");
 
     socketRef.current.on("receivedMessage", (msg) => {
-      console.log("Message received: ", msg);
+      console.log("Message received from server ", msg);
       handleNewMessage(msg);
     });
-    // console.log("Message: ",allMessage);
 
   }, [allMessage]);
 
@@ -195,7 +210,9 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
               handleShowEmoji={handleShowEmoji}
             />
           )}
+          <button onClick={() => setIsPoll(true)}>Poll</button>
 
+      
         </div>
 
         <div className="sentInputBox">

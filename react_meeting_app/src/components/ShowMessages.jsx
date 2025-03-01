@@ -7,20 +7,22 @@ export default function ShowMessage(props) {
   return (
     <>
       {props.newMessages.map((message) => {
-        // console.log("Is private to send message : ", message.isPrivate, message);
+
+        console.log("Message : ", message);
+        
         return (
           message.type == "poll" ?
-             <Poll title={message.title} option1={message.option1} option2={message.option2} user_name={message.user_name}></Poll>
-             :<Message
+            <Poll poll={message.message} user_name={message.user_name} time={message.time} isMine={message.isMine}></Poll>
+            : <Message
               user_name={message.user_name}
               message={message.message}
               time={message.time}
               classNow={message.isMine}
               isPrivate={message.isPrivate}
             ></Message>
-            
         );
       })}
     </>
   );
 }
+
