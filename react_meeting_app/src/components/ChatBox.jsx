@@ -10,9 +10,31 @@ import Wrapper from "./Wrapper";
 import PollCreater from "./PollCreater";
 // import EmojiPicker from 'emoji-picker-react';
 
-function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }) {
+function ChatBox({
+  view,
+  setView,
+  isPoll,
+  setIsPoll,
+  allMessage,
+  setAllMessage,
+}) {
   let { user_name, socketRef, roomId } = useAppContext();
   // let [allMessage, setAllMessage] = useState([]);
+
+  const chatMessageRef = useRef(null);
+
+  const scrollToBottom = () => {
+    if (chatMessageRef.current) {
+      chatMessageRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(scrollToBottom, 100);
+  }, [allMessage]);
 
   let messageRef = useRef("");
 
@@ -51,7 +73,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
         sender_id: socketRef.current.id,
         room_id: roomId.current,
         time: day,
-        type: "msg"
+        type: "msg",
       };
 
       // console.log("Object: ", newM);
@@ -107,9 +129,8 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
         console.log("Mess Final : ", mess);
         setAllMessage((prev) => [...prev, mess]);
       }
-
-    }, 100)
-  }, [view])
+    }, 100);
+  }, [view]);
 
   //   const handleNewMessage = (msg) => {
 
@@ -152,7 +173,6 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
     // }
   };
 
-  
   useEffect(() => {
     console.log("All messages: ", allMessage);
     socketRef.current.off("receivedMessage");
@@ -167,6 +187,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
     <div className="chatBox">
       <div className="chatDisplay">
         <ShowMessage newMessages={allMessage} />
+        <div ref={chatMessageRef} />
       </div>
 
       <div className="sentBox">

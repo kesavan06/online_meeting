@@ -13,6 +13,7 @@ import Wrapper from "./Wrapper";
 import PollCreater from "./PollCreater";
 import { FaCopy } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
+import { BreakOutRoomPopup } from "./BreakOutRoomPopup";
 
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
@@ -62,7 +63,15 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   );
 };
 
-function Meeting({ showMeeting }) {
+function Meeting({
+  showMeeting,
+  setShowMeeting,
+  setShowSignIn,
+  setShowSignUp,
+  setViewJoinMeeting,
+  setViewSetupMeeting,
+  setDisplayParent,
+}) {
   // let {videoGridRed} = useAppContext();
 
   // const [showWhiteBoard, setShowWhiteBoard] = useState(false);
@@ -76,6 +85,12 @@ function Meeting({ showMeeting }) {
   const [participantLength, setParticiapantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
   const [copyText, setCopyText] = useState(false);
+  const [showChatBot, setShowChatBot] = useState(false);
+  const [showParticipants, setShowParticipants] = useState(false);
+
+  const [breakOutRoom, setBreakOutRoom] = useState(false);
+
+  const [chatBotMessage, setChatBotMessage] = useState([]);
 
   const copyRoomId = async (roomId) => {
     await navigator.clipboard.writeText(roomId);
@@ -126,16 +141,9 @@ function Meeting({ showMeeting }) {
     startScreenShare,
     socketRef,
     user_name,
+    pauseAudio,
+    pauseVideo,
   } = useAppContext();
-
-
-
-
-  socketRef.current.on("disable-audio", (roomId, userId) => {
-    streams.map(() => {
-      
-    })
-  });
 
   console.log("all streams: ", streams);
 
@@ -149,9 +157,6 @@ function Meeting({ showMeeting }) {
       streams.map((videoStream) => {
         if (videoStream.type == "screen")
           screenVideoRef.current.srcObject = videoStream.stream;
-        // screenVideoRef.current.play().catch((err) => {
-        //   console.error("Error playing screen stream:", err);
-        // });
       });
     } else if (screenVideoRef.current) {
       screenVideoRef.current.srcObject = null;
@@ -231,6 +236,7 @@ function Meeting({ showMeeting }) {
           </p>
         </div>
       </div>
+
       <div className="meetingContent">
         <div className={showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
           <div className="videoBoxes">
@@ -275,6 +281,11 @@ function Meeting({ showMeeting }) {
                 />
               </div>
             )}
+            {breakOutRoom && (
+              <BreakOutRoomPopup
+                setBreakOutRoom={setBreakOutRoom}
+              ></BreakOutRoomPopup>
+            )}
             {allEmoji.map(({ id, emoji, name }) => {
               return (
                 <span className="emojiDiv" id={id}>
@@ -299,6 +310,12 @@ function Meeting({ showMeeting }) {
               setAllMessage={setAllMessage}
               setParticiapantLength={setParticiapantLength}
               showMeeting={showMeeting}
+              showChatBot={showChatBot}
+              setShowChatBot={setShowChatBot}
+              showParticipants={showParticipants}
+              setShowParticipants={setShowParticipants}
+              chatBotMessage={chatBotMessage}
+              setChatBotMessage={setChatBotMessage}
             ></ChatParticipants>
           </div>
         )}
@@ -313,7 +330,19 @@ function Meeting({ showMeeting }) {
           openPopup={openPopup}
           setShowEmojis={setShowEmojis}
           participantLength={participantLength}
-        ></MeetingFooter>{" "}
+          breakOutRoom={breakOutRoom}
+          setBreakOutRoom={setBreakOutRoom}
+          showParticipants={showParticipants}
+          setShowParticipants={setShowParticipants}
+          showChatBot={showChatBot}
+          setShowChatBot={setShowChatBot}
+          setShowSignIn={setShowSignIn}
+          setShowSignUp={setShowSignUp}
+          setViewJoinMeeting={setViewJoinMeeting}
+          setViewSetupMeeting={setViewSetupMeeting}
+          setDisplayParent={setDisplayParent}
+          setShowMeeting={setShowMeeting}
+        ></MeetingFooter>
       </div>
     </div>
   );

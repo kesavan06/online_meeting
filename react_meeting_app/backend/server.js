@@ -308,10 +308,13 @@ io.on("connection", (socket) => {
     io.to(to).emit("answer", { answer, from: socket.id });
   });
 
-  socket.on("disable-audio", (roomId) => {
-    io.to(roomId).emit("disable-audio", roomId, socket.id);
+  socket.on("control-audio", (roomId) => {
+    io.to(roomId).emit("control-audio", roomId, socket.id);
   });
 
+  socket.on("control-video", (roomId) => {
+    io.to(roomId).emit("control-video", roomId, socket.id);
+  });
   socket.on("screen-offer", ({ offer, to }) => {
     io.to(to).emit("screen-offer", { offer, from: socket.id });
   });
@@ -370,6 +373,10 @@ io.on("connection", (socket) => {
     console.log("room id: ", poll.room_Id);
     socket.to(poll.room_Id).emit("receivedPoll", poll);
     console.log("after recieve");
+  });
+
+  socket.on("leave-meeting", (roomId, userId) => {
+    io.to(roomId).emit("leave-meeting", roomId, userId);
   });
 
   // Handle user disconnection
