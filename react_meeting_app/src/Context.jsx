@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { io } from "socket.io-client";
+import { startRecord, startScreenRecord } from "./Recording";
 
 const AppContext = createContext();
 
@@ -18,8 +19,8 @@ export const AppProvider = ({ children }) => {
   const user_name = useRef({});
   const myStream = useRef(null);
   const myScreenStream = useRef(null);
-  const peerConnectionsRef = useRef(new Map()); // Use Map for better key management
-  const candidateQueues = useRef(new Map()); // Queue ICE candidates per peer
+  const peerConnectionsRef = useRef(new Map());
+  const candidateQueues = useRef(new Map());
   let srceenSharer = useRef(null);
   const [isShare, setIsShare] = useState(false);
   const key = useRef({});
@@ -32,7 +33,6 @@ export const AppProvider = ({ children }) => {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
       { urls: "stun:stun1.l.google.com:19302" },
-      // Add TURN server if needed for NAT traversal
     ],
   };
 
@@ -67,7 +67,7 @@ export const AppProvider = ({ children }) => {
       if (userId === socketRef.current.id) return;
       console.log("User connected:", userId);
       if (myStream.current || myScreenStream.current) {
-        await createPeerConnection(userId, true); // Create peer connection and include screen share if active
+        await createPeerConnection(userId, true);
       }
     });
 
@@ -138,7 +138,6 @@ export const AppProvider = ({ children }) => {
         prev = prev.filter((videoStream) => {
           console.log(videoStream.stream.id, streamId);
           if (videoStream.stream.id == streamId) {
-            // removePeerConnection(videoStream.userId);
             console.log(
               "after disconnected  screen: id",
               videoStream.stream.id,
@@ -198,13 +197,12 @@ export const AppProvider = ({ children }) => {
   };
 
   const createPeerConnection = async (userId, isInitiator) => {
-    if (peerConnectionsRef.current.has(userId)) return; // Avoid duplicates
+    if (peerConnectionsRef.current.has(userId)) return;
 
     const peerConnection = new RTCPeerConnection(configuration);
     peerConnectionsRef.current.set(userId, peerConnection);
-    candidateQueues.current.set(userId, []); // Initialize candidate queue
+    candidateQueues.current.set(userId, []);
 
-    // Add local stream tracks
     if (myStream.current) {
       myStream.current
         .getTracks()
@@ -219,7 +217,6 @@ export const AppProvider = ({ children }) => {
         );
     }
 
-    // Handle ICE candidates
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
         socketRef.current.emit("ice-candidate", {
@@ -231,16 +228,15 @@ export const AppProvider = ({ children }) => {
 
     const isScreenStream = (stream) => {
       const tracks = stream.getTracks();
-      return tracks.length === 1 && tracks[0].kind === "video"; // Screen share typically has only video
+      return tracks.length === 1 && tracks[0].kind === "video";
     };
 
     const isCameraStream = (stream) => {
       const videoTracks = stream.getVideoTracks();
       const audioTracks = stream.getAudioTracks();
-      return videoTracks.length > 0 && audioTracks.length > 0; // Webcam usually has both
+      return videoTracks.length > 0 && audioTracks.length > 0;
     };
 
-    // Handle remote stream
     peerConnection.ontrack = (event) => {
       const [remoteStream] = event.streams;
       console.log("Remote stream: ", remoteStream.id);
@@ -252,7 +248,6 @@ export const AppProvider = ({ children }) => {
       }
     };
 
-    // Monitor connection state
     peerConnection.oniceconnectionstatechange = () => {
       console.log(`${userId}: ICE state: ${peerConnection.iceConnectionState}`);
       if (peerConnection.iceConnectionState === "disconnected") {
@@ -274,7 +269,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const handleOffer = async (offer, from) => {
-    if (from === socketRef.current.id) return; // Ignore self
+    if (from === socketRef.current.id) return;
     const peerConnection = await createPeerConnection(from, false);
     try {
       await peerConnection.setRemoteDescription(
@@ -284,7 +279,6 @@ export const AppProvider = ({ children }) => {
       await peerConnection.setLocalDescription(answer);
       socketRef.current.emit("answer", { answer, to: from });
 
-      // Flush any queued candidates
       const queue = candidateQueues.current.get(from) || [];
       for (const candidate of queue) {
         await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
@@ -305,7 +299,6 @@ export const AppProvider = ({ children }) => {
       await peerConnection.setRemoteDescription(
         new RTCSessionDescription(answer)
       );
-      // Flush queued candidates
       const queue = candidateQueues.current.get(from) || [];
       for (const candidate of queue) {
         await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
@@ -330,7 +323,6 @@ export const AppProvider = ({ children }) => {
       if (peerConnection.remoteDescription) {
         await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
       } else {
-        // Queue candidate if remote description isn't set
         candidateQueues.current.set(from, [
           ...(candidateQueues.current.get(from) || []),
           candidate,
@@ -383,22 +375,14 @@ export const AppProvider = ({ children }) => {
       });
 
       myScreenStream.current = screenStream;
+      startScreenRecord(screenStream);
+      console.log(myScreenStream);
       setIsShare(true);
       srceenSharer.current = socketRef.current.id;
-      // Add tracks from screen stream to all existing peer connections
       for (const [userId, peerConnection] of peerConnectionsRef.current) {
         screenStream.getTracks().forEach((track) => {
-          peerConnection.addTrack(track, screenStream); // Add screen tracks to existing connection
+          peerConnection.addTrack(track, screenStream);
         });
-
-        // screenPeerConnection.onicecandidate = (event) => {
-        //   if (event.candidate) {
-        //     socketRef.current.emit("screen-candidate", {
-        //       candidate: event.candidate,
-        //       to: userId,
-        //     });
-        //   }
-        // };
 
         const offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(offer);
@@ -409,7 +393,6 @@ export const AppProvider = ({ children }) => {
         });
       }
 
-      // Set local screen stream state
       setScreenStreamState({
         userId: socketRef.current.id,
         stream: screenStream,
@@ -421,12 +404,10 @@ export const AppProvider = ({ children }) => {
         userId: socketRef.current.id,
       });
 
-      // Notify other participants about screen sharing
       socketRef.current.emit("screen-sharing-started", {
         roomId: roomId.current,
         userId: socketRef.current.id,
       });
-      // Handle stream stop
       screenStream.getVideoTracks()[0].onended = () => {
         stopScreenSharing(screenStream);
       };

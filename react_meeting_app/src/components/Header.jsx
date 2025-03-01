@@ -55,7 +55,7 @@ export default function Header({
   return (
     <div className="homePageHeader">
       <div className="iconAndName">
-        <h1>KadhaiKalaam</h1>
+      <img style={{width:"70px"}} src="meetingLogo2.png"></img>
       </div>
       <div className="navLogin">
         {!hasCookie &&
@@ -68,3 +68,4 @@ export default function Header({
     </div>
   );
 }
+

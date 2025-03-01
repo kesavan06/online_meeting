@@ -32,6 +32,14 @@ function MeetingFooter({
   setShowEmojis,
   openPopup,
   participantLength,
+  setSec,
+  sec,
+  min,
+  setMin,
+  isRecord,
+  setIsRecord,
+  isRun,
+  setIsRun,
   breakOutRoom,
   setBreakOutRoom,
   showParticipants,
@@ -48,7 +56,7 @@ function MeetingFooter({
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
-  const [isRecord, setIsRecord] = useState(false);
+  // const [isRecord, setIsRecord] = useState(false);
   const {
     roomId,
     myStream,
@@ -63,6 +71,7 @@ function MeetingFooter({
     setStreamsState,
   } = useAppContext();
   // const [showLeaveMeetingBtn, setShowLeaveMeetingBtn] = useState(false);
+  let interval;
 
   // function handleClick() {
   //   handleBoard();
@@ -110,7 +119,6 @@ function MeetingFooter({
       });
     });
   }, [pauseVideo]);
-
   const leaveMeeting = () => {
     console.log(streams);
 
@@ -149,8 +157,12 @@ function MeetingFooter({
       console.log(myScreenStream.current);
       if (myScreenStream.current) {
         localStream = myScreenStream.current;
+      } else {
+        localStream = myStream.current;
       }
       let stream = startRecord(localStream);
+      setIsRun(true);
+      // timer();
       if (stream) {
         setIsRecord(true);
       }
@@ -163,6 +175,7 @@ function MeetingFooter({
     try {
       stopRecord();
       console.log("Recording stop!!!");
+      stopTimer();
       setIsRecord(false);
     } catch (err) {
       console.log("Error: " + err);
@@ -172,7 +185,80 @@ function MeetingFooter({
   function handleEmoji() {
     setShowEmojis((prev) => (prev = !prev));
     setBreakOutRoom((prev) => (prev = false));
+
+    setBreakOutRoom((prev) => (prev = false));
   }
+
+  // function timer()
+  // {
+  // if(isRun)
+  // {
+  //   interval = setInterval(()=>{
+  //     setSec((prev)=>prev+1);
+
+  //   },1000);
+  // }
+
+  // }
+
+  useEffect(() => {
+    if (isRun && !interval) {
+      setSec(0);
+      interval = setInterval(() => {
+        setSec((prev) => prev + 1);
+      }, 1000);
+    }
+  }, [isRun]);
+
+  useEffect(() => {
+    if (sec == 59) {
+      setMin((prev) => prev + 1);
+      setSec(0);
+    }
+  }, [sec]);
+
+  function stopTimer() {
+    clearInterval(interval);
+    setIsRun(false);
+    setSec(0);
+    setMin(0);
+  }
+
+  // function timer()
+  // {
+  // if(isRun)
+  // {
+  //   interval = setInterval(()=>{
+  //     setSec((prev)=>prev+1);
+
+  //   },1000);
+  // }
+
+  // }
+
+  useEffect(() => {
+    if (isRun && !interval) {
+      setSec(0);
+      interval = setInterval(() => {
+        setSec((prev) => prev + 1);
+      }, 1000);
+    }
+  }, [isRun]);
+
+  useEffect(() => {
+    if (sec == 59) {
+      setMin((prev) => prev + 1);
+      setSec(0);
+    }
+  }, [sec]);
+
+  function stopTimer() {
+    clearInterval(interval);
+    setIsRun(false);
+    setSec(0);
+    setMin(0);
+  }
+
 
   return (
     <div className="footerBox">

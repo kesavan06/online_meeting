@@ -22,3 +22,4 @@ export default function Message({ user_name, message, time, classNow }) {
     </div>
   );
 }
+

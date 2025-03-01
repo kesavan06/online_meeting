@@ -125,8 +125,8 @@ function ChatBox({
           isMine = true;
         }
         mess.isMine = isMine;
-        console.log("Is mine : ", isMine);
-        console.log("Mess Final : ", mess);
+        // console.log("Is mine : ", isMine);
+        // console.log("Mess Final : ", mess);
         setAllMessage((prev) => [...prev, mess]);
       }
     }, 100);
@@ -154,33 +154,61 @@ function ChatBox({
     // setAllMessage("")
     // for (let msg of allMess) {
 
-    let isMyMessage = false;
-
-    let { user_name, message, sender_id, time } = msg;
-    let msgGot = { user_name, message, time };
-
-    if (socketRef.current.id == sender_id) {
-      isMyMessage = true;
+    console.log("MSG TYPE: ",msg.type);
+    if(msg.type=="vote1")
+    {
+      for(let chat of allMessage)
+      {
+        if(chat.type=="poll" && chat.message.index==msg.index)
+        {
+          chat.message.answer1 +=1;
+          chat.message.totalVote +=1;
+        }
+      }
     }
+    else if(msg.type=="vote2")
+    {
+      for(let pollMsg of allMessage)
+      {
+        if(pollMsg.type=="poll" && pollMsg.message.index==msg.index)
+        {
+          pollMsg.message.answer2 +=1;
+          pollMsg.message.totalVote +=1;
+        }
+      }
+    }
+    else{
+      let isMyMessage = false;
+      let { user_name, message, sender_id, time,type } = msg;
+      let msgGot = { user_name, message, time, type };
 
-    let sendClass = isMyMessage;
-    console.log("Message is mine : ", isMyMessage);
+      if (socketRef.current.id == sender_id) {
+        isMyMessage = true;
+      }
 
-    setAllMessage((exsistingMessages) => [
-      ...exsistingMessages,
-      { ...msgGot, isMine: sendClass },
-    ]);
+      let sendClass = isMyMessage;
+      // console.log("Message is mine : ", isMyMessage);
+
+      setAllMessage((exsistingMessages) => [
+        ...exsistingMessages,
+        { ...msgGot, isMine: sendClass },
+      ]);
+    }
+    
     // }
   };
 
   useEffect(() => {
-    console.log("All messages: ", allMessage);
+    // console.log("All messages: ", allMessage);
     socketRef.current.off("receivedMessage");
 
     socketRef.current.on("receivedMessage", (msg) => {
-      console.log("Message received: ", msg);
+      console.log("Message received from server ", msg);
       handleNewMessage(msg);
     });
+
+    // console.log("Message: ",allMessage);
+
   }, [allMessage]);
 
   return (
@@ -204,10 +232,15 @@ function ChatBox({
               handleShowEmoji={handleShowEmoji}
             />
           )}
+          <button onClick={()=>setIsPoll(true)}>Poll</button>
 
-          {/* <button onClick={(() => setIsPoll(true))}>Poll</button> */}
           {/* {isPoll && <Wrapper>
-              <PollCreater></PollCreater>
+              <PollCreater 
+                allMessage={allMessage}
+                setAllMessage={setAllMessage}
+                isPoll={isPoll}
+                setIsPoll={setIsPoll}
+              ></PollCreater>
             </Wrapper>} */}
         </div>
 

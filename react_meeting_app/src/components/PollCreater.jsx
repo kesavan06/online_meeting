@@ -9,6 +9,25 @@ export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPo
     const [newPoll, createNewPoll] = useState({ title: "", option1: "", option2: "", userName: "", room_Id: "", type: "" });
     const { user_name, socketRef, roomId } = useAppContext();
     // const [isPoll,setIsPoll] = useState(false);
+    // console.log("socketref",socketRef);
+
+    useEffect(()=>{
+        // socketRef.current = io("http://localhost:3002")
+        // console.log("I am inside effect in receive");
+        socketRef.current.on("receivedPoll",( poll) => {
+            console.log("POLL OBJECT", poll);
+
+            // setAllMessage((prevMsg)=>[...prevMsg,poll]);
+            socketRef.current.off("receivedPoll");
+        })
+        // return ()=>{
+        //     socketRef.current.off("receivedPoll");
+        // }
+    },[isPoll]);
+
+    // useEffect(()=>{
+    //     console.log("All mess in poll : ",allMessage);
+    // },[allMessage])
 
     function valueChange(e) {
         const { name, value } = e.target;
@@ -19,22 +38,39 @@ export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPo
         console.log("Inside the poll creater function");
         e.preventDefault();
         if (!newPoll.title || !newPoll.option1 || !newPoll.option2) return;
+        
+        let today=new Date();
+        let todayTime=today.toLocaleTimeString();
+        let splitTime=todayTime.split(":");
+        let time = +splitTime[0] > 12 
+            ? +splitTime[0]-12 + ":" +splitTime[1] + " PM"
+            : splitTime[0] + ":" +splitTime[1] + " AM";
 
-        const value = { title: newPoll.title, option1: newPoll.option1, option2: newPoll.option2, userName: user_name.current, room_Id: roomId.current, type: "poll" };
-        socketRef.current.emit("sendPoll", value);
+        if(splitTime[0] == 12)
+        {
+            time = splitTime[0] + ":" + splitTime[1] + " PM"
+        }
+
+        const message = {title: newPoll.title, option1:newPoll.option1, option2:newPoll.option2, answer1:0,answer2:0,totalVote:0,index:""};
+        const value = { user_name: user_name.current, message,sender_id:socketRef.current.id,room_id: roomId.current, time:time,type: "poll" };
+        socketRef.current.emit("sendMessage", value);
+        setIsPoll(!isPoll);
         console.log("Value: ", value);
 
         createNewPoll({ title: "", option1: "", option2: "", userName: "", room_Id: "", type: "" });
         console.log("Last line in the function");
-        setIsPoll(false);
+        
     }
 
+    
+    
+
     // useEffect(()=>{
-    // console.log("poll",poll);
-    socketRef.current.on("receivedPoll", (pollObj) => {
-        console.log("POLL OBJECT", pollObj);
-        setAllMessage([...allMessage, pollObj]);
-    })
+    // // console.log("poll",poll);
+    // socketRef.current.on("receivedPoll", (pollObj) => {
+    //     console.log("POLL OBJECT", pollObj);
+    //     setAllMessage([...allMessage, pollObj]);
+    // })
     // },[isPoll]);
 
 
