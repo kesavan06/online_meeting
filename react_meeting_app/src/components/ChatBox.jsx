@@ -163,30 +163,6 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
   };
 
 
-  // useEffect(() => {
-  //   // console.log("All messages: ", allMessage);
-  //   socketRef.current.off("receivedMessage");
-
-  //   socketRef.current.on("receivedMessage", (msg) => {
-  //     console.log("Message received: ", msg);
-  //     handleNewMessage(msg);
-  //   });
-  // }, [allMessage]);
-
-
-  // useEffect(() => {
-  //   console.log("All particiapnt in chat : ", allParticipants);
-  // }, [])
-
-
-  // useEffect(() => {
-  //   console.log("Message to : ", toSocket);
-  // }, [toSocket]);
-
-
-  // useEffect(() => {
-  //   console.log("Private variable changed");
-  // }, [isPrivate])
 
   useEffect(() => {
 
@@ -196,8 +172,9 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
       console.log("Message received: ", msg);
       handleNewMessage(msg);
     });
+    // console.log("Message: ",allMessage);
 
-  }, [])
+  }, [allMessage]);
 
   return (
     <div className="chatBox">

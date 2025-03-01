@@ -72,6 +72,10 @@ function Meeting({ showMeeting }) {
   const [allEmoji, setAllEmoji] = useState([]);
   let [isPoll, setIsPoll] = useState(false);
   let [allMessage, setAllMessage] = useState([]);
+  const [isRecord, setIsRecord] = useState(false);
+  const [sec, setSec] = useState(0);
+  const [min, setMin] = useState(0);
+  const [isRun, setIsRun] = useState(false);
 
   const [participantLength, setParticipantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
@@ -101,7 +105,6 @@ function Meeting({ showMeeting }) {
     newWindow.document.title = "Kathaikalaam - whiteboard";
 
     if (newWindow) {
-
       const style = newWindow.document.createElement("style");
       style.innerHTML = `
         body {
@@ -112,7 +115,7 @@ function Meeting({ showMeeting }) {
         }`;
 
       newWindow.document.head.appendChild(style);
-      
+
       newWindow.document.body.innerHTML = "<div id='popup-root'></div>";
 
       const popupRoot = newWindow.document.getElementById("popup-root");
@@ -133,6 +136,10 @@ function Meeting({ showMeeting }) {
     socketRef,
     user_name,
   } = useAppContext();
+
+  socketRef.current.on("disable-audio", (roomId, userId) => {
+    streams.map(() => {});
+  });
 
   console.log("all streams: ", streams);
 
@@ -210,7 +217,18 @@ function Meeting({ showMeeting }) {
       )}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
-          {/* <VideoRecord></VideoRecord> */}
+        {isRecord && (
+            <VideoRecord
+              isRun={isRun}
+              setIsRun={setIsRun}
+              sec={sec}
+              min={min}
+              setSec={setSec}
+              setMin={setMin}
+              isRecord={isRecord}
+              setIsRecord={setIsRecord}
+            ></VideoRecord>
+          )}
           <p
             style={{
               color: "white",
@@ -220,7 +238,7 @@ function Meeting({ showMeeting }) {
             }}
           >
             Meeting ID: {roomId.current}
-            { }
+            {}
             <FaCopy
               onClick={() => copyRoomId(roomId.current)}
               style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -313,7 +331,14 @@ function Meeting({ showMeeting }) {
           openPopup={openPopup}
           setShowEmojis={setShowEmojis}
           participantLength={participantLength}
-
+          setSec={setSec}
+          sec={sec}
+          min={min}
+          setMin={setMin}
+          isRecord={isRecord}
+          setIsRecord={setIsRecord}
+          isRun={isRun}
+          setIsRun={setIsRun}
         ></MeetingFooter>{" "}
       </div>
     </div>

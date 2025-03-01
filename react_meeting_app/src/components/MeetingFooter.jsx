@@ -28,20 +28,42 @@ function MeetingFooter({
   showEmojis,
   setShowEmojis,
   openPopup,
-  participantLength
+  participantLength,
+  setSec,
+  sec,
+  min,
+  setMin,
+  isRecord,
+  setIsRecord,
+  isRun,
+  setIsRun,
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
-  const [isRecord, setIsRecord] = useState(false);
+  // const [isRecord, setIsRecord] = useState(false);
   const { myStream, isShare, myScreenStream } = useAppContext();
   // const [showLeaveMeetingBtn, setShowLeaveMeetingBtn] = useState(false);
+  let interval;
 
   // function handleClick() {
   //   handleBoard();
   // }
-  const [puaseVideo, setPauseVideo] = useState(false);
-  const [puaseAudio, setPauseAudio] = useState(false);
-  
+  const [pauseVideo, setPauseVideo] = useState(false);
+  const [pauseAudio, setPauseAudio] = useState(false);
+
+  useEffect(() => {
+    console.log(pauseAudio);
+    if (pauseAudio) {
+      setTimeout(() => {
+        socketRef.current.emit("disable-audio", roomId.current);
+      }, 1000);
+      console.log("mic off");
+    } else {
+      console.log("mic on");
+    }
+  }, [pauseAudio]);
+
+  useEffect(() => {});
 
   const leaveMeeting = () => {
     window.location.reload();
@@ -53,8 +75,12 @@ function MeetingFooter({
       console.log(myScreenStream.current);
       if (myScreenStream.current) {
         localStream = myScreenStream.current;
+      } else {
+        localStream = myStream.current;
       }
       let stream = startRecord(localStream);
+      setIsRun(true);
+      // timer();
       if (stream) {
         setIsRecord(true);
       }
@@ -67,6 +93,7 @@ function MeetingFooter({
     try {
       stopRecord();
       console.log("Recording stop!!!");
+      stopTimer();
       setIsRecord(false);
     } catch (err) {
       console.log("Error: " + err);
@@ -77,11 +104,84 @@ function MeetingFooter({
     setShowEmojis((prev) => (prev = !prev));
   }
 
+  // function timer()
+  // {
+  // if(isRun)
+  // {
+  //   interval = setInterval(()=>{
+  //     setSec((prev)=>prev+1);
+
+  //   },1000);
+  // }
+
+  // }
+
+  useEffect(() => {
+    if (isRun && !interval) {
+      setSec(0);
+      interval = setInterval(() => {
+        setSec((prev) => prev + 1);
+      }, 1000);
+    }
+  }, [isRun]);
+
+  useEffect(() => {
+    if (sec == 59) {
+      setMin((prev) => prev + 1);
+      setSec(0);
+    }
+  }, [sec]);
+
+  function stopTimer() {
+    clearInterval(interval);
+    setIsRun(false);
+    setSec(0);
+    setMin(0);
+  }
+
+  // function timer()
+  // {
+  // if(isRun)
+  // {
+  //   interval = setInterval(()=>{
+  //     setSec((prev)=>prev+1);
+
+  //   },1000);
+  // }
+
+  // }
+
+  useEffect(() => {
+    if (isRun && !interval) {
+      setSec(0);
+      interval = setInterval(() => {
+        setSec((prev) => prev + 1);
+      }, 1000);
+    }
+  }, [isRun]);
+
+  useEffect(() => {
+    if (sec == 59) {
+      setMin((prev) => prev + 1);
+      setSec(0);
+    }
+  }, [sec]);
+
+  function stopTimer() {
+    clearInterval(interval);
+    setIsRun(false);
+    setSec(0);
+    setMin(0);
+  }
+
   return (
     <div className="footerBox">
       <div className="micVideoConrol">
         <div
-          onClick={() => (mic ? setMic(false) : setMic(true))}
+          onClick={() => {
+            mic ? setMic(false) : setMic(true);
+            setPauseAudio((prev) => !prev);
+          }}
           className="controlBox"
         >
           {mic ? (
@@ -136,7 +236,7 @@ function MeetingFooter({
             ></FaCircleStop>
           )}
         </div>
-       
+
         <div
           className="controlBox exitBox"
           onClick={() => {

@@ -1,6 +1,7 @@
 let screenStream;
 let mediaRecorder;
 let recordedChunks = [];
+let screen = [];
 
 export async function startRecord(stream) {
     try {
@@ -33,9 +34,9 @@ export function stopRecord() {
         // mediaRecorder.stop();
         // console.log("Recording stopped...");
     // }
-
+    let total=recordedChunks.concat(screen);
     
-    const recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
+    const recordedBlob = new Blob(total, { type: "video/webm" });
 
     const downloadLink = document.createElement("a");
     downloadLink.href = URL.createObjectURL(recordedBlob);
@@ -45,6 +46,26 @@ export function stopRecord() {
     console.log("Recording stopped...");
     
     console.log("Recording saved.");
+}
+
+export function startScreenRecord()
+{
+    try {
+        mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+
+        mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+                console.log("Inside the if condition");
+                screen.push(event.data);
+            }
+        };
+        mediaRecorder.onstop = stopRecord;
+
+        mediaRecorder.start();
+        console.log("Recording started...");
+    } catch (error) {
+        console.error("Error starting screen recording:", error);
+    }
 }
 
 // export function saveRecording() {

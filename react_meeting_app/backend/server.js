@@ -277,7 +277,7 @@ io.on("connection", (socket) => {
       // }
 
       let roomCheck = checkTheRoomToId(roomId); //true- exsists
-      console.log("Room exsist : ", roomCheck)
+      console.log("Room exsist : ",roomCheck)
       if (roomCheck) {
         // join room
 
@@ -346,6 +346,10 @@ io.on("connection", (socket) => {
     if (!to || !answer) return socket.emit("error", "Missing answer or target");
     console.log(`Answer from ${socket.id} to ${to}`);
     io.to(to).emit("answer", { answer, from: socket.id });
+  });
+
+  socket.on("disable-audio", (roomId) => {
+    io.to(roomId).emit("disable-audio", roomId, socket.id);
   });
 
   socket.on("screen-offer", ({ offer, to }) => {
@@ -426,11 +430,6 @@ io.on("connection", (socket) => {
 
     io.to(roomId).emit("giveParticicpant", room.participants);
   })
-
-
-
-
-
 
 
 

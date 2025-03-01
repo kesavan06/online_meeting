@@ -1,6 +1,6 @@
 .homePageHeader {
   width: 100%;
-  height: 50px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -8,12 +8,6 @@
   padding: 10px; ;
 }
 
-/* .iconAndName {
-  width: 20%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} */
 
 .navLogin {
   color: rgb(241, 241, 241);
