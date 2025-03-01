@@ -73,9 +73,9 @@ function Meeting({ showMeeting }) {
   let [isPoll, setIsPoll] = useState(false);
   let [allMessage, setAllMessage] = useState([]);
   const [isRecord, setIsRecord] = useState(false);
-  const [sec,setSec] = useState(0);
-  const [min,setMin] = useState(0);
-  const [isRun,setIsRun]=useState(false);
+  const [sec, setSec] = useState(0);
+  const [min, setMin] = useState(0);
+  const [isRun, setIsRun] = useState(false);
 
   const [participantLength, setParticiapantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
@@ -100,7 +100,6 @@ function Meeting({ showMeeting }) {
     newWindow.document.title = "Kadhaikalaam - whiteboard";
 
     if (newWindow) {
-
       const style = newWindow.document.createElement("style");
       style.innerHTML = `
         body {
@@ -111,7 +110,7 @@ function Meeting({ showMeeting }) {
         }`;
 
       newWindow.document.head.appendChild(style);
-      
+
       newWindow.document.body.innerHTML = "<div id='popup-root'></div>";
 
       const popupRoot = newWindow.document.getElementById("popup-root");
@@ -132,6 +131,10 @@ function Meeting({ showMeeting }) {
     socketRef,
     user_name,
   } = useAppContext();
+
+  socketRef.current.on("disable-audio", (roomId, userId) => {
+    streams.map(() => {});
+  });
 
   console.log("all streams: ", streams);
 
@@ -195,7 +198,6 @@ function Meeting({ showMeeting }) {
     };
   }, []);
 
-
   return (
     <div className="meetingContainer">
       {isPoll && (
@@ -210,7 +212,18 @@ function Meeting({ showMeeting }) {
       )}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
-          {isRecord && <VideoRecord isRun={isRun} setIsRun={setIsRun} sec={sec} min={min} setSec={setSec} setMin={setMin} isRecord={isRecord} setIsRecord={setIsRecord}></VideoRecord>}
+          {isRecord && (
+            <VideoRecord
+              isRun={isRun}
+              setIsRun={setIsRun}
+              sec={sec}
+              min={min}
+              setSec={setSec}
+              setMin={setMin}
+              isRecord={isRecord}
+              setIsRecord={setIsRecord}
+            ></VideoRecord>
+          )}
           <p
             style={{
               color: "white",
@@ -220,7 +233,7 @@ function Meeting({ showMeeting }) {
             }}
           >
             Meeting ID: {roomId.current}
-            { }
+            {}
             <FaCopy
               onClick={() => copyRoomId(roomId.current)}
               style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -271,17 +284,17 @@ function Meeting({ showMeeting }) {
                   onEmojiClick={handleClickOnEmoji}
                 />
               </div>
-           )}
-           {allEmoji.map(({ id, emoji, name }) => {
-             return (
-               <span className="emojiDiv" id={id}>
-                 <p style={{ fontSize: "1rem", textAlign: "center" }}>
-                   {name}
-                 </p>
-                 {emoji}
-               </span>
-             );
-           })}
+            )}
+            {allEmoji.map(({ id, emoji, name }) => {
+              return (
+                <span className="emojiDiv" id={id}>
+                  <p style={{ fontSize: "1rem", textAlign: "center" }}>
+                    {name}
+                  </p>
+                  {emoji}
+                </span>
+              );
+            })}
           </div>
         </div>
         {showChatBox && (

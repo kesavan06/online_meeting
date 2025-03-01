@@ -194,7 +194,7 @@ app.post("/getP", (req, res) => {
   try {
     let { roomId } = req.body;
     console.log("I am inside oarticipant : ", roomId);
-    let participants =  getRoom(roomId);
+    let participants = getRoom(roomId);
     console.log("Participants : ", participants);
 
     let p = participants.participants;
@@ -241,8 +241,7 @@ io.on("connection", (socket) => {
       // }
 
       let roomCheck = checkTheRoomToId(roomId); //true- exsists
-      console.log("Room exsist : ",roomCheck)
-      if (roomCheck) {
+      console.log("Room exsist : ", roomCheck);      if (roomCheck) {
         // join room
 
         let roomObject = getRoom(roomId);
@@ -307,6 +306,10 @@ io.on("connection", (socket) => {
     if (!to || !answer) return socket.emit("error", "Missing answer or target");
     console.log(`Answer from ${socket.id} to ${to}`);
     io.to(to).emit("answer", { answer, from: socket.id });
+  });
+
+  socket.on("disable-audio", (roomId) => {
+    io.to(roomId).emit("disable-audio", roomId, socket.id);
   });
 
   socket.on("screen-offer", ({ offer, to }) => {
@@ -473,7 +476,7 @@ function checkTheRoomToId(roomId) {
 }
 
 function getRoom(roomID) {
-  console.log("All Rooms : I came inside -",allRoomDetails);
+  console.log("All Rooms : I came inside -", allRoomDetails);
   for (let room of allRoomDetails) {
     console.log("Room: ", room);
     if (room.roomId == roomID) {
