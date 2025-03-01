@@ -135,7 +135,14 @@ function MeetingFooter({
     setShowMeeting((prev) => (prev = false));
     socketRef.current.disconnect();
     socketRef.current = io("http://localhost:3002");
-    setStreamsState([]);
+    setStreamsState((prev) => {
+      prev.map((videoStream) => {
+        videoStream.stream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      });
+      return [];
+    });
   };
   socketRef.current.on("leave-meeting", (roomId, userId) => {
     setStreamsState((prev) => {
@@ -258,7 +265,6 @@ function MeetingFooter({
     setSec(0);
     setMin(0);
   }
-
 
   return (
     <div className="footerBox">
