@@ -16,26 +16,26 @@ function VideoRecord({sec,min,setMin,setSec,setIsRecord,isRecord,isRun,setIsRun}
   // }
 
 
-  function stopRecording() {
-    try {
-      stopRecord();
-      console.log("Recording stop!!!");
-      stopTimer();
-      setIsRecord(false);
-    }
-    catch (err) {
-      console.log("Error: " + err);
-    }
-  }
+  // function stopRecording() {
+  //   try {
+  //     stopRecord();
+  //     console.log("Recording stop!!!");
+  //     stopTimer();
+  //     setIsRecord(false);
+  //   }
+  //   catch (err) {
+  //     console.log("Error: " + err);
+  //   }
+  // }
 
 
-  function stopTimer()
-  {
-    clearInterval(interval);
-    setIsRun(false);
-    setSec(0);
-    setMin(0);
-  }
+  // function stopTimer()
+  // {
+  //   clearInterval(interval);
+  //   setIsRun(false);
+  //   setSec(0);
+  //   setMin(0);
+  // }
 
   
   return (
@@ -48,7 +48,7 @@ function VideoRecord({sec,min,setMin,setSec,setIsRecord,isRecord,isRun,setIsRun}
           <p>LIVE {min}:{sec}</p>
         </div>
         <div className="stopRecord">
-            <FaCircleStop className="stopRecordIcon" onClick={stopRecording}></FaCircleStop>
+            <FaCircleStop className="stopRecordIcon"></FaCircleStop>
         </div>
       </div>
   );

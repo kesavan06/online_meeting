@@ -22,6 +22,7 @@ const corsOptions = {
 };
 
 let allRoomDetails = [];
+let pollIndex=0;
 
 const mysql = require("mysql2");
 
@@ -240,7 +241,7 @@ io.on("connection", (socket) => {
       // }
 
       let roomCheck = checkTheRoomToId(roomId); //true- exsists
-  console.log("Room exsist : ",roomCheck)
+      console.log("Room exsist : ",roomCheck)
       if (roomCheck) {
         // join room
 
@@ -331,29 +332,65 @@ io.on("connection", (socket) => {
   // send Message
 
   socket.on("sendMessage", (msgObject) => {
-    console.log("Message Received from ", socket.id, " Message: ", msgObject);
-    console.log("SenderId: ", msgObject.sender_id);
-    console.log("Room: ", msgObject.room_id);
-
+    // console.log("Message Received from ", socket.id, " Message: ", msgObject);
+    // console.log("SenderId: ", msgObject.sender_id);
+    // console.log("Room: ", msgObject.room_id);
     console.log("Room Details : ", allMessages);
-    let roomObject = getRoom(msgObject.room_id);
-    console.log("Room obj: ", roomObject);
 
-    let { user_name, message, time, sender_id } = msgObject;
-
-    allMessages.push({
-      user_name,
-      message,
-      time,
-      sender_id,
-    });
-    roomObject.messages.push({ user_name, sender_id, message, time });
-
-    console.log("ALl messages: ", allMessages);
-    console.log(roomObject.messages);
-
-    io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+    console.log("Message Received from ", socket.id, " Message: ", msgObject);
+    // console.log("SenderId: ", msgObject.sender_id);
+    // console.log("Ro
+    if(msgObject.type=="vote1")
+    {
+      let room=getRoom(msgObject.room_id);
+      console.log("Room in vote1",room);
+      let roomDetail=room.messages;
+      for(let poll of roomDetail)
+      {
+        if(poll.type=="poll" && poll.message.index==msgObject.index)
+        {
+          console.log(typeof(poll.message.answer1));
+          poll.message.answer1 +=1;
+        }
+      }
+      console.log(room.messages);
+      io.to(msgObject.roomID).emit("receivedMessage",msgObject)
+    }
+    else if(msgObject.type=="vote2")
+    {
+      let room=getRoom(msgObject.roomID);
+      let roomDetail=room.messages;
+      for(let poll of roomDetail)
+      {
+        if(poll.type=="poll" && poll.message.index==msgObject.index)
+        {
+          poll.message.answer2 +=1;
+        }
+      }
+      io.to(msgObject.roomID).emit("receivedMessage",msgObject);
+    }
+    else{
+      let roomObject = getRoom(msgObject.room_id);
+      let { user_name, message, time, sender_id, type } = msgObject;
+      // if(type=="poll")
+      // {
+      //   message.index=pollIndex;
+      //   index++;
+      // }
+      allMessages.push({
+        user_name,
+        message,
+        time,
+        sender_id,
+        type
+      });
+      console.log("Room obj: ", roomObject);
+      roomObject.messages.push({ user_name, sender_id, message, time, type });
+      io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+    }
+    
   });
+
 
   socket.on("emojiSend", (emoji) => {
     console.log("EMoji Received : ", emoji);

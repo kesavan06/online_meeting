@@ -6,20 +6,22 @@ import Poll from "./Poll";
 export default function ShowMessage(props) {
   return (
     <>
-      {props.newMessages.map((message) => {
-        console.log(message.type)
+      {props.newMessages.map((msg) => {
+        console.log("MESSAGE",msg);
+        console.log("type: ",msg.type);
 
         return (
-          message.type == "poll" ?
-             <Poll title={message.title} option1={message.option1} option2={message.option2} user_name={message.user_name}></Poll>
+          msg.type == "poll" ? 
+             <Poll poll={msg.message} user_name={msg.user_name} time={msg.time} isMine={msg.isMine}></Poll>
              :<Message
-             user_name={message.user_name}
-             message={message.message}
-             time={message.time}
-             classNow={message.isMine}
+             user_name={msg.user_name}
+             message={msg.message}
+             time={msg.time}
+             classNow={msg.isMine}
            ></Message>
         );
       })}
     </>
   );
 }
+
