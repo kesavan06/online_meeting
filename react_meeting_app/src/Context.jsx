@@ -26,6 +26,7 @@ export const AppProvider = ({ children }) => {
   const key = useRef({});
   const user_id = useRef({});
   let host = useRef(null);
+  let toSocket = useRef({});
   const [pauseVideo, setPauseVideo] = useState(false);
   const [pauseAudio, setPauseAudio] = useState(false);
 
@@ -504,6 +505,7 @@ export const AppProvider = ({ children }) => {
         user_id,
         setIsShare,
         isShare,
+        toSocket,
         pauseAudio,
         pauseVideo,
         setPauseAudio,

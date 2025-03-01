@@ -86,9 +86,13 @@ function Meeting({
   const [min, setMin] = useState(0);
   const [isRun, setIsRun] = useState(false);
 
-  const [participantLength, setParticiapantLength] = useState(0);
+  const [participantLength, setParticipantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
   const [copyText, setCopyText] = useState(false);
+  const [allParticipants, setAllParticipants] = useState([]);
+
+
+  const isPrivate = useRef(false );
   const [showChatBot, setShowChatBot] = useState(false);
   const [showParticipants, setShowParticipants] = useState(false);
 
@@ -112,7 +116,7 @@ function Meeting({
 
   const openPopup = () => {
     const newWindow = window.open("", "_blank", "width=1000,height=700");
-    newWindow.document.title = "Kadhaikalaam - whiteboard";
+    newWindow.document.title = "Kathaikalaam - whiteboard";
 
     if (newWindow) {
       const style = newWindow.document.createElement("style");
@@ -226,7 +230,7 @@ function Meeting({
       )}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
-          {isRecord && (
+        {isRecord && (
             <VideoRecord
               isRun={isRun}
               setIsRun={setIsRun}
@@ -327,8 +331,11 @@ function Meeting({
               isPoll={isPoll}
               allMessage={allMessage}
               setAllMessage={setAllMessage}
-              setParticiapantLength={setParticiapantLength}
+              setParticipantLength={setParticipantLength}
               showMeeting={showMeeting}
+              isPrivate={isPrivate}
+              allParticipants={allParticipants}
+              setAllParticipants={setAllParticipants}
               showChatBot={showChatBot}
               setShowChatBot={setShowChatBot}
               showParticipants={showParticipants}

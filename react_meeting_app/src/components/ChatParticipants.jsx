@@ -16,7 +16,7 @@ function ChatParticipants({
   isPoll,
   allMessage,
   setAllMessage,
-  setParticiapantLength,
+  setParticipantLength,
   showMeeting,
   showChatBot,
   setShowChatBot,
@@ -24,19 +24,43 @@ function ChatParticipants({
   setShowParticipants,
   chatBotMessage,
   setChatBotMessage,
+  isPrivate,
+  allParticipants,
+  setAllParticipants,
 }) {
   const [viewPoll, setViewPoll] = useState(false);
+
   let [view, setView] = useState(true);
-  const { roomId } = useAppContext();
+  const { roomId, toSocket, socketRef } = useAppContext();
 
   useEffect(() => {
     setTimeout(async () => {
-      console.log("ROom id : ", roomId);
-      let part = await getPaticipants(roomId.current);
-      console.log("Room participant : ", part);
-      setParticiapantLength((prev) => (prev = part.data.length));
-    }, 50);
-  }, [showMeeting]);
+      await getParticipants(roomId.current, socketRef);
+    }, 100);
+  }, []);
+
+  async function getParticipants(roomId) {
+    try {
+      // console.log("Inside emit function ------------------------------------------------------------------------- ");
+      socketRef.current.emit("getParticiapants", roomId);
+
+      await socketRef.current.on("giveParticicpant", (msg) => {
+        setAllParticipants([]);
+
+        setParticipantLength((prev) => (prev = msg.length));
+
+        for (let p of msg) {
+          let name = p.name;
+          let socketId = p.socketId;
+          let host = p.isHost;
+
+          setAllParticipants((prev) => [...prev, { name, socketId, host }]);
+        }
+      });
+    } catch (err) {
+      console.log("Error : \n", err);
+    }
+  }
 
   useEffect(() => {
     console.log("Chat bot message : ", chatBotMessage);
@@ -93,6 +117,8 @@ function ChatParticipants({
           isPoll={isPoll}
           allMessage={allMessage}
           setAllMessage={setAllMessage}
+          allParticipants={allParticipants}
+          isPrivate={isPrivate}
         ></ChatBox>
       ) : showChatBot ? (
         <ChatBot
@@ -103,8 +129,10 @@ function ChatParticipants({
         <Participants
           view={view}
           setView={setView}
-          setParticipantLength={setParticiapantLength}
+          setParticipantLength={setParticipantLength}
           getPaticipants={getPaticipants}
+          allParticipants={allParticipants}
+          setAllParticipants={setAllParticipants}
         ></Participants>
       )}
     </div>
