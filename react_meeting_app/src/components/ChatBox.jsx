@@ -12,6 +12,7 @@ import PollCreater from "./PollCreater";
 
 function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }) {
   let { user_name, socketRef, roomId } = useAppContext();
+  const [pollUpdate,setPollUpdate] = useState(false);
   // let [allMessage, setAllMessage] = useState([]);
 
   let messageRef = useRef("");
@@ -129,6 +130,39 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
 
   // }
 
+  useEffect(()=>{
+    setTimeout(async () => {
+      let fetchAllMessages = await fetch("http://localhost:3002/allMessages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ roomId: roomId.current }),
+      });
+      setAllMessage([]);
+
+      // console.log("All Messages: ",fetchAllMessages );
+
+      let allM = await fetchAllMessages.json();
+      // console.log("AllMEssages:  ", allM);
+      // console.log("AllMEssages:  ", allM.data.messages);
+      // console.log("Participants:  ", allM.data.participants);
+      let message = allM.data.messages;
+
+      for (let mess of message) {
+        let isMine = false;
+        if (mess.sender_id == socketRef.current.id) {
+          isMine = true;
+        }
+        mess.isMine = isMine;
+        // console.log("Is mine : ", isMine);
+        // console.log("Mess Final : ", mess);
+        setAllMessage((prev) => [...prev, mess]);
+      }
+
+    }, 100)
+  },pollUpdate);
+
   const handleNewMessage = (msg) => {
     // setAllMessage("")
     // for (let msg of allMess) {
@@ -142,6 +176,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
         {
           chat.message.answer1 +=1;
           chat.message.totalVote +=1;
+          setPollUpdate(!pollUpdate);
         }
       }
     }
@@ -153,6 +188,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
         {
           pollMsg.message.answer2 +=1;
           pollMsg.message.totalVote +=1;
+          setPollUpdate(!pollUpdate);
         }
       }
     }
