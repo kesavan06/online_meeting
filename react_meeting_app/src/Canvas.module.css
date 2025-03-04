@@ -99,14 +99,26 @@ input[type="range"] {
   height: 5%;
   background-color: white;
 }
-
-/* .shapeDiv {
+/* 
+.shapeDiv {
   width: 85%;
   height: 20%;
   border: 2px solid black;
   overflow-y: scroll;
   scrollbar-width: none;
   position: absolute;
+  background-color: pink;
   left: 100%;
   z-index: 2;
 } */
+
+
+/* width: 9%;
+height: 62%;
+overflow-y: scroll;
+scrollbar-width: none;
+position: absolute;
+background: pink;
+top: 92%;
+z-index: 1;
+left: 34%; */

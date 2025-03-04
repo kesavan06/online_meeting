@@ -199,8 +199,6 @@ function MeetingFooter({
   function handleEmoji() {
     setShowEmojis((prev) => (prev = !prev));
     setBreakOutRoom((prev) => (prev = false));
-
-    setBreakOutRoom((prev) => (prev = false));
   }
 
   // function timer()
@@ -312,6 +310,7 @@ function MeetingFooter({
         >
           <MdMobileScreenShare className="changeColor"></MdMobileScreenShare>
         </div>
+
         <div
           className="controlBox"
           onClick={() => {
@@ -321,7 +320,8 @@ function MeetingFooter({
         >
           <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher>
         </div>
-        <div className="controlBox" onClick={() => handleEmoji()}>
+
+        <div className="controlBox" onClick={() => handleEmoji()} >
           <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
         </div>
         <div

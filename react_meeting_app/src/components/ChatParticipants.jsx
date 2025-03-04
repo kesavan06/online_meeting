@@ -30,6 +30,42 @@ function ChatParticipants({
 }) {
   const [viewPoll, setViewPoll] = useState(false);
 
+
+  function saveChat(userId) {
+
+    console.log("Chat mess : ", allMessage);
+    console.log("User id : ", userId);
+
+
+    if (allMessage.length !== 0) {
+
+      const chatMessages = allMessage.map((message) => {
+        if (message.isPrivate) {
+          return `${message.user_name}: ${message.message} (private)`
+        }
+        else {
+          return `${message.user_name}: ${message.message}`
+        }
+      }).join("\n");
+
+
+      console.log("Chat Message : ", chatMessages);
+
+      const data = new Blob([chatMessages], { type: "text/plain " });
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(data);
+      link.download = "chat_message.txt";
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+  }
+
+
+
   let [view, setView] = useState(true);
   const { roomId, toSocket, socketRef } = useAppContext();
 
@@ -119,6 +155,7 @@ function ChatParticipants({
           setAllMessage={setAllMessage}
           allParticipants={allParticipants}
           isPrivate={isPrivate}
+          saveChat={saveChat}
         ></ChatBox>
       ) : showChatBot ? (
         <ChatBot

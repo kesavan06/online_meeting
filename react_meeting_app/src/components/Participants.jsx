@@ -4,14 +4,15 @@ import ShowParticipant from "./ShowPartipants";
 
 import { useAppContext } from "../Context";
 
+
 function Participants({ view, setParticipantLength, allParticipants, setAllParticipants }) {
 
   let { socketRef, roomId } = useAppContext();
 
 
-  useEffect(() => {
-    console.log("All Names : ", allParticipants);
-  }, [allParticipants])
+  // useEffect(() => {
+  //   console.log("All Names : ", allParticipants);
+  // }, [allParticipants])
 
 
   return (
