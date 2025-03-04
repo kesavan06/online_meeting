@@ -1,0 +1,24 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+
+
+.forBold{
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.forNormal{
+    font-size: 18px;
+}
+
+.buttonClick{
+    background-color: bisque;
+}
+
+.normal{
+    background-color: white;
+}

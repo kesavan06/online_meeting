@@ -8,12 +8,28 @@ import { useAppContext } from "../Context";
 import Emoji from "./Emoji";
 import Wrapper from "./Wrapper";
 import PollCreater from "./PollCreater";
+import ShowOptions from "./ShowOptions";
 // import EmojiPicker from 'emoji-picker-react';
 
-function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }) {
+function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage,allParticipants, isPrivate  }) {
   let { user_name, socketRef, roomId } = useAppContext();
   const [pollUpdate,setPollUpdate] = useState(false);
   // let [allMessage, setAllMessage] = useState([]);
+
+  const chatMessageRef = useRef(null);
+
+  const scrollToBottom = () => {
+    if (chatMessageRef.current) {
+      chatMessageRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(scrollToBottom, 100);
+  }, [allMessage]);
 
   let messageRef = useRef("");
 
@@ -30,21 +46,20 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
     messageText = messageText.trim();
 
     const today = new Date();
-    console.log(today.toLocaleString());
 
     let getTodayTime = today.toLocaleTimeString();
     let splitDay = getTodayTime.split(":");
 
-    let day =
-      +splitDay[0] > 12
-        ? +splitDay[0] - 12 + "." + splitDay[1] + " PM"
-        : splitDay[0] + "." + splitDay[1] + " AM";
+
+    let day = (+splitDay[0] > 12) ? +splitDay[0] - 12 + "." + splitDay[1] + " PM" : splitDay[0] + "." + splitDay[1] + " AM";
+
     if (splitDay[0] == 12) {
       day = splitDay[0] + "." + splitDay[1] + " PM";
     }
+
+    console.log("Is A private message : ", isPrivate);
+
     if (messageText != "") {
-      console.log("Room : ", roomId.current);
-      console.log("Message : ", messageRef.current);
 
       newM = {
         user_name: user_name.current,
@@ -52,12 +67,21 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
         sender_id: socketRef.current.id,
         room_id: roomId.current,
         time: day,
-        type: "msg"
+        isPrivate: isPrivate.current,
+        type: "msg",
+        userChoice:[],
       };
 
-      // console.log("Object: ", newM);
+      if (isPrivate.current == true) {
+        newM.receiver_id = toSocket.current;
+      }
+
+     console.log("Is A private message 2 : ", newM);
+
+
       socketRef.current.emit("sendMessage", newM);
       messageRef.current.value = "";
+
     }
   }
 
@@ -66,7 +90,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
   }
 
   function handlekeyDown(e) {
-    console.log(e.key);
+
     if (e.key == "Enter") {
       if (messageRef.current.value != "") {
         handleSendMessage();
@@ -90,13 +114,31 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
       });
       setAllMessage([]);
 
-      // console.log("All Messages: ",fetchAllMessages );
 
       let allM = await fetchAllMessages.json();
-      // console.log("AllMEssages:  ", allM);
-      // console.log("AllMEssages:  ", allM.data.messages);
-      // console.log("Participants:  ", allM.data.participants);
-      let message = allM.data.messages;
+      let message;
+
+      // console.log("All mess  - Public : ", allM.data);
+
+      let allMNow = [];
+      for (let m of allM.data) {
+        if (m.sender_id == socketRef.current.id && m.isPrivate && m.receiver_id !== undefined) {
+          // console.log(1);
+          allMNow.push(m);
+        }
+        if (m.receiver_id == socketRef.current.id && m.isPrivate) {
+          // console.log(2);
+          allMNow.push(m);
+        }
+        if (!m.isPrivate && m.receiver_id == undefined) {
+          // console.log(3);
+          allMNow.push(m)
+        }
+      }
+
+      console.log("All grouped messages : ", allMNow);
+
+      message = allMNow
 
       for (let mess of message) {
         let isMine = false;
@@ -104,11 +146,9 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
           isMine = true;
         }
         mess.isMine = isMine;
-        // console.log("Is mine : ", isMine);
-        // console.log("Mess Final : ", mess);
+
         setAllMessage((prev) => [...prev, mess]);
       }
-
     }, 100)
   }, [view])
 
@@ -130,72 +170,217 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
 
   // }
 
-  useEffect(()=>{
-    setTimeout(async () => {
-      let fetchAllMessages = await fetch("http://localhost:3002/allMessages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ roomId: roomId.current }),
-      });
-      setAllMessage([]);
-
-      // console.log("All Messages: ",fetchAllMessages );
-
-      let allM = await fetchAllMessages.json();
-      // console.log("AllMEssages:  ", allM);
-      // console.log("AllMEssages:  ", allM.data.messages);
-      // console.log("Participants:  ", allM.data.participants);
-      let message = allM.data.messages;
-
-      for (let mess of message) {
-        let isMine = false;
-        if (mess.sender_id == socketRef.current.id) {
-          isMine = true;
-        }
-        mess.isMine = isMine;
-        // console.log("Is mine : ", isMine);
-        // console.log("Mess Final : ", mess);
-        setAllMessage((prev) => [...prev, mess]);
-      }
-
-    }, 100)
-  },pollUpdate);
-
   const handleNewMessage = (msg) => {
     // setAllMessage("")
     // for (let msg of allMess) {
 
     console.log("MSG TYPE: ",msg.type);
+    let obj;
     if(msg.type=="vote1")
     {
-      for(let chat of allMessage)
+      let obj;
+      for(let i=0;i<allMessage.length; i++)
       {
-        if(chat.type=="poll" && chat.message.index==msg.index)
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
         {
-          chat.message.answer1 +=1;
-          chat.message.totalVote +=1;
-          setPollUpdate(!pollUpdate);
+          allMessage[i].message.answer1 +=1;
+          allMessage[i].message.totalVote +=1;
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="vote1";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:"vote1"};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
+
+          break;
         }
       }
     }
     else if(msg.type=="vote2")
     {
-      for(let pollMsg of allMessage)
+      let obj;
+      for(let i=0; i<allMessage.length; i++)
       {
-        if(pollMsg.type=="poll" && pollMsg.message.index==msg.index)
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
         {
-          pollMsg.message.answer2 +=1;
-          pollMsg.message.totalVote +=1;
-          setPollUpdate(!pollUpdate);
+          allMessage[i].message.answer2 +=1;
+          allMessage[i].message.totalVote +=1;
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="vote2";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:"vote2"};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
+
+          break;
         }
       }
     }
-    else{
+    else if(msg.type=="decreaseVote2AndIncreaseVote1")
+    {
+      for(let i=0;i<allMessage.length;i++)
+      {
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
+        {
+          allMessage[i].message.answer1 += 1;
+          allMessage[i].message.answer2 -= 1;
+          // allMessage[i].message.check = "vote1";
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="vote1";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:"vote1"};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
+
+          break;
+        }
+      }
+    }
+    else if(msg.type=="decreaseVote1")
+    {
+      for(let i=0;i<allMessage.length;i++)
+      {
+        
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
+        {
+          allMessage[i].message.answer1 -= 1;
+          // allMessage[i].message.check = "";
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:""};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
+
+          break;
+        }
+      }
+    }
+    else if(msg.type=="decreaseVote1AndIncreaseVote2")
+    {
+      for(let i=0;i<allMessage.length;i++)
+      {
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
+        {
+          allMessage[i].message.answer1 -= 1;
+          allMessage[i].message.answer2 += 1;
+          // allMessage[i].message.check = "vote2";
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="vote2";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:"vote2"};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
+          break;
+        }
+      }
+    }
+    else if(msg.type=="decreaseVote2")
+    {
+      let obj;
+      for(let i=0;i<allMessage.length;i++)
+      {
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
+        {
+          allMessage[i].message.answer2 += 1;
+          // allMessage[i].message.check = "";
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:""};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
+
+          break;
+        }
+      }
+
+    }
+    else
+    {
       let isMyMessage = false;
-      let { user_name, message, sender_id, time,type } = msg;
-      let msgGot = { user_name, message, time, type };
+      let { user_name, message, sender_id, time, type, isPrivate,userChoice } = msg;
+      let msgGot = { user_name, message, time, type, isPrivate,sender_id,userChoice };
+
+      console.log("Inside message  : ",msg);
 
       if (socketRef.current.id == sender_id) {
         isMyMessage = true;
@@ -209,13 +394,16 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
         { ...msgGot, isMine: sendClass },
       ]);
     }
+  
     
+    
+
     // }
   };
 
   
   useEffect(() => {
-    // console.log("All messages: ", allMessage);
+
     socketRef.current.off("receivedMessage");
 
     socketRef.current.on("receivedMessage", (msg) => {
@@ -223,22 +411,24 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
       handleNewMessage(msg);
     });
 
-    // console.log("Message: ",allMessage);
-
   }, [allMessage]);
+
+  useEffect(()=>{
+    console.log("All message : ",allMessage);
+  },[allMessage])
 
   return (
     <div className="chatBox">
       <div className="chatDisplay">
         <ShowMessage newMessages={allMessage} />
+        <div ref={chatMessageRef} />
       </div>
 
       <div className="sentBox">
         <div className="msgPermision">
-          {/* <p>To</p>
-          <select className="selectUser">
-            <option>Everyone</option>
-          </select> */}
+          <p>To</p>
+
+          <ShowOptions parArray={allParticipants} isPrivate={isPrivate} ></ShowOptions>
 
           {showEmoji && (
             <Emoji
@@ -247,16 +437,9 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
               handleShowEmoji={handleShowEmoji}
             />
           )}
-          <button onClick={()=>setIsPoll(true)}>Poll</button>
+          <button onClick={() => setIsPoll(true)}>Poll</button>
 
-          {/* {isPoll && <Wrapper>
-              <PollCreater 
-                allMessage={allMessage}
-                setAllMessage={setAllMessage}
-                isPoll={isPoll}
-                setIsPoll={setIsPoll}
-              ></PollCreater>
-            </Wrapper>} */}
+      
         </div>
 
         <div className="sentInputBox">
@@ -267,7 +450,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage }
             onKeyDown={handlekeyDown}
           ></input>
 
-          <button onClick={handleShowEmoji}>
+          <button onClick={(msg) => handleShowEmoji(msg)}>
             <FaFaceSmile className="invert"></FaFaceSmile>
           </button>
 

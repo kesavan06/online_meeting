@@ -1,0 +1,11 @@
+.selectUser {
+    width: 100px;
+    text-align: center;
+    height: 35px;
+    font-size: 0.9em;
+    background-color: rgb(17, 127, 86);
+    border: 1px solid transparent;
+    color: rgb(241, 241, 241);
+    border-radius: 5px;
+    cursor: pointer;
+  }

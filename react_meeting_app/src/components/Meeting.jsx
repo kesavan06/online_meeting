@@ -13,6 +13,8 @@ import Wrapper from "./Wrapper";
 import PollCreater from "./PollCreater";
 import { FaCopy } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
+import { BreakOutRoomPopup } from "./BreakOutRoomPopup";
+import Notes from "./Notes";
 
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
@@ -62,7 +64,15 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   );
 };
 
-function Meeting({ showMeeting }) {
+function Meeting({
+  showMeeting,
+  setShowMeeting,
+  setShowSignIn,
+  setShowSignUp,
+  setViewJoinMeeting,
+  setViewSetupMeeting,
+  setDisplayParent,
+}) {
   // let {videoGridRed} = useAppContext();
 
   // const [showWhiteBoard, setShowWhiteBoard] = useState(false);
@@ -76,10 +86,21 @@ function Meeting({ showMeeting }) {
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [isRun, setIsRun] = useState(false);
+  const [showNotes,setShowNotes] = useState(false);
 
-  const [participantLength, setParticiapantLength] = useState(0);
+  const [participantLength, setParticipantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
   const [copyText, setCopyText] = useState(false);
+  const [allParticipants, setAllParticipants] = useState([]);
+
+
+  const isPrivate = useRef(false );
+  const [showChatBot, setShowChatBot] = useState(false);
+  const [showParticipants, setShowParticipants] = useState(false);
+
+  const [breakOutRoom, setBreakOutRoom] = useState(false);
+
+  const [chatBotMessage, setChatBotMessage] = useState([]);
 
   const copyRoomId = async (roomId) => {
     await navigator.clipboard.writeText(roomId);
@@ -97,7 +118,7 @@ function Meeting({ showMeeting }) {
 
   const openPopup = () => {
     const newWindow = window.open("", "_blank", "width=1000,height=700");
-    newWindow.document.title = "Kadhaikalaam - whiteboard";
+    newWindow.document.title = "Kathaikalaam - whiteboard";
 
     if (newWindow) {
       const style = newWindow.document.createElement("style");
@@ -130,6 +151,8 @@ function Meeting({ showMeeting }) {
     startScreenShare,
     socketRef,
     user_name,
+    pauseAudio,
+    pauseVideo,
   } = useAppContext();
 
   socketRef.current.on("disable-audio", (roomId, userId) => {
@@ -148,9 +171,6 @@ function Meeting({ showMeeting }) {
       streams.map((videoStream) => {
         if (videoStream.type == "screen")
           screenVideoRef.current.srcObject = videoStream.stream;
-        // screenVideoRef.current.play().catch((err) => {
-        //   console.error("Error playing screen stream:", err);
-        // });
       });
     } else if (screenVideoRef.current) {
       screenVideoRef.current.srcObject = null;
@@ -212,7 +232,7 @@ function Meeting({ showMeeting }) {
       )}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
-          {isRecord && (
+        {isRecord && (
             <VideoRecord
               isRun={isRun}
               setIsRun={setIsRun}
@@ -241,6 +261,7 @@ function Meeting({ showMeeting }) {
           </p>
         </div>
       </div>
+
       <div className="meetingContent">
         <div className={showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
           <div className="videoBoxes">
@@ -285,6 +306,11 @@ function Meeting({ showMeeting }) {
                 />
               </div>
             )}
+            {breakOutRoom && (
+              <BreakOutRoomPopup
+                setBreakOutRoom={setBreakOutRoom}
+              ></BreakOutRoomPopup>
+            )}
             {allEmoji.map(({ id, emoji, name }) => {
               return (
                 <span className="emojiDiv" id={id}>
@@ -307,11 +333,26 @@ function Meeting({ showMeeting }) {
               isPoll={isPoll}
               allMessage={allMessage}
               setAllMessage={setAllMessage}
-              setParticiapantLength={setParticiapantLength}
+              setParticipantLength={setParticipantLength}
               showMeeting={showMeeting}
+              isPrivate={isPrivate}
+              allParticipants={allParticipants}
+              setAllParticipants={setAllParticipants}
+              showChatBot={showChatBot}
+              setShowChatBot={setShowChatBot}
+              showParticipants={showParticipants}
+              setShowParticipants={setShowParticipants}
+              chatBotMessage={chatBotMessage}
+              setChatBotMessage={setChatBotMessage}
             ></ChatParticipants>
           </div>
         )}
+        {showNotes && (
+          <div className="meetingChatParticipants">
+            <Notes setShowNotes={setShowNotes}></Notes>
+          </div>
+        )
+        }
       </div>
       <div className="meetingFooter">
         <MeetingFooter
@@ -331,6 +372,20 @@ function Meeting({ showMeeting }) {
           setIsRecord={setIsRecord}
           isRun={isRun}
           setIsRun={setIsRun}
+          breakOutRoom={breakOutRoom}
+          setBreakOutRoom={setBreakOutRoom}
+          showParticipants={showParticipants}
+          setShowParticipants={setShowParticipants}
+          showChatBot={showChatBot}
+          setShowChatBot={setShowChatBot}
+          setShowSignIn={setShowSignIn}
+          setShowSignUp={setShowSignUp}
+          setViewJoinMeeting={setViewJoinMeeting}
+          setViewSetupMeeting={setViewSetupMeeting}
+          setDisplayParent={setDisplayParent}
+          setShowMeeting={setShowMeeting}
+          showNotes={showNotes}
+          setShowNotes={setShowNotes}
         ></MeetingFooter>{" "}
       </div>
     </div>

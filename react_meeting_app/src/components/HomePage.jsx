@@ -1,7 +1,7 @@
 import Header from "./Header";
 import FeatureList from "./FeatureList";
 import AboutMeeting from "./AboutMeeting";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MeetingSetup from "./MeetingSetup";
 import JoinMeeting from "./JoinMeeting";
 import Signin from "./Signin";
@@ -13,9 +13,7 @@ import { useAppContext } from "../Context";
 import ShareScreen from "./ShareScreen";
 import SignUp from "./SignUp.js";
 import "../HomePage.css";
-import { useCookies } from 'react-cookie';
-
-
+import { useCookies } from "react-cookie";
 
 // setAndReadCookie();
 
@@ -31,10 +29,12 @@ export default function HomePage() {
   const [displayMessage, setDisplayMessage] = useState(false);
 
   const [hasCookie, setHasCookie] = useState(false);
-  const [cookie, setCookie, removeCookie] = useCookies(['user_name', 'user_id', ]);
+  const [cookie, setCookie, removeCookie] = useCookies([
+    "user_name",
+    "user_id",
+  ]);
   // console.log("Cookie exsisit : ",document.cookie);
   const [oneTimeCookie, setOneTimeCookie] = useState(false);
-
 
   function handleShareScreen() {
     setDisplayShareScreen(!displayShareScreen);
@@ -48,6 +48,17 @@ export default function HomePage() {
     setDisplayParent(!displayParent);
   }
 
+  useEffect(() => {
+    console.log(
+      viewSetupMeeting,
+      viewJoinMeeting,
+      showSignUp,
+      showSignIn,
+      displayParent,
+      showMeeting
+    );
+  }, [viewSetupMeeting, viewJoinMeeting, showSignUp, showSignIn, showMeeting]);
+
   if (
     !viewSetupMeeting &&
     !viewJoinMeeting &&
@@ -58,7 +69,6 @@ export default function HomePage() {
   ) {
     return (
       <div className="homeContainer homePageContainer">
-
         <Header
           showSignUp={showSignUp}
           setShowSignUp={setShowSignUp}
@@ -67,7 +77,6 @@ export default function HomePage() {
           cookie={cookie}
           setCookie={setCookie}
           removeCookie={removeCookie}
-
           hasCookie={hasCookie}
           setHasCookie={setHasCookie}
         />
@@ -111,7 +120,7 @@ export default function HomePage() {
             password={password}
             setPassword={setPassword}
             signUpFunction={SignUp}
-            cookie= {cookie}
+            cookie={cookie}
             setCookie={setCookie}
           ></Signup>
         </Wrapper>
@@ -147,12 +156,11 @@ export default function HomePage() {
             setPassword={setPassword}
             displayMessage={displayMessage}
             setDisplayMessage={setDisplayMessage}
-            cookie= {cookie}
+            cookie={cookie}
             setCookie={setCookie}
-            
           ></Signin>
         </Wrapper>
-        
+
         <AboutMeeting
           view={viewSetupMeeting}
           setView={setViewSetupMeeting}
@@ -177,7 +185,7 @@ export default function HomePage() {
           setView={setViewSetupMeeting}
           showMeeting={showMeeting}
           setShowMeeting={setShowMeeting}
-          cookie= {cookie}
+          cookie={cookie}
         ></MeetingSetup>
       );
     } else if (viewJoinMeeting) {
@@ -187,13 +195,21 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
           setShowMeeting={setShowMeeting}
           showMeeting={showMeeting}
-          cookie= {cookie}
+          cookie={cookie}
         ></JoinMeeting>
       );
     } else if (showMeeting) {
-      return <Meeting showMeeting={showMeeting}></Meeting>;
+      return (
+        <Meeting
+          showMeeting={showMeeting}
+          setShowMeeting={setShowMeeting}
+          setShowSignIn={setShowSignIn}
+          setShowSignUp={setShowSignUp}
+          setViewJoinMeeting={setViewJoinMeeting}
+          setViewSetupMeeting={setViewSetupMeeting}
+          setDisplayParent={setDisplayParent}
+        ></Meeting>
+      );
     }
   }
 }
-
-
