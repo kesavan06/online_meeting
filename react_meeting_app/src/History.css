@@ -1,0 +1,73 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+.historyParent {
+    width: 100%;
+    height: 100vh;
+    color: white;
+    background-color: #111827;
+    padding: 2%;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+
+.meetingDetail {
+    width: 100%;
+    height: 7%;
+    border-radius: 10px;
+    background-color: #1F2937;
+    display: flex;
+    align-items: center;
+}
+
+
+.timeManage {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.timeIcon {
+    width: 30%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.userName {
+    width: 20%;
+    height: 100%;
+}
+
+.proParent {
+    width: 15%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chatAnoteDowload {
+    width: 25%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4%;
+    margin-left: 10%;
+}
+
+.flex {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6%;
+}

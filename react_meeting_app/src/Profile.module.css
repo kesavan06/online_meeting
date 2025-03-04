@@ -15,3 +15,10 @@
     align-items: center;
     padding-top: 1%;
 }
+
+.imageOfProfile{
+    width: 35px;
+    height: 35px;
+    overflow: hidden;
+    
+}

@@ -27,21 +27,22 @@ export const ChatBot = ({ chatBotMessage, setChatBotMessage }) => {
 
     console.log("TIme : ", splitDay);
 
-    // let day =
-    //   +splitDay[0] > 12
-    //     ? +splitDay[0] - 12 + "." + splitDay[1] + " PM"
-    //     : splitDay[0] + "." + splitDay[1] + " AM";
+    let day =
+      +splitDay[0] > 12
+        ? +splitDay[0] - 12 + "." + splitDay[1] + " PM"
+        : splitDay[0] + "." + splitDay[1] + " AM";
 
-    // if (splitDay[0] == 12) {
-    //   day = splitDay[0] + "." + splitDay[1] + " PM";
-    // }
+    if (splitDay[0] == 12) {
+      day = splitDay[0] + "." + splitDay[1] + " PM";
+    }
 
-    let day = splitDay[0].concat(
-      ".",
-      splitDay[1],
-      " ",
-      splitDay[2].slice(3).toUpperCase()
-    );
+    // let day = splitDay[0].concat(
+    //   ".",
+    //   splitDay[1],
+    //   " ",
+    //   splitDay[2].slice(3).toUpperCase()
+    // );
+    
     let botPrompt = prompt.current.value;
     prompt.current.value = "";
     setChatBotMessage((prev) => {

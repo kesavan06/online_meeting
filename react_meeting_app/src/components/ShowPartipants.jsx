@@ -69,7 +69,7 @@ export default function ShowParticipant({ name, socketId, allParticipants, host 
     return (
         <div className="name">
             <div className="participantProfile">
-                <Profile firstLetter={userName[0].toUpperCase()} />
+                <Profile firstLetter={userName[0].toUpperCase() } />
                 <p ref={nameOfUser} contentEditable={editName} tabIndex={0} style={{ cursor: editName ? "text" : "default" }} className="userName">{userName} </p>
                 {host && <span style={{ fontSize: "0.75rem", position : "absolute", top: "36%", left : "29%"}}>(host)</span>}
             </div>

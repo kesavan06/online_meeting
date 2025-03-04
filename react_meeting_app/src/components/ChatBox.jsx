@@ -9,11 +9,11 @@ import Emoji from "./Emoji";
 import Wrapper from "./Wrapper";
 import PollCreater from "./PollCreater";
 import ShowOptions from "./ShowOptions";
+import { HiOutlineSave } from "react-icons/hi";
 // import EmojiPicker from 'emoji-picker-react';
 
-function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage,allParticipants, isPrivate  }) {
-  let { user_name, socketRef, roomId } = useAppContext();
-  const [pollUpdate,setPollUpdate] = useState(false);
+function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, allParticipants, isPrivate ,saveChat }) {
+  let { user_name, socketRef, roomId , toSocket} = useAppContext();
   // let [allMessage, setAllMessage] = useState([]);
 
   const chatMessageRef = useRef(null);
@@ -76,7 +76,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage,a
         newM.receiver_id = toSocket.current;
       }
 
-     console.log("Is A private message 2 : ", newM);
+      console.log("Is A private message 2 : ", newM);
 
 
       socketRef.current.emit("sendMessage", newM);
@@ -103,6 +103,45 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage,a
     handleOpen();
   }
 
+
+  // function saveChat(userId) {
+
+  //   console.log("Chat mess : ", allMessage);
+  //   console.log("User id : ", userId);
+
+
+  //   if (allMessage.length !== 0) {
+
+  //     const chatMessages = allMessage.map((message) => {
+  //       if (message.isPrivate) {
+  //         return `${message.user_name}: ${message.message} (private)`
+  //       }
+  //       else {
+  //         return `${message.user_name}: ${message.message}`
+  //       }
+  //     }).join("\n");
+
+
+  //     console.log("Chat Message : ", chatMessages);
+
+  //     const data = new Blob([chatMessages], { type: "text/plain " });
+
+  //     const link = document.createElement("a");
+  //     link.href = URL.createObjectURL(data);
+  //     link.download = "chat_message.txt";
+
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //   }
+
+  // }
+
+
+
+
+
+
   useEffect(() => {
     setTimeout(async () => {
       let fetchAllMessages = await fetch("http://localhost:3002/allMessages", {
@@ -118,20 +157,16 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage,a
       let allM = await fetchAllMessages.json();
       let message;
 
-      // console.log("All mess  - Public : ", allM.data);
-
       let allMNow = [];
+
       for (let m of allM.data) {
         if (m.sender_id == socketRef.current.id && m.isPrivate && m.receiver_id !== undefined) {
-          // console.log(1);
           allMNow.push(m);
         }
         if (m.receiver_id == socketRef.current.id && m.isPrivate) {
-          // console.log(2);
           allMNow.push(m);
         }
         if (!m.isPrivate && m.receiver_id == undefined) {
-          // console.log(3);
           allMNow.push(m)
         }
       }
@@ -171,9 +206,9 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage,a
   // }
 
   const handleNewMessage = (msg) => {
-    // setAllMessage("")
-    // for (let msg of allMess) {
+    // console.log("MSG TYPE: ", msg.type);
 
+   
     console.log("MSG TYPE: ",msg.type);
     let obj;
     if(msg.type=="vote1")
@@ -401,7 +436,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage,a
     // }
   };
 
-  
+
   useEffect(() => {
 
     socketRef.current.off("receivedMessage");
@@ -439,7 +474,9 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage,a
           )}
           <button onClick={() => setIsPoll(true)}>Poll</button>
 
-      
+          <button className="saveChat" onClick={() => saveChat(socketRef.current.id)}>
+            <HiOutlineSave />
+          </button>
         </div>
 
         <div className="sentInputBox">
