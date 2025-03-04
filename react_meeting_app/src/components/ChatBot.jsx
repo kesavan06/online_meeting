@@ -49,7 +49,7 @@ export const ChatBot = ({ chatBotMessage, setChatBotMessage }) => {
     });
     let url =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
-    let apiKey = "AIzaSyDii7w6Hlr4zLVT6VZxLf7jYqU0-Q4sjQc";
+    let apiKey = "AIzaSyAnVf9v8wu_1JRPCPudoFpfT-Z5NKQY0wU";
     let response = await fetch(url + "?key=" + apiKey, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -66,6 +66,7 @@ export const ChatBot = ({ chatBotMessage, setChatBotMessage }) => {
       }),
     });
     let data = await response.json().then((data) => data);
+    console.log(data);
     let message = data.candidates[0].content.parts[0].text;
     setChatBotMessage((prev) => {
       return [...prev, { message: message, time: day }];

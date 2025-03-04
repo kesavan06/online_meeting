@@ -14,6 +14,7 @@ import ShareScreen from "./ShareScreen";
 import SignUp from "./SignUp.js";
 import "../HomePage.css";
 import { useCookies } from "react-cookie";
+import BreakOutMeeting from "./BreakOutMeeting.jsx";
 
 // setAndReadCookie();
 
@@ -48,6 +49,8 @@ export default function HomePage() {
     setDisplayParent(!displayParent);
   }
 
+  const [showBreakOutRoom, setShowBreaOutRoom] = useState(false);
+
   useEffect(() => {
     console.log(
       viewSetupMeeting,
@@ -55,9 +58,17 @@ export default function HomePage() {
       showSignUp,
       showSignIn,
       displayParent,
-      showMeeting
+      showMeeting,
+      showBreakOutRoom
     );
-  }, [viewSetupMeeting, viewJoinMeeting, showSignUp, showSignIn, showMeeting]);
+  }, [
+    viewSetupMeeting,
+    viewJoinMeeting,
+    showSignUp,
+    showSignIn,
+    showMeeting,
+    showBreakOutRoom,
+  ]);
 
   if (
     !viewSetupMeeting &&
@@ -65,7 +76,8 @@ export default function HomePage() {
     !showSignUp &&
     !showSignIn &&
     !displayParent &&
-    !showMeeting
+    !showMeeting &&
+    !showBreakOutRoom
   ) {
     return (
       <div className="homeContainer homePageContainer">
@@ -208,7 +220,21 @@ export default function HomePage() {
           setViewJoinMeeting={setViewJoinMeeting}
           setViewSetupMeeting={setViewSetupMeeting}
           setDisplayParent={setDisplayParent}
+          setShowBreakOutRoom={setShowBreaOutRoom}
         ></Meeting>
+      );
+    } else if (showBreakOutRoom) {
+      return (
+        <BreakOutMeeting
+          showMeeting={showMeeting}
+          setShowMeeting={setShowMeeting}
+          setShowSignIn={setShowSignIn}
+          setShowSignUp={setShowSignUp}
+          setViewJoinMeeting={setViewJoinMeeting}
+          setViewSetupMeeting={setViewSetupMeeting}
+          setDisplayParent={setDisplayParent}
+          setShowBreakOutRoom={setShowBreaOutRoom}
+        ></BreakOutMeeting>
       );
     }
   }

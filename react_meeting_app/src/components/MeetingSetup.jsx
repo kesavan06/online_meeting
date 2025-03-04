@@ -81,6 +81,7 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
 
     setShowMeeting(!showMeeting);
     initializeMediaStream(user_name.current, user_id.current, true);
+    console.log(showMeeting);
   });
 
   // async function cMeetingFetch() {

@@ -145,15 +145,16 @@
   position: absolute;
   top: 43%;
   right: 23%;
-
 }
-
+.emoji1 {
+  position: absolute;
+  top: 43%;
+  right: 42.3%;
+}
 
 .EmojiPickerReact .epr-preview {
   display: none;
 }
-
-
 
 @keyframes floatEmoji {
   0% {
@@ -167,7 +168,6 @@
   }
 }
 
-
 .emojiDiv {
   color: white;
   bottom: 2%;
@@ -178,7 +178,7 @@
   animation-duration: 4.5s;
 }
 
-.breakOutRoomPopup{
+.breakOutRoomPopup {
   width: 400px;
   height: 600px;
   background-color: rgb(42, 42, 40);

@@ -29,6 +29,7 @@ export const AppProvider = ({ children }) => {
   let toSocket = useRef({});
   const [pauseVideo, setPauseVideo] = useState(false);
   const [pauseAudio, setPauseAudio] = useState(false);
+  const [breakoutRoomStream, setBreakoutRoomStream] = useState([]);
 
   const configuration = {
     iceServers: [
@@ -245,6 +246,7 @@ export const AppProvider = ({ children }) => {
       if (remoteStream) {
         let type = isScreenStream(remoteStream) ? "screen" : "camera";
         console.log("Remote stream received:", remoteStream.id);
+        console.log("Context breakout room streams:", breakoutRoomStream);
         addVideoStream({ stream: remoteStream, type: type, userId: userId });
       }
     };
@@ -360,6 +362,21 @@ export const AppProvider = ({ children }) => {
     });
   };
 
+  const addBreakoutRoomStream = (videoStream) => {
+    console.log(videoStream);
+    if (!videoStream) {
+      console.warn("Invalid stream provided to addBreakoutRoomStream");
+      return;
+    }
+    setBreakoutRoomStream((prevStream) => {
+      if (!prevStream.some((s) => s.stream.id === videoStream.stream.id)) {
+        console.log("Stream added:", videoStream.stream.id);
+        return [...prevStream, videoStream];
+      }
+      return prevStream;
+    });
+  };
+
   const startScreenShare = async () => {
     let isScreenShare = streamState.some(
       (videoStream) => videoStream.type == "screen"
@@ -470,6 +487,7 @@ export const AppProvider = ({ children }) => {
         userId: socketRef.current.id,
       });
       console.log("After set stream:", streamState);
+      socketRef.current.isHost = isHost;
       if (roomId.current) {
         socketRef.current.emit(
           "join-room",
@@ -510,6 +528,10 @@ export const AppProvider = ({ children }) => {
         pauseVideo,
         setPauseAudio,
         setPauseVideo,
+        setupSocketListeners,
+        breakoutRoomStream,
+        setBreakoutRoomStream,
+        addBreakoutRoomStream,
       }}
     >
       {children}

@@ -63,7 +63,7 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   );
 };
 
-function Meeting({
+function BreakOutMeeting({
   showMeeting,
   setShowMeeting,
   setShowSignIn,
@@ -187,8 +187,6 @@ function Meeting({
     pauseVideo,
     breakoutRoomStream,
     setBreakoutRoomStream,
-    addBreakoutRoomStream,
-    setStreamsState,
   } = useAppContext();
 
   socketRef.current.on("disable-audio", (roomId, userId) => {
@@ -196,7 +194,6 @@ function Meeting({
   });
 
   console.log("all streams: ", streams);
-  console.log("break out room stream: ", breakoutRoomStream);
 
   const screenVideoRef = useRef(null);
   // function handleWhiteBoardShow() {
@@ -255,33 +252,6 @@ function Meeting({
     };
   }, []);
 
-  const joinBreakoutRoom = () => {
-    setShowMeeting((prev) => (prev = false));
-    setShowBreakOutRoom((prev) => (prev = true));
-    socketRef.current.emit("join-breakout-room", roomId.current);
-  };
-  socketRef.current.on("join-breakout-room", (roomId, userId) => {
-    let localStream = streams.filter((videoStream) => {
-      if (videoStream.userId == userId) {
-        return videoStream;
-      }
-    });
-
-    setStreamsState((prev) => {
-      console.log(prev);
-      prev = prev.filter((videoStream) => {
-        if (videoStream.stream.id != localStream[0]?.stream?.id) {
-          return videoStream;
-        }
-      });
-      console.log(prev);
-      return prev;
-    });
-
-    console.log("localStream: ", localStream[0]);
-    addBreakoutRoomStream(localStream[0]);
-  });
-
   return (
     <div className="meetingContainer">
       {isPoll && (
@@ -302,7 +272,6 @@ function Meeting({
               setIsRun={setIsRun}
               sec={sec}
               min={min}
-              breakOutRoom
               setSec={setSec}
               setMin={setMin}
               isRecord={isRecord}
@@ -331,7 +300,8 @@ function Meeting({
         <div className={showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
           <div className="videoBoxes">
             {streams != null &&
-              streams.map((videoStream) => {
+              breakoutRoomStream.map((videoStream) => {
+                console.log(breakoutRoomStream);
                 if (videoStream.type == "camera") {
                   return (
                     <VideoComponent
@@ -379,7 +349,6 @@ function Meeting({
                 setBRoomArray={setBRoomArray}
                 setShowBreakOutRoom={setShowBreakOutRoom}
                 setShowMeeting={setShowMeeting}
-                joinBreakoutRoom={joinBreakoutRoom}
               ></BreakOutRoomPopup>
             )}
             {allEmoji.map(({ id, emoji, name }) => {
@@ -456,4 +425,4 @@ function Meeting({
   );
 }
 
-export default Meeting;
+export default BreakOutMeeting;

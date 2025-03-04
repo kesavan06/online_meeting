@@ -63,10 +63,10 @@ export default function Header({
       </div>
       <div className="navLogin">
         {!hasCookie &&
-          <p onClick={showSignIn}>Signin</p>
+          <p onClick={showSignIn}>Sign in</p>
         }
         {hasCookie &&
-          <p onClick={() => handleLogOut()}>Logout</p>
+          <p onClick={() => handleLogOut()}>Log out</p>
         }
       </div>
     </div>

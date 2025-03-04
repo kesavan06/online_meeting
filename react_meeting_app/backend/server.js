@@ -104,7 +104,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/allMessages", async (req, res) => {
-
   let { roomId } = req.body;
   console.log("Room ID : ", roomId);
   let theRoom = await getRoom(roomId);
@@ -207,8 +206,6 @@ app.post("/getP", (req, res) => {
   }
 });
 
-
-
 app.post("/changeName", (req, res) => {
   let { name, roomId, socketId } = req.body;
   console.log("Change Name ", name, roomId);
@@ -224,26 +221,7 @@ app.post("/changeName", (req, res) => {
 
   let room2 = getRoom(roomId);
   console.log("After change : ", room2.participants);
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+});
 
 const rooms = {};
 
@@ -285,7 +263,11 @@ io.on("connection", (socket) => {
         let roomObject = getRoom(roomId);
         let userId = user_id;
 
-        if (!roomObject.participants.some(participant => participant.socketId == socketId)) {
+        if (
+          !roomObject.participants.some(
+            (participant) => participant.socketId == socketId
+          )
+        ) {
           roomObject.participants.push({
             socketId: socketId,
             name: userNameShow,
@@ -308,6 +290,7 @@ io.on("connection", (socket) => {
         ];
         console.log("Room PArticipant: ", roomObject.participants);
         roomObject.messages = [];
+        roomObject.breakoutRooms = [];
         allRoomDetails.push(roomObject);
       }
 
@@ -326,6 +309,13 @@ io.on("connection", (socket) => {
       rooms[roomId].add(socketId);
       socket.join(roomId);
       socket.to(roomId).emit("user-connected", socketId);
+
+      const room = getRoom(roomId);
+      if (room && room.breakoutRooms.length > 0) {
+        room.breakoutRooms.forEach((roomName) => {
+          socket.emit("showBreakoutRooms", roomName, roomId, socket.id);
+        });
+      }
     }
   );
 
@@ -347,6 +337,28 @@ io.on("connection", (socket) => {
     if (!to || !answer) return socket.emit("error", "Missing answer or target");
     console.log(`Answer from ${socket.id} to ${to}`);
     io.to(to).emit("answer", { answer, from: socket.id });
+  });
+
+  socket.on("showBreakoutRooms", (roomName, roomId) => {
+    const room = getRoom(roomId);
+    if (room && !room.breakoutRooms.includes(roomName)) {
+      room.breakoutRooms.push(roomName);
+    }
+    io.to(roomId).emit("showBreakoutRooms", roomName, roomId, socket.id);
+  });
+
+  socket.on("remove-breakout-room", (roomId, indexOfRoom) => {
+    const room = getRoom(roomId);
+    if(room){
+      room.breakoutRooms.splice(indexOfRoom, 1);
+    }
+    console.log("Remove breakout-room:", roomId, indexOfRoom);
+    io.to(roomId).emit("remove-breakout-room", roomId, indexOfRoom);
+  });
+
+  socket.on("join-breakout-room", (roomId) => {
+    console.log("Join breakout-room:", roomId);
+    io.to(roomId).emit("join-breakout-room", roomId, socket.id);
   });
 
   socket.on("control-audio", (roomId) => {
@@ -376,70 +388,80 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("screen-sharing-stopped", socket.id, screenId);
   });
 
-
-
   // send Message
 
   socket.on("sendMessage", (msgObject) => {
-
     console.log("Message Received from ", socket.id, " Message: ", msgObject);
- 
-    if(msgObject.type=="vote1")
-    {
-      let room=getRoom(msgObject.room_id);
-      console.log("Room in vote1",room);
-      let roomDetail=room.messages;
-      for(let poll of roomDetail)
-      {
-        if(poll.type=="poll" && poll.message.index==msgObject.index)
-        {
-          console.log(typeof(poll.message.answer1));
-          poll.message.answer1 +=1;
+
+    if (msgObject.type == "vote1") {
+      let room = getRoom(msgObject.room_id);
+      console.log("Room in vote1", room);
+      let roomDetail = room.messages;
+      for (let poll of roomDetail) {
+        if (poll.type == "poll" && poll.message.index == msgObject.index) {
+          console.log(typeof poll.message.answer1);
+          poll.message.answer1 += 1;
         }
       }
       console.log(room.messages);
-      io.to(msgObject.roomID).emit("receivedMessage",msgObject)
-    }
-    else if(msgObject.type=="vote2")
-    {
-      let room=getRoom(msgObject.roomID);
-      let roomDetail=room.messages;
-      for(let poll of roomDetail)
-      {
-        if(poll.type=="poll" && poll.message.index==msgObject.index)
-        {
-          poll.message.answer2 +=1;
+      io.to(msgObject.roomID).emit("receivedMessage", msgObject);
+    } else if (msgObject.type == "vote2") {
+      let room = getRoom(msgObject.roomID);
+      let roomDetail = room.messages;
+      for (let poll of roomDetail) {
+        if (poll.type == "poll" && poll.message.index == msgObject.index) {
+          poll.message.answer2 += 1;
         }
       }
-      io.to(msgObject.roomID).emit("receivedMessage",msgObject);
-    }
-    else{
+      io.to(msgObject.roomID).emit("receivedMessage", msgObject);
+    } else {
       let roomObject = getRoom(msgObject.room_id);
-     
+
       console.log("Room obj: ", roomObject);
 
       let { user_name, message, time, sender_id, isPrivate, type } = msgObject;
 
       if (isPrivate == true) {
-        roomObject.messages.push({ user_name, sender_id, message, time, receiver_id: msgObject.receiver_id, isPrivate, type });
+        roomObject.messages.push({
+          user_name,
+          sender_id,
+          message,
+          time,
+          receiver_id: msgObject.receiver_id,
+          isPrivate,
+          type,
+        });
 
-        console.log("Private message from ", msgObject.sender_id, " to ", msgObject.receiver_id, isPrivate);
+        console.log(
+          "Private message from ",
+          msgObject.sender_id,
+          " to ",
+          msgObject.receiver_id,
+          isPrivate
+        );
         console.log("The given message : ", msgObject.message);
 
         io.to(msgObject.sender_id).emit("receivedMessage", msgObject);
         io.to(msgObject.receiver_id).emit("receivedMessage", msgObject);
-
-
-      }
-      else {
-        roomObject.messages.push({ user_name, sender_id, message, time, isPrivate, type });
-        console.log("This is a public message : ", { user_name, sender_id, message, time });
+      } else {
+        roomObject.messages.push({
+          user_name,
+          sender_id,
+          message,
+          time,
+          isPrivate,
+          type,
+        });
+        console.log("This is a public message : ", {
+          user_name,
+          sender_id,
+          message,
+          time,
+        });
 
         io.to(msgObject.room_id).emit("receivedMessage", msgObject);
-
       }
     }
-    
   });
 
   socket.on("emojiSend", (emoji) => {
@@ -448,24 +470,19 @@ io.on("connection", (socket) => {
     io.to(socket.roomName).emit("showEmoji", { emoji, name: socket.userName });
   });
 
-  socket.on("sendPoll",(poll)=>{
-    console.log("User_name",poll.userName);
-    console.log("room id: ",poll.room_Id);
-    socket.to(poll.room_Id).emit("receivedPoll",poll);
-    console.log("after recieve")
-  });
-
-  socket.on("leave-meeting", (roomId, userId) => {
-    io.to(roomId).emit("leave-meeting", roomId, userId);
+  socket.on("sendPoll", (poll) => {
+    console.log("User_name", poll.userName);
+    console.log("room id: ", poll.room_Id);
+    socket.to(poll.room_Id).emit("receivedPoll", poll);
+    console.log("after recieve");
   });
 
   socket.on("getParticiapants", (roomId) => {
     let room = getRoom(roomId);
-    console.log('Room in part : ', room.participants);
+    console.log("Room in part : ", room.participants);
 
     io.to(roomId).emit("giveParticicpant", room.participants);
   });
-
 
   // Handle user disconnection
   socket.on("disconnect", () => {
@@ -485,11 +502,10 @@ io.on("connection", (socket) => {
       removeParticipant(allRoomDetails, socket.roomName, socket.id);
 
       let room = getRoom(socket.roomName);
-      console.log('Room in part delete : ', room.participants);
+      console.log("Room in part delete : ", room.participants);
 
       io.to(socket.roomName).emit("giveParticicpant", room.participants);
     }
-
 
     for (const roomId in rooms) {
       if (rooms[roomId].has(socket.id)) {
@@ -662,7 +678,6 @@ async function addPaticipants(room_name, user_name, user_id) {
 }
 
 function removeParticipant(allRoomDetails, roomId, socketId) {
-
   const room = allRoomDetails.find((room) => room.roomId === roomId);
 
   if (room) {
@@ -672,7 +687,6 @@ function removeParticipant(allRoomDetails, roomId, socketId) {
     );
 
     if (participantIndex !== -1) {
-
       room.participants.splice(participantIndex, 1);
 
       console.log(

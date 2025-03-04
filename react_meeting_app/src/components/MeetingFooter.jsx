@@ -20,6 +20,9 @@ import { FaRecordVinyl } from "react-icons/fa";
 import { FaUsersRectangle } from "react-icons/fa6";
 import { FaRobot } from "react-icons/fa";
 import { io } from "socket.io-client";
+import { MdScreenShare } from "react-icons/md";
+import { TbScreenShare } from "react-icons/tb";
+import { MdMobileScreenShare } from "react-icons/md";
 
 function MeetingFooter({
   handleBoard,
@@ -53,6 +56,7 @@ function MeetingFooter({
   setViewSetupMeeting,
   setDisplayParent,
   setShowMeeting,
+  setShowBreakOutRoom,
 }) {
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
@@ -69,6 +73,7 @@ function MeetingFooter({
     pauseVideo,
     streams,
     setStreamsState,
+    setupSocketListeners,
   } = useAppContext();
   // const [showLeaveMeetingBtn, setShowLeaveMeetingBtn] = useState(false);
   let interval;
@@ -122,19 +127,19 @@ function MeetingFooter({
   const leaveMeeting = () => {
     console.log(streams);
 
-    socketRef.current.emit(
-      "leave-meeting",
-      roomId.current,
-      socketRef.current.id
-    );
+    // socketRef.current.emit(
+    //   "leave-meeting",
+    //   roomId.current,
+    //   socketRef.current.id
+    // );
     setShowSignIn((prev) => (prev = false));
     setShowSignUp((prev) => (prev = false));
     setViewJoinMeeting((prev) => (prev = false));
     setViewSetupMeeting((prev) => (prev = false));
     setDisplayParent((prev) => (prev = false));
     setShowMeeting((prev) => (prev = false));
+    console.log("Old socket", socketRef.current.id);
     socketRef.current.disconnect();
-    socketRef.current = io("http://localhost:3002");
     setStreamsState((prev) => {
       prev.map((videoStream) => {
         videoStream.stream.getTracks().forEach((track) => {
@@ -143,21 +148,23 @@ function MeetingFooter({
       });
       return [];
     });
+    socketRef.current = io("http://localhost:3002");
+    setupSocketListeners();
   };
-  socketRef.current.on("leave-meeting", (roomId, userId) => {
-    setStreamsState((prev) => {
-      prev = prev.filter((videoStream) => {
-        if (videoStream.userId != userId) {
-          return videoStream;
-        } else {
-          videoStream.stream.getTracks().forEach((track) => {
-            track.stop();
-          });
-        }
-      });
-      return prev;
-    });
-  });
+  // socketRef.current.on("leave-meeting", (roomId, userId) => {
+  //   setStreamsState((prev) => {
+  //     prev = prev.filter((videoStream) => {
+  //       if (videoStream.userId != userId) {
+  //         return videoStream;
+  //       } else {
+  //         videoStream.stream.getTracks().forEach((track) => {
+  //           track.stop();
+  //         });
+  //       }
+  //     });
+  //     return prev;
+  //   });
+  // });
   function startRecording() {
     try {
       let localStream = myStream.current;
@@ -303,7 +310,7 @@ function MeetingFooter({
             startScreenShare();
           }}
         >
-          <FaShareFromSquare className="changeColor"></FaShareFromSquare>
+          <MdMobileScreenShare className="changeColor"></MdMobileScreenShare>
         </div>
         <div
           className="controlBox"
@@ -357,7 +364,6 @@ function MeetingFooter({
         <div
           className="controlBox"
           onClick={() => {
-            console.log("Hello");
             setShowChatBox((prev) => (prev = true));
             setChatView((prev) => (prev = true));
             setShowParticipants((prev) => (prev = false));

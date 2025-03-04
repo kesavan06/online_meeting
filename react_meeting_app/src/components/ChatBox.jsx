@@ -11,8 +11,17 @@ import PollCreater from "./PollCreater";
 import ShowOptions from "./ShowOptions";
 // import EmojiPicker from 'emoji-picker-react';
 
-function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, allParticipants, isPrivate  }) {
-  let { user_name, socketRef, roomId , toSocket} = useAppContext();
+function ChatBox({
+  view,
+  setView,
+  isPoll,
+  setIsPoll,
+  allMessage,
+  setAllMessage,
+  allParticipants,
+  isPrivate,
+}) {
+  let { user_name, socketRef, roomId, toSocket } = useAppContext();
   // let [allMessage, setAllMessage] = useState([]);
 
   const chatMessageRef = useRef(null);
@@ -49,8 +58,12 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
     let getTodayTime = today.toLocaleTimeString();
     let splitDay = getTodayTime.split(":");
 
-
-    let day = (+splitDay[0] > 12) ? +splitDay[0] - 12 + "." + splitDay[1] + " PM" : splitDay[0] + "." + splitDay[1] + " AM";
+    let day = splitDay[0].concat(
+      ".",
+      splitDay[1],
+      " ",
+      splitDay[2].slice(3).toUpperCase()
+    );
 
     if (splitDay[0] == 12) {
       day = splitDay[0] + "." + splitDay[1] + " PM";
@@ -59,7 +72,6 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
     console.log("Is A private message : ", isPrivate);
 
     if (messageText != "") {
-
       newM = {
         user_name: user_name.current,
         message: messageText,
@@ -67,19 +79,17 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
         room_id: roomId.current,
         time: day,
         isPrivate: isPrivate.current,
-        type: "msg"
+        type: "msg",
       };
 
       if (isPrivate.current == true) {
         newM.receiver_id = toSocket.current;
       }
 
-     console.log("Is A private message 2 : ", newM);
-
+      console.log("Is A private message 2 : ", newM);
 
       socketRef.current.emit("sendMessage", newM);
       messageRef.current.value = "";
-
     }
   }
 
@@ -88,7 +98,6 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
   }
 
   function handlekeyDown(e) {
-
     if (e.key == "Enter") {
       if (messageRef.current.value != "") {
         handleSendMessage();
@@ -112,7 +121,6 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
       });
       setAllMessage([]);
 
-
       let allM = await fetchAllMessages.json();
       let message;
 
@@ -120,7 +128,11 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
 
       let allMNow = [];
       for (let m of allM.data) {
-        if (m.sender_id == socketRef.current.id && m.isPrivate && m.receiver_id !== undefined) {
+        if (
+          m.sender_id == socketRef.current.id &&
+          m.isPrivate &&
+          m.receiver_id !== undefined
+        ) {
           // console.log(1);
           allMNow.push(m);
         }
@@ -130,13 +142,13 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
         }
         if (!m.isPrivate && m.receiver_id == undefined) {
           // console.log(3);
-          allMNow.push(m)
+          allMNow.push(m);
         }
       }
 
       console.log("All grouped messages : ", allMNow);
 
-      message = allMNow
+      message = allMNow;
 
       for (let mess of message) {
         let isMine = false;
@@ -147,9 +159,8 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
 
         setAllMessage((prev) => [...prev, mess]);
       }
-    }, 100)
-  }, [view])
-
+    }, 100);
+  }, [view]);
 
   const handleNewMessage = (msg) => {
     // console.log("MSG TYPE: ", msg.type);
@@ -161,8 +172,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
           chat.message.totalVote += 1;
         }
       }
-    }
-    else if (msg.type == "vote2") {
+    } else if (msg.type == "vote2") {
       for (let pollMsg of allMessage) {
         if (pollMsg.type == "poll" && pollMsg.message.index == msg.index) {
           pollMsg.message.answer2 += 1;
@@ -170,11 +180,10 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
         }
       }
     }
-   
+
     let isMyMessage = false;
     let { user_name, message, sender_id, time, type, isPrivate } = msg;
     let msgGot = { user_name, message, time, type, isPrivate };
-
 
     if (socketRef.current.id == sender_id) {
       isMyMessage = true;
@@ -191,16 +200,13 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
     // }
   };
 
-  
   useEffect(() => {
-
     socketRef.current.off("receivedMessage");
 
     socketRef.current.on("receivedMessage", (msg) => {
       console.log("Message received from server ", msg);
       handleNewMessage(msg);
     });
-
   }, [allMessage]);
 
   return (
@@ -214,7 +220,10 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
         <div className="msgPermision">
           <p>To</p>
 
-          <ShowOptions parArray={allParticipants} isPrivate={isPrivate} ></ShowOptions>
+          <ShowOptions
+            parArray={allParticipants}
+            isPrivate={isPrivate}
+          ></ShowOptions>
 
           {showEmoji && (
             <Emoji
@@ -224,8 +233,6 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
             />
           )}
           <button onClick={() => setIsPoll(true)}>Poll</button>
-
-      
         </div>
 
         <div className="sentInputBox">
