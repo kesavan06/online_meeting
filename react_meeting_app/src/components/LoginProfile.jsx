@@ -17,7 +17,7 @@ function LoginProfile({ cookie, handleLogOut, setHistory,showHistory }) {
 
     return (
         <>
-            <div className="loginProfile" onClick={() => handleClickProfile()} tabIndex="0" >
+            <div className="loginProfile" onClick={() => handleClickProfile()} tabIndex="0" style={{cursor: "pointer"}} >
                 {cookie.user_name[0].toUpperCase()}
             </div>
 

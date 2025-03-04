@@ -14,7 +14,8 @@ import { GoDiamond } from "react-icons/go";
 import { RiVipDiamondLine } from "react-icons/ri";
 import { IoTriangleOutline } from "react-icons/io5";
 import { GoArrowUpRight } from "react-icons/go";
-
+import { MdSaveAlt } from "react-icons/md";
+import { FaRegTrashCan } from "react-icons/fa6";
 
 
 export default function ButtonDiv(props) {
@@ -26,7 +27,7 @@ export default function ButtonDiv(props) {
   let setEraser = props.setEraser;
   let setColor = props.color;
   let drawShapes = props.drawShapes;
-
+  let takeWhiteBoardScreenShot = props.takeWhiteBoardScreenShot;
   let tool = props.tool;
   // let setTool = props.setTool;
 
@@ -270,8 +271,17 @@ export default function ButtonDiv(props) {
         )}
       </button>
 
+
       <Button
-        value={<PiBroomFill style={{ fontSize: "1.6rem" }} />}
+        value={<MdSaveAlt style={{ fontSize: "1.6rem" }} />}
+        onClick={takeWhiteBoardScreenShot}
+        type="button"
+        title="Take screenshot"
+      ></Button>
+
+
+      <Button
+        value={<FaRegTrashCan style={{ fontSize: "1.6rem" }} />}
         onClick={clearAll}
         type="button"
         title="Clear"
