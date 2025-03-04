@@ -30,14 +30,6 @@ function ChatParticipants({
 }) {
   const [viewPoll, setViewPoll] = useState(false);
 
-  let [view, setView] = useState(true);
-  const { roomId, toSocket, socketRef } = useAppContext();
-
-  useEffect(() => {
-    setTimeout(async () => {
-      await getParticipants(roomId.current, socketRef);
-    }, 100);
-  }, []);
 
   function saveChat(userId) {
 
@@ -72,6 +64,16 @@ function ChatParticipants({
 
   }
 
+
+
+  let [view, setView] = useState(true);
+  const { roomId, toSocket, socketRef } = useAppContext();
+
+  useEffect(() => {
+    setTimeout(async () => {
+      await getParticipants(roomId.current, socketRef);
+    }, 100);
+  }, []);
 
   async function getParticipants(roomId) {
     try {
@@ -153,12 +155,12 @@ function ChatParticipants({
           setAllMessage={setAllMessage}
           allParticipants={allParticipants}
           isPrivate={isPrivate}
+          saveChat={saveChat}
         ></ChatBox>
       ) : showChatBot ? (
         <ChatBot
           chatBotMessage={chatBotMessage}
           setChatBotMessage={setChatBotMessage}
-          saveChat={saveChat}
         ></ChatBot>
       ) : (
         <Participants

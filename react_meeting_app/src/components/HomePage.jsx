@@ -83,7 +83,7 @@ export default function HomePage() {
           hasCookie={hasCookie}
           setHasCookie={setHasCookie}
           setHistory={setHistory}
-          
+          showHistory={showHistory}
         />
 
         <AboutMeeting

@@ -70,7 +70,6 @@ export default function Header({
         }
         {hasCookie &&
           <LoginProfile cookie={cookie} handleLogOut={handleLogOut} setHistory={setHistory}/>
-          // <p onClick={() => handleLogOut()}>Logout</p>)
         }
       </div>
     </div>
