@@ -1,6 +1,7 @@
 import Canvas from "./Canvas"
 import { useState, useRef, useEffect } from "react";
 import ButtonDiv from "./ButtonIn";
+import html2canvas from "html2canvas";
 
 
 import style from "../Canvas.module.css";
@@ -21,6 +22,9 @@ export default function WhiteBoard({ controlBoard }) {
     let eraserWidthRef = useRef(10);
     const [display, setDisplay] = useState(false);
 
+    const date = new Date();
+    const day = date.toLocaleTimeString();
+    console.log("Time L ", day);
 
     let [elements, setElements] = useState([]);
     let [action, setAction] = useState("none");
@@ -29,7 +33,19 @@ export default function WhiteBoard({ controlBoard }) {
     const drawShapes = useRef(false);
     const elementsRef = useRef([]);
 
+    async function takeWhiteBoardScreenShot() {
+        if (canvasRef.current) {
+            const can = await html2canvas(canvasRef.current, { useCors: true, backgroundColor: "white" });
+            const image = can.toDataURL("image/png");
 
+            const link = document.createElement("a");
+            link.href = image;
+            link.download = "whiteboard-screen-shot.png";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
 
 
     const [, forceRender] = useState(false);
@@ -64,7 +80,7 @@ export default function WhiteBoard({ controlBoard }) {
             isDrawingRef.current = false;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            elementsRef.current=[];
+            elementsRef.current = [];
         }
     };
 
@@ -73,16 +89,16 @@ export default function WhiteBoard({ controlBoard }) {
     }
 
 
-    useEffect(()=>{
-        console.log("element in clear rect: ",elements);
+    useEffect(() => {
+        console.log("element in clear rect: ", elements);
     }, [elements])
 
 
     return (
         <>
             <Parent>
-                <ButtonDiv setIsDrawing={setIsDrawing} isDrawing={isDrawingRef.current} clearCanvas={clearCanvas} setEraser={setEraser} color={setColor} setBrushWidth={setBrushWidth} setEraserWidth={setEraserWidth} displayParent={displayWrap} parentShow={controlBoard} drawShapes={drawShapes}  tool={tool}  />
-                <Canvas isDrawingRef={isDrawingRef} class={style.canvas} canvasRef={canvasRef} isEraser={eraserRef} color={colorRef} brushWidth={brushRef} widthOfEraser={eraserWidthRef} elements={elements} setElements={setElements} action={action} setAction={setAction} tool={tool} selectedElement={selectedElement} setSelectedElement={setSelectedElement}  drawShapes={drawShapes} elementsRef={elementsRef} />
+                <ButtonDiv setIsDrawing={setIsDrawing} isDrawing={isDrawingRef.current} clearCanvas={clearCanvas} setEraser={setEraser} color={setColor} setBrushWidth={setBrushWidth} setEraserWidth={setEraserWidth} displayParent={displayWrap} parentShow={controlBoard} drawShapes={drawShapes} tool={tool} takeWhiteBoardScreenShot={takeWhiteBoardScreenShot} />
+                <Canvas isDrawingRef={isDrawingRef} class={style.canvas} canvasRef={canvasRef} isEraser={eraserRef} color={colorRef} brushWidth={brushRef} widthOfEraser={eraserWidthRef} elements={elements} setElements={setElements} action={action} setAction={setAction} tool={tool} selectedElement={selectedElement} setSelectedElement={setSelectedElement} drawShapes={drawShapes} elementsRef={elementsRef} />
             </Parent>
         </>
     )
