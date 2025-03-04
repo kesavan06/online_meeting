@@ -5,6 +5,8 @@ import { useAppContext } from "../Context";
 import "../Header.css";
 // import { useState } from "react";
 
+import LoginProfile from "./LoginProfile";
+
 export default function Header({
   showSignUp,
   setShowSignUp,
@@ -14,7 +16,8 @@ export default function Header({
   setCookie,
   hasCookie,
   setHasCookie,
-  removeCookie
+  removeCookie,
+  setHistory
 }) {
 
   const { user_name, user_id } = useAppContext();
@@ -33,7 +36,7 @@ export default function Header({
     setShowSignUp(false);
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     if (document.cookie) {
       console.log("Cookie in header: ", cookie);
       setHasCookie(prev => prev = true);
@@ -59,14 +62,15 @@ export default function Header({
   return (
     <div className="homePageHeader">
       <div className="iconAndName">
-      <img style={{width:"70px"}} src="meetingLogo2.png"></img>
+        <img style={{ width: "70px" }} src="meetingLogo2.png"></img>
       </div>
       <div className="navLogin">
         {!hasCookie &&
           <p onClick={showSignIn}>Signin</p>
         }
         {hasCookie &&
-          <p onClick={() => handleLogOut()}>Logout</p>
+          <LoginProfile cookie={cookie} handleLogOut={handleLogOut} setHistory={setHistory}/>
+          // <p onClick={() => handleLogOut()}>Logout</p>)
         }
       </div>
     </div>

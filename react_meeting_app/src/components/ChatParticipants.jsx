@@ -39,6 +39,40 @@ function ChatParticipants({
     }, 100);
   }, []);
 
+  function saveChat(userId) {
+
+    console.log("Chat mess : ", allMessage);
+    console.log("User id : ", userId);
+
+
+    if (allMessage.length !== 0) {
+
+      const chatMessages = allMessage.map((message) => {
+        if (message.isPrivate) {
+          return `${message.user_name}: ${message.message} (private)`
+        }
+        else {
+          return `${message.user_name}: ${message.message}`
+        }
+      }).join("\n");
+
+
+      console.log("Chat Message : ", chatMessages);
+
+      const data = new Blob([chatMessages], { type: "text/plain " });
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(data);
+      link.download = "chat_message.txt";
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+  }
+
+
   async function getParticipants(roomId) {
     try {
       // console.log("Inside emit function ------------------------------------------------------------------------- ");
@@ -124,6 +158,7 @@ function ChatParticipants({
         <ChatBot
           chatBotMessage={chatBotMessage}
           setChatBotMessage={setChatBotMessage}
+          saveChat={saveChat}
         ></ChatBot>
       ) : (
         <Participants

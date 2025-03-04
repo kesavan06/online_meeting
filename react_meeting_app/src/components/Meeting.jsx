@@ -92,13 +92,14 @@ function Meeting({
   const [allParticipants, setAllParticipants] = useState([]);
 
 
-  const isPrivate = useRef(false );
+  const isPrivate = useRef(false);
   const [showChatBot, setShowChatBot] = useState(false);
   const [showParticipants, setShowParticipants] = useState(false);
 
   const [breakOutRoom, setBreakOutRoom] = useState(false);
 
   const [chatBotMessage, setChatBotMessage] = useState([]);
+  const emojiRef = useRef();
 
   const copyRoomId = async (roomId) => {
     await navigator.clipboard.writeText(roomId);
@@ -154,7 +155,7 @@ function Meeting({
   } = useAppContext();
 
   socketRef.current.on("disable-audio", (roomId, userId) => {
-    streams.map(() => {});
+    streams.map(() => { });
   });
 
   console.log("all streams: ", streams);
@@ -216,6 +217,19 @@ function Meeting({
     };
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (emojiRef.current && !emojiRef.current.contains(event.target)) {
+        setShowEmojis(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showEmojis]);
+
   return (
     <div className="meetingContainer">
       {isPoll && (
@@ -230,7 +244,7 @@ function Meeting({
       )}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
-        {isRecord && (
+          {isRecord && (
             <VideoRecord
               isRun={isRun}
               setIsRun={setIsRun}
@@ -251,7 +265,7 @@ function Meeting({
             }}
           >
             Meeting ID: {roomId.current}
-            {}
+            { }
             <FaCopy
               onClick={() => copyRoomId(roomId.current)}
               style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -290,7 +304,7 @@ function Meeting({
             )}
 
             {showEmojis && (
-              <div className="emoji">
+              <div className="emoji" ref={emojiRef}>
                 <EmojiPicker
                   theme="dark"
                   width={300}
@@ -301,6 +315,7 @@ function Meeting({
                   ]}
                   open={showEmojis}
                   onEmojiClick={handleClickOnEmoji}
+                  tableIndex="0"
                 />
               </div>
             )}

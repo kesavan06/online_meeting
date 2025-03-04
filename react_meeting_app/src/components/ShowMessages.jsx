@@ -7,7 +7,7 @@ export default function ShowMessage(props) {
   return (
     <>
       {props.newMessages.map((message, index) => {
-        console.log("Message : ", message);
+        // console.log("Message : ", message);
 
         return message.type == "poll" ? (
           <Poll

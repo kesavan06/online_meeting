@@ -14,6 +14,7 @@ import ShareScreen from "./ShareScreen";
 import SignUp from "./SignUp.js";
 import "../HomePage.css";
 import { useCookies } from "react-cookie";
+import MeetingHistory from "./MeetingHistory.jsx";
 
 // setAndReadCookie();
 
@@ -27,6 +28,7 @@ export default function HomePage() {
   const [displayParent, setDisplayParent] = useState(false);
   const [displayShareScreen, setDisplayShareScreen] = useState(false);
   const [displayMessage, setDisplayMessage] = useState(false);
+  const [showHistory, setHistory] = useState(false);
 
   const [hasCookie, setHasCookie] = useState(false);
   const [cookie, setCookie, removeCookie] = useCookies([
@@ -65,7 +67,8 @@ export default function HomePage() {
     !showSignUp &&
     !showSignIn &&
     !displayParent &&
-    !showMeeting
+    !showMeeting &&
+    !showHistory
   ) {
     return (
       <div className="homeContainer homePageContainer">
@@ -79,6 +82,8 @@ export default function HomePage() {
           removeCookie={removeCookie}
           hasCookie={hasCookie}
           setHasCookie={setHasCookie}
+          setHistory={setHistory}
+          
         />
 
         <AboutMeeting
@@ -173,11 +178,18 @@ export default function HomePage() {
         <FeatureList />
       </div>
     );
-  } else if (displayParent) {
+  }
+  else if (displayParent) {
     return <WhiteBoard parentShow={handleParentShow} />;
-  } else if (displayShareScreen) {
+  }
+  else if (displayShareScreen) {
     return <ShareScreen></ShareScreen>;
-  } else {
+  }
+  else if (showHistory) {
+    return <MeetingHistory />
+  }
+
+  else {
     if (viewSetupMeeting) {
       return (
         <MeetingSetup

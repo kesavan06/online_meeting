@@ -128,3 +128,10 @@
   align-items: flex-end;
   flex-direction: column;
 }
+
+
+.saveChat{
+  width: 7%;
+  height: 51%;
+  margin-left: 50%;
+}

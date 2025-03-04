@@ -27,21 +27,22 @@ export const ChatBot = ({ chatBotMessage, setChatBotMessage }) => {
 
     console.log("TIme : ", splitDay);
 
-    // let day =
-    //   +splitDay[0] > 12
-    //     ? +splitDay[0] - 12 + "." + splitDay[1] + " PM"
-    //     : splitDay[0] + "." + splitDay[1] + " AM";
+    let day =
+      +splitDay[0] > 12
+        ? +splitDay[0] - 12 + "." + splitDay[1] + " PM"
+        : splitDay[0] + "." + splitDay[1] + " AM";
 
-    // if (splitDay[0] == 12) {
-    //   day = splitDay[0] + "." + splitDay[1] + " PM";
-    // }
+    if (splitDay[0] == 12) {
+      day = splitDay[0] + "." + splitDay[1] + " PM";
+    }
 
-    let day = splitDay[0].concat(
-      ".",
-      splitDay[1],
-      " ",
-      splitDay[2].slice(3).toUpperCase()
-    );
+    // let day = splitDay[0].concat(
+    //   ".",
+    //   splitDay[1],
+    //   " ",
+    //   splitDay[2].slice(3).toUpperCase()
+    // );
+    
     let botPrompt = prompt.current.value;
     prompt.current.value = "";
     setChatBotMessage((prev) => {
@@ -49,7 +50,7 @@ export const ChatBot = ({ chatBotMessage, setChatBotMessage }) => {
     });
     let url =
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
-    let apiKey = "AIzaSyDii7w6Hlr4zLVT6VZxLf7jYqU0-Q4sjQc";
+    let apiKey = "AIzaSyAnVf9v8wu_1JRPCPudoFpfT-Z5NKQY0wU";
     let response = await fetch(url + "?key=" + apiKey, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
