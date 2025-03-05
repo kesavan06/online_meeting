@@ -19,7 +19,7 @@ export default function Poll({poll,user_name,time,isMine,userChoice,userClick,se
     {
         console.log("Option1: ",option1Ref.current.checked);
         console.log("Option2: ",option2Ref.current.checked);
-        if(poll.check=="vote2")
+        if(isVote2)
         {
             let pollDetail = {room_id:roomId.current, index:poll.index, type:"decreaseVote2AndIncreaseVote1",sender_id:socketRef.current.id};
             socketRef.current.emit("sendMessage",pollDetail);
@@ -46,7 +46,7 @@ export default function Poll({poll,user_name,time,isMine,userChoice,userClick,se
     {
         console.log("Option1: ",option1Ref.current.checked);
         console.log("Option2: ",option2Ref.current.checked);
-        if(poll.check=="vote1")
+        if(isVote1)
         {
             let pollDetail = {room_id:roomId.current, index:poll.index, type:"decreaseVote1AndIncreaseVote2",sender_id:socketRef.current.id};
             socketRef.current.emit("sendMessage",pollDetail);
@@ -115,7 +115,7 @@ export default function Poll({poll,user_name,time,isMine,userChoice,userClick,se
                     } */}
                     <input checked={isVote1 ? true : false} ref={option1Ref} className="pollRadioButton" type="radio" onChange={increaseVote1} name="poll"></input>
                 {poll.option1}</label>
-                <progress ref={answer1Ref} value={poll.answer1} max="10"></progress>
+                <progress ref={answer1Ref} value={(poll.answer1/poll.totalVote)*100} max="100"></progress>
                 <label className="option">
                     {/* {
                         userChoice.map((obj)=>{
@@ -124,7 +124,7 @@ export default function Poll({poll,user_name,time,isMine,userChoice,userClick,se
                     }     */}
                     <input checked={isVote2 ? true : false} ref={option2Ref} className="pollRadioButton" type="radio" name="poll" onChange={increaseVote2}></input>
                 {poll.option2}</label>
-                <progress ref={answer2Ref} value={poll.answer2} max="10"></progress>
+                <progress ref={answer2Ref} value={(poll.answer2/poll.totalVote)*100} max="100"></progress>
             </div>
         </div>
     )

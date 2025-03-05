@@ -364,7 +364,7 @@ function Meeting({
         )}
         {showNotes && (
           <div className="meetingChatParticipants">
-            <Notes setShowNotes={setShowNotes}></Notes>
+            <Notes showChatBox={showChatBox} setShowNotes={setShowNotes}></Notes>
           </div>
         )
         }

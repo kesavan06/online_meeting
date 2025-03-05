@@ -22,6 +22,8 @@ const corsOptions = {
 
 let allRoomDetails = [];
 let pollIndex = 0;
+let notes;
+
 
 const mysql = require("mysql2");
 

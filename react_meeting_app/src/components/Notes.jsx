@@ -98,8 +98,8 @@ export default function Notes({setShowNotes})
     }
 
     return(
-        <div style={{width:"100%",height:"100%"}}>
-            <div ref={divRef} contentEditable={true}  style={{width:"100%",height:"90%",backgroundColor:"#202128",color:"white"}}></div>
+        <div id="wholeContainer">
+            <div ref={divRef} contentEditable={true}  id="notesDiv"></div>
             <div style={{width:"100%",height:"60px",display:"flex",justifyContent:"space-between"}}>
                 <button className={isBold ? "buttonClick" : "normal"} style={{width:"50px",height:"50px"}} onClick={setBold}>B</button>
                 <button className={isUnderline ? "buttonClick" : "normal"} style={{width:"50px",height:"50px"}} onClick={setUnderLine}>U</button>

@@ -375,6 +375,7 @@ function MeetingFooter({
             console.log("Hello");
             setShowChatBox((prev) => (prev = true));
             setChatView((prev) => (prev = true));
+            setShowNotes((prev)=>prev=false);
             setShowParticipants((prev) => (prev = false));
             setShowChatBot((prev) => (prev = false));
           }}

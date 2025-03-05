@@ -62,7 +62,10 @@ export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPo
         
     }
 
-    
+    function cancelPoll()
+    {
+        setIsPoll(false);
+    }
     
 
     // useEffect(()=>{
@@ -95,7 +98,10 @@ export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPo
                 <label>Answer Options</label>
                 <input className="inputBox" type="text" name="option1" onChange={valueChange} value={newPoll.option1} required></input>
                 <input className="inputBox" type="text" name="option2" onChange={valueChange} value={newPoll.option2} required></input>
-                <button className="inputBox" type="submit">Create Poll</button>
+                <div className="btns">
+                    <button className="pollCancelBtn" onClick={cancelPoll}>Cancel</button>
+                    <button className="createPollBtn" type="submit">Create Poll</button>
+                </div>
             </form>
             {/* {
                 poll.map((data)=>{

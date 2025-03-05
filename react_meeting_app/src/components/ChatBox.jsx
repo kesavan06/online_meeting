@@ -206,7 +206,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
   // }
 
   const handleNewMessage = (msg) => {
-    // console.log("MSG TYPE: ", msg.type);
+    console.log("MSG TYPE: ", msg.type);
 
    
     console.log("MSG TYPE: ",msg.type);
@@ -318,6 +318,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
         if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
         {
           allMessage[i].message.answer1 -= 1;
+          allMessage[i].message.totalVote -=1;
           // allMessage[i].message.check = "";
           let poll=allMessage[i].userChoice;
           let isExist=false;
@@ -383,6 +384,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
         if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
         {
           allMessage[i].message.answer2 += 1;
+          allMessage[i].message.totalVote +=1;
           // allMessage[i].message.check = "";
           let poll=allMessage[i].userChoice;
           let isExist=false;
@@ -472,7 +474,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
               handleShowEmoji={handleShowEmoji}
             />
           )}
-          <button onClick={() => setIsPoll(true)}>Poll</button>
+          <button className="pollButton" onClick={() => setIsPoll(true)}>Poll</button>
 
           <button className="saveChat" onClick={() => saveChat(socketRef.current.id)}>
             <HiOutlineSave />
