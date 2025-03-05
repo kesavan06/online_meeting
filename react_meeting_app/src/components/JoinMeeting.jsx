@@ -12,9 +12,17 @@ function JoinMeeting({
   setViewJoinMeeting,
   showMeeting,
   setShowMeeting,
-  cookie
+  cookie,
 }) {
-  const { roomId, socketRef, getMediaStream, initializeMediaStream, user_name, user_id } = useAppContext();
+  const {
+    roomId,
+    socketRef,
+    getMediaStream,
+    initializeMediaStream,
+    user_name,
+    user_id,
+    onScreenShare,
+  } = useAppContext();
 
   const [mic, setMic] = useState(true);
   const [video, setVideo] = useState(true);
@@ -35,14 +43,11 @@ function JoinMeeting({
   //   user_id.current = cookie.user_id;
   // }
 
-
   useEffect(() => {
     if (userName.current) {
       userName.current.value = user_name.current; // Set input value manually
     }
   }, [user_name]);
-
-
 
   useEffect(() => {
     const startStream = async () => {
@@ -76,7 +81,6 @@ function JoinMeeting({
     console.log("Room: ", roomInput.current.value);
 
     if (roomInput.current.value.trim() !== "") {
-
       user_name.current = userName.current.value;
       roomId.current = roomInput.current.value;
 

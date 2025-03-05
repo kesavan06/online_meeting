@@ -6,7 +6,7 @@ import { FaMicrophone } from "react-icons/fa";
 import { FaVideo } from "react-icons/fa";
 import { FaVideoSlash } from "react-icons/fa";
 import { FaChalkboardTeacher } from "react-icons/fa";
-import { FaB, FaShareFromSquare } from "react-icons/fa6";
+import { FaB, FaNoteSticky, FaShareFromSquare } from "react-icons/fa6";
 import { FaRegFaceSmile } from "react-icons/fa6";
 import { FaRightFromBracket } from "react-icons/fa6";
 import { FaRegMessage } from "react-icons/fa6";
@@ -20,6 +20,7 @@ import { FaRecordVinyl } from "react-icons/fa";
 import { FaUsersRectangle } from "react-icons/fa6";
 import { FaRobot } from "react-icons/fa";
 import { io } from "socket.io-client";
+import { FaRegNoteSticky } from "react-icons/fa6";
 import { MdScreenShare } from "react-icons/md";
 import { TbScreenShare } from "react-icons/tb";
 import { MdMobileScreenShare } from "react-icons/md";
@@ -49,6 +50,8 @@ function MeetingFooter({
   setShowParticipants,
   showChatBot,
   setShowChatBot,
+  showNotes,
+  setShowNotes,
 
   setShowSignIn,
   setShowSignUp,
@@ -74,6 +77,7 @@ function MeetingFooter({
     streams,
     setStreamsState,
     setupSocketListeners,
+    onScreenShare,
   } = useAppContext();
   // const [showLeaveMeetingBtn, setShowLeaveMeetingBtn] = useState(false);
   let interval;
@@ -114,9 +118,11 @@ function MeetingFooter({
     }
 
     socketRef.current.on("control-video", (roomId, userId) => {
+      console.log("myStream:", myStream.current.id);
       streams.map((videoStream) => {
-        if (videoStream.userId == userId) {
-          console.log(videoStream.userId, userId);
+        console.log("all streams: ", videoStream.stream.id);
+        console.log("check: ", videoStream.stream.id == myStream.current.id);
+        if (videoStream.stream.id == myStream.current.id) {
           videoStream.stream.getVideoTracks().forEach((track) => {
             track.enabled = !pauseVideo;
           });
@@ -271,6 +277,14 @@ function MeetingFooter({
     setMin(0);
   }
 
+  function showNotebook() {
+    setShowNotes(true);
+    setShowChatBot(false);
+    setShowChatBox(false);
+    setShowParticipants(false);
+    setChatView(false);
+  }
+
   return (
     <div className="footerBox">
       <div className="micVideoConrol">
@@ -305,6 +319,7 @@ function MeetingFooter({
         <div
           className="controlBox"
           onClick={() => {
+            onScreenShare.current = true;
             startScreenShare();
           }}
         >
@@ -314,6 +329,7 @@ function MeetingFooter({
         <div
           className="controlBox"
           onClick={() => {
+            onScreenShare.current = true;
             startScreenShare();
             openPopup();
           }}
@@ -321,7 +337,7 @@ function MeetingFooter({
           <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher>
         </div>
 
-        <div className="controlBox" onClick={() => handleEmoji()} >
+        <div className="controlBox" onClick={() => handleEmoji()}>
           <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
         </div>
         <div
@@ -361,11 +377,15 @@ function MeetingFooter({
         </div>
       </div>
       <div className="moreControls">
+        <div className="controlBox" onClick={showNotebook}>
+          <FaRegNoteSticky className="changeColor"></FaRegNoteSticky>
+        </div>
         <div
           className="controlBox"
           onClick={() => {
             setShowChatBox((prev) => (prev = true));
             setChatView((prev) => (prev = true));
+            setShowNotes((prev) => (prev = false));
             setShowParticipants((prev) => (prev = false));
             setShowChatBot((prev) => (prev = false));
           }}

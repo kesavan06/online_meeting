@@ -6,7 +6,7 @@ import { useAppContext } from "../Context";
 
 export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPoll }) {
     // const [poll,setPoll] = useState([]);
-    const [newPoll, createNewPoll] = useState({ title: "", option1: "", option2: "", userName: "", room_Id: "", type: "" });
+    const [newPoll, createNewPoll] = useState({ title: "", option1: "", option2: "", userName: "", room_Id: "", type: ""});
     const { user_name, socketRef, roomId } = useAppContext();
     // const [isPoll,setIsPoll] = useState(false);
     // console.log("socketref",socketRef);
@@ -52,7 +52,7 @@ export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPo
         }
 
         const message = {title: newPoll.title, option1:newPoll.option1, option2:newPoll.option2, answer1:0,answer2:0,totalVote:0,index:""};
-        const value = { user_name: user_name.current, message,sender_id:socketRef.current.id,room_id: roomId.current, time:time,type: "poll" };
+        const value = { user_name: user_name.current, message,sender_id:socketRef.current.id,room_id: roomId.current, time:time,type: "poll",userChoice:[]};
         socketRef.current.emit("sendMessage", value);
         setIsPoll(!isPoll);
         console.log("Value: ", value);
@@ -62,7 +62,10 @@ export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPo
         
     }
 
-    
+    function cancelPoll()
+    {
+        setIsPoll(false);
+    }
     
 
     // useEffect(()=>{
@@ -95,7 +98,10 @@ export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPo
                 <label>Answer Options</label>
                 <input className="inputBox" type="text" name="option1" onChange={valueChange} value={newPoll.option1} required></input>
                 <input className="inputBox" type="text" name="option2" onChange={valueChange} value={newPoll.option2} required></input>
-                <button className="inputBox" type="submit">Create Poll</button>
+                <div className="btns">
+                    <button className="pollCancelBtn" onClick={cancelPoll}>Cancel</button>
+                    <button className="createPollBtn" type="submit">Create Poll</button>
+                </div>
             </form>
             {/* {
                 poll.map((data)=>{

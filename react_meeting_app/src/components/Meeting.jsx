@@ -14,9 +14,11 @@ import PollCreater from "./PollCreater";
 import { FaCopy } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
 import { BreakOutRoomPopup } from "./BreakOutRoomPopup";
+import Notes from "./Notes";
 
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
+  const { onScreenShare } = useAppContext();
 
   useEffect(() => {
     if (videoRef.current && stream) {
@@ -53,7 +55,7 @@ const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   return (
     <video
       ref={videoRef}
-      className={!showWhiteBoard ? "video" : "upVideo"}
+      className={onScreenShare.current ? "video" : "video-item"}
       autoPlay
       playsInline
       muted={isLocalStream}
@@ -86,12 +88,12 @@ function Meeting({
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [isRun, setIsRun] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
 
   const [participantLength, setParticipantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
   const [copyText, setCopyText] = useState(false);
   const [allParticipants, setAllParticipants] = useState([]);
-
 
   const isPrivate = useRef(false);
   const [showChatBot, setShowChatBot] = useState(false);
@@ -135,7 +137,6 @@ function Meeting({
       socketRef.current.off("remove-breakout-room", handleRemoveBreakoutRooms);
     };
   }, [bRoomArray]);
-
 
   const copyRoomId = async (roomId) => {
     await navigator.clipboard.writeText(roomId);
@@ -192,10 +193,11 @@ function Meeting({
     setBreakoutRoomStream,
     addBreakoutRoomStream,
     setStreamsState,
+    onScreenShare,
   } = useAppContext();
 
   socketRef.current.on("disable-audio", (roomId, userId) => {
-    streams.map(() => { });
+    streams.map(() => {});
   });
 
   console.log("all streams: ", streams);
@@ -259,6 +261,21 @@ function Meeting({
   }, []);
 
   useEffect(() => {
+    socketRef.current.on("screen-sharing-started", (userId, isScreen) => {
+      console.log("Screen sharing started:", userId, isScreen);
+      onScreenShare.current = isScreen;
+    });
+
+    socketRef.current.on(
+      "screen-sharing-stopped",
+      (userId, screenId, isScreen) => {
+        console.log("Screen sharing stopped:", userId, screenId, isScreen);
+        onScreenShare.current = isScreen;
+      }
+    );
+  }, [onScreenShare.current]);
+
+  useEffect(() => {
     function handleClickOutside(event) {
       if (emojiRef.current && !emojiRef.current.contains(event.target)) {
         setShowEmojis(false);
@@ -270,7 +287,6 @@ function Meeting({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showEmojis]);
-
 
   const joinBreakoutRoom = () => {
     setShowMeeting((prev) => (prev = false));
@@ -313,7 +329,7 @@ function Meeting({
       )}
       <div className="meetingHeaderBox">
         <div className="meetingHeader">
-         {isRecord && (
+          {isRecord && (
             <VideoRecord
               isRun={isRun}
               setIsRun={setIsRun}
@@ -335,7 +351,7 @@ function Meeting({
             }}
           >
             Meeting ID: {roomId.current}
-            { }
+            {}
             <FaCopy
               onClick={() => copyRoomId(roomId.current)}
               style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -346,7 +362,9 @@ function Meeting({
 
       <div className="meetingContent">
         <div className={showChatBox ? "meetingVideoBox" : "meetingVideoBox1"}>
-          <div className="videoBoxes">
+          <div
+            className={onScreenShare.current ? "videoBoxes" : "video-container"}
+          >
             {streams != null &&
               streams.map((videoStream) => {
                 if (videoStream.type == "camera") {
@@ -364,7 +382,7 @@ function Meeting({
                 }
               })}
           </div>
-          <div className="mainVideoBox">
+          <div className={onScreenShare.current ? "mainVideoBox" : ""}>
             {streams.some((videoStream) => videoStream.type == "screen") && (
               <video
                 ref={screenVideoRef}
@@ -374,7 +392,7 @@ function Meeting({
             )}
 
             {showEmojis && (
-              <div className={showChatBox ? "emoji" : "emoji1"}ref={emojiRef}>
+              <div className={showChatBox ? "emoji" : "emoji1"} ref={emojiRef}>
                 <EmojiPicker
                   theme="dark"
                   width={300}
@@ -436,6 +454,14 @@ function Meeting({
             ></ChatParticipants>
           </div>
         )}
+        {showNotes && (
+          <div className="meetingChatParticipants">
+            <Notes
+              showChatBox={showChatBox}
+              setShowNotes={setShowNotes}
+            ></Notes>
+          </div>
+        )}
       </div>
       <div className="meetingFooter">
         <MeetingFooter
@@ -467,7 +493,8 @@ function Meeting({
           setViewSetupMeeting={setViewSetupMeeting}
           setDisplayParent={setDisplayParent}
           setShowMeeting={setShowMeeting}
-          setShowBreakOutRoom={setShowBreakOutRoom}
+          showNotes={showNotes}
+          setShowNotes={setShowNotes}
         ></MeetingFooter>{" "}
       </div>
     </div>

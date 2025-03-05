@@ -18,6 +18,7 @@
   scrollbar-width: none;
 }
 
+
 .chatThread {
   width: 100%;
   height: fit-content;
@@ -133,5 +134,15 @@
 .saveChat{
   width: 7%;
   height: 51%;
-  margin-left: 50%;
+  margin-left: 40%;
+}
+
+.pollButton{
+  height: 35px;
+  width: 70px;
+  margin-left: 30px;
+  border-radius: 5px ;
+  border: none;
+  background-color: #117F56;
+  color: white;
 }

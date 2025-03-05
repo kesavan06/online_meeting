@@ -30,6 +30,7 @@ export const AppProvider = ({ children }) => {
   const [pauseVideo, setPauseVideo] = useState(false);
   const [pauseAudio, setPauseAudio] = useState(false);
   const [breakoutRoomStream, setBreakoutRoomStream] = useState([]);
+  const onScreenShare = useRef(false);
 
   const configuration = {
     iceServers: [
@@ -423,9 +424,11 @@ export const AppProvider = ({ children }) => {
       });
 
       socketRef.current.emit("screen-sharing-started", {
+        isScreen: onScreenShare.current,
         roomId: roomId.current,
         userId: socketRef.current.id,
       });
+
       screenStream.getVideoTracks()[0].onended = () => {
         stopScreenSharing(screenStream);
       };
@@ -454,12 +457,15 @@ export const AppProvider = ({ children }) => {
       return prev;
     });
 
+    onScreenShare.current = false;
+
     myScreenStream.current = null;
     srceenSharer.current = null;
     setScreenStreamState(null);
     socketRef.current.emit("screen-share-stopped", {
       roomId: roomId.current,
       screenId: screenStream.id,
+      isScreen: onScreenShare.current,
     });
   };
 
@@ -532,6 +538,7 @@ export const AppProvider = ({ children }) => {
         breakoutRoomStream,
         setBreakoutRoomStream,
         addBreakoutRoomStream,
+        onScreenShare,
       }}
     >
       {children}

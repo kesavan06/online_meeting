@@ -32,6 +32,7 @@ const corsOptions = {
 
 let allRoomDetails = [];
 let pollIndex = 0;
+let notes;
 
 const mysql = require("mysql2");
 
@@ -390,12 +391,14 @@ io.on("connection", (socket) => {
     io.to(to).emit("screen-candidate", { candidate, from: socket.id });
   });
 
-  socket.on("screen-sharing-started", ({ roomId, userId }) => {
-    socket.to(roomId).emit("screen-sharing-started", userId);
+  socket.on("screen-sharing-started", ({ roomId, userId, isScreen }) => {
+    socket.to(roomId).emit("screen-sharing-started", userId, isScreen);
   });
 
-  socket.on("screen-share-stopped", ({ roomId, screenId }) => {
-    socket.to(roomId).emit("screen-sharing-stopped", socket.id, screenId);
+  socket.on("screen-share-stopped", ({ roomId, screenId, isScreen }) => {
+    socket
+      .to(roomId)
+      .emit("screen-sharing-stopped", socket.id, screenId, isScreen);
   });
 
   // send Message
@@ -407,29 +410,170 @@ io.on("connection", (socket) => {
       let room = getRoom(msgObject.room_id);
       console.log("Room in vote1", room);
       let roomDetail = room.messages;
-      for (let poll of roomDetail) {
-        if (poll.type == "poll" && poll.message.index == msgObject.index) {
-          console.log(typeof poll.message.answer1);
-          poll.message.answer1 += 1;
+      for (let j = 0; j < roomDetail.length; j++) {
+        if (
+          roomDetail[j].type == "poll" &&
+          roomDetail[j].message.index == msgObject.index
+        ) {
+          console.log(typeof roomDetail[j].message.answer1);
+          roomDetail[j].message.answer1 += 1;
+          // roomDetail[j].message.check = "vote1";
+          let poll = roomDetail[j].userChoice;
+          let isExist = false;
+          for (let i = 0; i < poll.length; i++) {
+            if (poll[i].senderId == msgObject.sender_id) {
+              poll[i].answer = "vote1";
+              isExist = true;
+              break;
+            }
+          }
+          if (!isExist) {
+            let object = { senderId: msgObject.sender_id, answer: "vote1" };
+            roomDetail[j].userChoice.push(object);
+          }
         }
       }
       console.log(room.messages);
-      io.to(msgObject.roomID).emit("receivedMessage", msgObject);
+      io.to(msgObject.room_id).emit("receivedMessage", msgObject);
     } else if (msgObject.type == "vote2") {
-      let room = getRoom(msgObject.roomID);
+      let room = getRoom(msgObject.room_id);
       let roomDetail = room.messages;
-      for (let poll of roomDetail) {
-        if (poll.type == "poll" && poll.message.index == msgObject.index) {
-          poll.message.answer2 += 1;
+      for (let j = 0; j < roomDetail.length; j++) {
+        if (
+          roomDetail[j].type == "poll" &&
+          roomDetail[j].message.index == msgObject.index
+        ) {
+          roomDetail[j].message.answer2 += 1;
+          // roomDetail[j].message.check = "vote2";
+          let poll = roomDetail[j].userChoice;
+          let isExist = false;
+          for (let i = 0; i < poll.length; i++) {
+            if (poll[i].senderId == msgObject.sender_id) {
+              poll[i].answer = "vote2";
+              isExist = true;
+              break;
+            }
+          }
+          if (!isExist) {
+            let object = { senderId: msgObject.sender_id, answer: "vote2" };
+            roomDetail[j].userChoice.push(object);
+          }
         }
       }
-      io.to(msgObject.roomID).emit("receivedMessage", msgObject);
+      io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+    } else if (msgObject.type == "decreaseVote2AndIncreaseVote1") {
+      let room = getRoom(msgObject.room_id);
+      let roomDetail = room.messages;
+      for (let j = 0; j < roomDetail.length; j++) {
+        if (
+          roomDetail[j].type == "poll" &&
+          roomDetail[j].message.index == msgObject.index
+        ) {
+          roomDetail[j].message.answer1 += 1;
+          roomDetail[j].message.answer2 -= 1;
+          // roomDetail[j].message.check = "vote1";
+          let poll = roomDetail[j].userChoice;
+          let isExist = false;
+          for (let i = 0; i < poll.length; i++) {
+            if (poll[i].senderId == msgObject.sender_id) {
+              poll[i].answer = "vote1";
+              isExist = true;
+              break;
+            }
+          }
+          if (!isExist) {
+            let object = { senderId: msgObject.sender_id, answer: "vote1" };
+            roomDetail[j].userChoice.push(object);
+          }
+        }
+      }
+      io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+    } else if (msgObject.type == "decreaseVote1") {
+      let room = getRoom(msgObject.room_id);
+      let roomDetail = room.messages;
+      for (let j = 0; j < roomDetail.length; j++) {
+        if (
+          roomDetail[j].type == "poll" &&
+          roomDetail[j].message.index == msgObject.index
+        ) {
+          roomDetail[j].message.answer1 -= 1;
+          // roomDetail[j].message.check = "";
+          let poll = roomDetail[j].userChoice;
+          let isExist = false;
+          for (let i = 0; i < poll.length; i++) {
+            if (poll[i].senderId == msgObject.sender_id) {
+              poll[i].answer = "";
+              isExist = true;
+              break;
+            }
+          }
+          if (!isExist) {
+            let object = { senderId: msgObject.sender_id, answer: "" };
+            roomDetail[j].userChoice.push(object);
+          }
+        }
+      }
+      io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+    } else if (msgObject.type == "decreaseVote1AndIncreaseVote2") {
+      let room = getRoom(msgObject.room_id);
+      let roomDetail = room.messages;
+      for (let j = 0; j < roomDetail.length; j++) {
+        if (
+          roomDetail[j].type == "poll" &&
+          roomDetail[j].message.index == msgObject.index
+        ) {
+          roomDetail[j].message.answer1 -= 1;
+          roomDetail[j].message.answer2 += 1;
+          // poll.message.check = "vote2";
+          let poll = roomDetail[j].userChoice;
+          let isExist = false;
+          for (let i = 0; i < poll.length; i++) {
+            if (poll[i].senderId == msgObject.sender_id) {
+              poll[i].answer = "vote1";
+              isExist = true;
+              break;
+            }
+          }
+          if (!isExist) {
+            let object = { senderId: msgObject.sender_id, answer: "vote2" };
+            roomDetail[j].userChoice.push(object);
+          }
+        }
+      }
+      io.to(msgObject.room_id).emit("receivedMessage", msgObject);
+    } else if (msgObject.type == "decreaseVote2") {
+      let room = getRoom(msgObject.room_id);
+      let roomDetail = room.messages;
+      for (let j = 0; j < roomDetail.length; j++) {
+        if (
+          roomDetail[j].type == "poll" &&
+          roomDetail[j].message.index == msgObject.index
+        ) {
+          roomDetail[j].message.answer2 += 1;
+          // roomDetail[j].message.check = "";
+          let poll = roomDetail[j].userChoice;
+          let isExist = false;
+          for (let i = 0; i < poll.length; i++) {
+            if (poll[i].senderId == msgObject.sender_id) {
+              poll[i].answer = "vote1";
+              isExist = true;
+              break;
+            }
+          }
+          if (!isExist) {
+            let object = { senderId: msgObject.sender_id, answer: "" };
+            roomDetail[j].userChoice.push(object);
+          }
+        }
+      }
+      io.to(msgObject.room_id).emit("receivedMessage", msgObject);
     } else {
       let roomObject = getRoom(msgObject.room_id);
 
       console.log("Room obj: ", roomObject);
 
-      let { user_name, message, time, sender_id, isPrivate, type } = msgObject;
+      let { user_name, message, time, sender_id, isPrivate, type, userChoice } =
+        msgObject;
 
       if (isPrivate == true) {
         roomObject.messages.push({
@@ -454,6 +598,10 @@ io.on("connection", (socket) => {
         io.to(msgObject.sender_id).emit("receivedMessage", msgObject);
         io.to(msgObject.receiver_id).emit("receivedMessage", msgObject);
       } else {
+        if (msgObject.type == "poll") {
+          message.index = pollIndex;
+          pollIndex++;
+        }
         roomObject.messages.push({
           user_name,
           sender_id,
@@ -461,6 +609,7 @@ io.on("connection", (socket) => {
           time,
           isPrivate,
           type,
+          userChoice,
         });
         console.log("This is a public message : ", {
           user_name,
@@ -549,10 +698,6 @@ async function getUserDetails() {
     console.log("Error in gettting user data : \nInternal Server Error\n", err);
   }
 }
-
-server.listen(3002, () => {
-  console.log(`Server running on https://172.17.20.38`);
-});
 
 function checkTheRoomToId(roomId) {
   let exists = false;
@@ -712,3 +857,7 @@ function removeParticipant(allRoomDetails, roomId, socketId) {
     console.log(`Room with ID ${roomId} not found`);
   }
 }
+
+server.listen(3002, () => {
+  console.log(`Server running on https://172.17.20.38`);
+});

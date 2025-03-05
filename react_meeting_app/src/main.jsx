@@ -12,11 +12,13 @@ import { Routes, Route, Link } from "react-router-dom";
 import MeetingSetup from "./components/MeetingSetup.jsx";
 import App from "./components/App.jsx";
 import { CookiesProvider } from 'react-cookie';
+import EndPage from "./components/EndPage.jsx";
 
 createRoot(document.getElementById("root")).render(
   <>
     <CookiesProvider>
       <App></App>
+      {/* <EndPage></EndPage> */}
     </CookiesProvider>
   </>
 );
