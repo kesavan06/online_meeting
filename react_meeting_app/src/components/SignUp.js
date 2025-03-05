@@ -13,7 +13,7 @@ export default async function SignUp(name, password, unique_name) {
     let encryptUnique = encrptData(unique_name, secret.password);
     console.log("Encrypt 2 User Name: ", encryptUnique);
 
-    let setUser = await fetch("https://172.17.20.38:3002/signUp", {
+    let setUser = await fetch("https://192.168.243.21:3002/signUp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +51,7 @@ function encrptData(data, secret) {
 }
 
 async function getDetailOfAPerson(unique) {
-  let getUser = await fetch("https://172.17.20.38:3002/user", {
+  let getUser = await fetch("https://192.168.243.21:3002/user", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -8,13 +8,13 @@ export default defineConfig({
   server: {
     https: {
       key: fs.readFileSync(
-        path.resolve(__dirname, "certs/172.17.20.38-key.pem")
+        path.resolve(__dirname, "certs/192.168.243.21-key.pem")
       ),
       cert: fs.readFileSync(
-        path.resolve(__dirname, "certs/172.17.20.38.pem")
+        path.resolve(__dirname, "certs/192.168.243.21.pem")
       ),
     },
-    host: "172.17.20.38", // Replace with your IP address
+    host: "192.168.243.21", // Replace with your IP address
     port: 5173, // Optional: Specify a port
   },
 });

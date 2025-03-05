@@ -20,6 +20,8 @@ import { FaRecordVinyl } from "react-icons/fa";
 import { FaUsersRectangle } from "react-icons/fa6";
 import { FaRobot } from "react-icons/fa";
 import { io } from "socket.io-client";
+import { FaArrowUpFromBracket } from "react-icons/fa6";
+import { FaArrowRightFromBracket } from "react-icons/fa6";
 import { FaRegNoteSticky } from "react-icons/fa6";
 import { MdScreenShare } from "react-icons/md";
 import { TbScreenShare } from "react-icons/tb";
@@ -154,7 +156,7 @@ function MeetingFooter({
       });
       return [];
     });
-    socketRef.current = io("https://172.17.20.38:3002");
+    socketRef.current = io("https://192.168.243.21:3002");
     setupSocketListeners();
   };
   // socketRef.current.on("leave-meeting", (roomId, userId) => {
@@ -323,7 +325,7 @@ function MeetingFooter({
             startScreenShare();
           }}
         >
-          <MdMobileScreenShare className="changeColor"></MdMobileScreenShare>
+          <FaArrowUpFromBracket className="changeColor"></FaArrowUpFromBracket>
         </div>
 
         <div
@@ -373,7 +375,7 @@ function MeetingFooter({
             leaveMeeting();
           }}
         >
-          <FaRightFromBracket className="exit"></FaRightFromBracket>
+          <FaArrowRightFromBracket className="exit"></FaArrowRightFromBracket>
         </div>
       </div>
       <div className="moreControls">

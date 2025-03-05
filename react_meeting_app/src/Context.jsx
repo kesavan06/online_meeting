@@ -44,7 +44,7 @@ export const AppProvider = ({ children }) => {
   }, [streamState]);
 
   useEffect(() => {
-    socketRef.current = io("https://172.17.20.38:3002");
+    socketRef.current = io("https://192.168.243.21:3002");
     setupSocketListeners();
 
     return () => {

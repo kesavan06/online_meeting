@@ -5,8 +5,8 @@ const socketio = require("socket.io");
 const fs = require("fs");
 const path = require("path");
 
-const certPath = path.join(__dirname, "certs", "172.17.20.38.pem");
-const keyPath = path.join(__dirname, "certs", "172.17.20.38-key.pem");
+const certPath = path.join(__dirname, "certs", "192.168.243.21.pem");
+const keyPath = path.join(__dirname, "certs", "192.168.243.21-key.pem");
 
 const options = {
   cert: fs.readFileSync(certPath),
@@ -859,5 +859,5 @@ function removeParticipant(allRoomDetails, roomId, socketId) {
 }
 
 server.listen(3002, () => {
-  console.log(`Server running on https://172.17.20.38`);
+  console.log(`Server running on https://192.168.243.21`);
 });

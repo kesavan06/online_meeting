@@ -7,7 +7,8 @@ import rough from "roughjs/bundled/rough.esm";
 
 
 const generator = rough.generator();
-
+let count = 0;
+let indexN = 0;
 
 function calculateAngle(x1, y1, x2, y2) {
     return Math.atan2(y2 - y1, x2 - x1);
@@ -35,9 +36,8 @@ function drawArrowHeades(x, y, angle) {
 }
 
 
-function createElement(x1, y1, x2, y2, type) {
+function createElement(id, x1, y1, x2, y2, type, text) {
 
-    // console.log("Create ELEment : ", type);
     let roughElement;
 
     switch (type) {
@@ -59,11 +59,10 @@ function createElement(x1, y1, x2, y2, type) {
             const height = Math.abs(y2 - y1);
 
             roughElement = generator.polygon([
-                [x, y - height / 2],     // Top
-                // [x + width , y - height / 2], // Extra upper-right point
-                [x + width / 2, y],      // Right
-                [x, y + height / 2],     // Bottom
-                [x - width / 2, y]       // Left
+                [x, y - height / 2],
+                [x + width / 2, y],
+                [x, y + height / 2],
+                [x - width / 2, y]
             ]);
 
             break;
@@ -88,6 +87,10 @@ function createElement(x1, y1, x2, y2, type) {
             roughElement = [mainLine, ...arrows]
             break;
 
+        case "text":
+            roughElement = { text, x1, y1 };
+            break;
+
         default:
             console.error("❌ Unsupported shape type:", type);
             return null;
@@ -98,39 +101,7 @@ function createElement(x1, y1, x2, y2, type) {
         console.error("❌ roughElement creation failed", { x1, y1, x2, y2, type });
         return null;
     }
-    return { x1, y1, x2, y2, type, roughElement };
-}
-
-
-// const updateElement = (id, x1, y1, x2, y2, type) => {
-//     const updatedElement = createElement(id, x1, y1, x2, y2, type);
-
-//     const elementsCopy = [...elements];
-//     elementsCopy[id] = updatedElement;
-
-//     setElements(elementsCopy);
-// }
-
-const adjustElementCoordinates = (element) => {
-    const { type, x1, x2, y1, y2 } = element;
-
-    if (type == "rectangle") {
-        const minX = Math.min(x1, x2);
-        const maxX = Math.max(x1, x2);
-        const minY = Math.min(y1, y2);
-        const maxY = Math.max(y1, y2);
-
-        return { x1: minX, y1: minY, x2: maxX, y2: maxY };
-    }
-    else {
-        if (x1 < x2 || (x1 == x2 && y1 < y2)) {
-            return { x1, y1, x2, y2 };
-        }
-        else {
-            return { x1: x2, y1: y2, x2: x1, y2: y1 };
-
-        }
-    }
+    return { id, x1, y1, x2, y2, type, roughElement, text };
 }
 
 
@@ -168,6 +139,11 @@ export default function Canvas(props) {
     let setElements = props.setElements;
     let drawShapes = props.drawShapes;
 
+    let [isTyping, setIsTyping] = useState(false);
+    let [coordinate, setCoordinate] = useState({ x1: 0, y1: 0 });
+
+    let textAreaRef = useRef();
+
     let [showCursor, setShowCursor] = useState(true);
     const elementsRef = props.elementsRef;
 
@@ -200,13 +176,52 @@ export default function Canvas(props) {
 
         let { x, y } = getMousePosition(event);
 
-        if (drawShapes.current == true) {
+        // if (isTyping) {
+        //     console.log("Typing in progress, preventing new element creation.");
+        //     event.stopPropagation();
+        //     return;
+        // }
+        // else {
+        //     console.log("GOing to create a new one : is typeig", isTyping);
+        // }
+        
+        if (drawShapes.current == true || tool.current == "text") {
 
-            const element = createElement(x, y, x, y, tool.current);
-            elementsRef.current = [...elementsRef.current, element];
-            setElements(elementsRef.current);
+            if (tool.current == "text") {
 
+                if (isTyping) return;
+
+                const element = createElement(indexN, x, y, 0, 0, tool.current, "");
+                setElements(prevElements => [...prevElements, element]);
+                setCoordinate({ x1: x, y1: y });
+
+                // elementsRef.current = [...elementsRef.current, element];
+                // setElements(elementsRef.current);
+
+                setSelectedElement(element);
+
+                console.log("Setting element");
+                setIsTyping(true);
+                // console.log("isTyping after setting:", isTyping);
+
+                setAction("writing");
+                // console.log("Mouse Down - Action set to writing");
+
+            }
+            else {
+                const element = createElement(indexN, x, y, x, y, tool.current);
+
+                elementsRef.current = [...elementsRef.current, element];
+                setElements(elementsRef.current);
+
+                setSelectedElement(element);
+                // console.log("I come inside");
+                setAction("drawing");
+            }
+            indexN++;
         }
+
+
 
     };
 
@@ -235,9 +250,12 @@ export default function Canvas(props) {
 
             if (elementsRef.current.length === 0) return;
 
-            const { x1, y1 } = elementsRef.current[index];
+            const { x1, y1, type } = elementsRef.current[index];
+            // console.log("Type and all : ",x1,y1,type);
 
-            const updatedElement = createElement(x1, y1, x, y, tool.current);
+            if (type === "text") return;
+
+            const updatedElement = createElement(index, x1, y1, x, y, tool.current);
 
             elementsRef.current[index] = updatedElement;
             setElements([...elementsRef.current]);
@@ -245,12 +263,13 @@ export default function Canvas(props) {
 
         }
         else {
-            context.lineTo(x, y);
-            console.log("draw : ", x, y);
-            context.strokeStyle = 'white';
-            context.strokeStyle = color.current;
-            context.lineWidth = brushWidth.current;
-
+            if (!isTyping) {
+                context.lineTo(x, y);
+                console.log("draw : ", x, y);
+                context.strokeStyle = 'white';
+                context.strokeStyle = color.current;
+                context.lineWidth = brushWidth.current;
+            }
         }
 
 
@@ -263,12 +282,21 @@ export default function Canvas(props) {
 
     const stopDrawing = () => {
 
+        if (action !== "writing") {
 
-        setAction("none");
+            // console.log("Before stopDrawing - Action:", action);
+            setAction("none");
+
+        } else {
+            // console.log("Blocked setting action to none because it's writing.");
+        }
+
         setSelectedElement(null);
+
 
         isDrawingActive = false;
         context.beginPath();
+
     };
 
     function handleMouseLeave() {
@@ -313,16 +341,23 @@ export default function Canvas(props) {
 
             context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
             const roughCanvas = rough.canvas(canvasRef.current);
-            elements.forEach(({ roughElement }, i) => {
-                if (!roughElement) {
+
+            elements.forEach((el, i) => {
+
+                if (!el.roughElement || !el) {
                     console.error(`❌ Element at index ${i} is invalid:`, el);
                     return;
                 }
 
-                if (Array.isArray(roughElement)) {
-                    roughElement.forEach(el => roughCanvas.draw(el));
+                if (el.type === "text") {
+                    context.font = "16px Arial";
+                    context.fillStyle = color.current;
+                    context.fillText(el.text, el.x1, el.y1);
+                }
+                else if (Array.isArray(el.roughElement)) {
+                    el.roughElement.forEach(el => roughCanvas.draw(el));
                 } else {
-                    roughCanvas.draw(roughElement);
+                    roughCanvas.draw(el.roughElement);
                 }
 
             });
@@ -330,21 +365,85 @@ export default function Canvas(props) {
         }
     }, [elements])
 
+
+    useEffect(() => {
+
+        if (tool == "text") {
+            textAreaRef.current.focus();
+        }
+
+    }, [action, selectedElement])
+
+
     function handleEnter() {
         canvasRef.current.style.cursor = "default";
     }
 
+    useEffect(() => {
+        console.log("Tool : ", tool, isTyping);
+    }, [tool, action])
+
+
+
+    useEffect(() => {
+        console.log("Action : ", action);
+    }, [action])
+
+
+    useEffect(() => {
+        console.log("Coordinate : ", coordinate, isTyping);
+    }, [coordinate])
+
+
+
+    function handleBlur() {
+        console.log("Before blur:", selectedElement);
+
+        let s = elements[elements.length - 1];
+        console.log("S E : ", s);
+
+        let text = textAreaRef.current.value;
+        if (text.trim() == "") return;
+
+        setElements(prevElements =>
+            prevElements.map(el =>
+                el.id === selectedElement.id ? { ...el, roughElement: { ...el.roughElement, text }, text } : el
+            )
+        );
+
+        console.log("After blur:", selectedElement);
+
+        setTimeout(() => {
+            setIsTyping(false);
+            setAction("none");
+            setSelectedElement(null);
+            textAreaRef.current.value = "";
+        }, 100)
+
+    }
+
+
 
     return (
         <>
-            <canvas ref={canvasRef} className={props.class} width={1010} height={1060} style={{ position: "relative", cursor: "none", border: "1px solid white", borderLeft: "0px solid" }} id="canvas_new"> </canvas>
+            <canvas ref={canvasRef} className={props.class} width={1010} height={1060} style={{ position: "relative", cursor: "none", border: "1px solid white", borderLeft: "0px solid" }} id="canvas_new" tabIndex="0"> </canvas>
 
             {showCursor &&
-                <div style={{ transition: "transform 0.05s linear", pointerEvents: "none", position: "absolute", left: position.x, top: position.y }} onMouseLeave={() => handleMouseLeave()} onMouseEnter={handleEnter}>
+                <div style={{ transition: "transform 0.05s linear", pointerEvents: "none", position: "absolute", left: position.x, top: position.y }} onMouseLeave={() => handleMouseLeave()} onMouseEnter={handleEnter} >
                     {isDrawingRef.current && !isErasing.current && <FaPencilAlt style={{ fontSize: "1.7rem", rotate: "180deg" }} />}
                     {isErasing.current && <PiEraserFill style={{ fontSize: "1.7rem", rotate: "180deg", color: "black" }} />}
                     {!isDrawingRef.current && <div style={{ width: "20px", height: "21px", borderRadius: "100%", backgroundColor: "black" }}></div>}
                 </div>
+            }
+
+            {
+                isTyping &&
+                (< textarea
+                    ref={textAreaRef}
+                    style={{ position: "fixed", top: coordinate.y1, left: coordinate.x1 }}
+                    onBlur={handleBlur}
+                >
+                </textarea>)
             }
         </>
     )

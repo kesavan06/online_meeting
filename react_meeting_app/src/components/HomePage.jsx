@@ -194,9 +194,12 @@ export default function HomePage() {
     return <WhiteBoard parentShow={handleParentShow} />;
   } else if (displayShareScreen) {
     return <ShareScreen></ShareScreen>;
-  } else if (showHistory) {
-    return <MeetingHistory />;
-  } else {
+  }
+  else if (showHistory) {
+    return <MeetingHistory setHistory={setHistory}/>
+  }
+
+  else {
     if (viewSetupMeeting) {
       return (
         <MeetingSetup

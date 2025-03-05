@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../LoginProfileStyle.css";
 import ShowMessage from "./ShowMessages";
 
-function LoginProfile({ cookie, handleLogOut, setHistory,showHistory }) {
+function LoginProfile({ cookie, handleLogOut, setHistory }) {
     console.log("Cookie : ", cookie);
     const [showDetails, setShowDetails] = useState(false);
 

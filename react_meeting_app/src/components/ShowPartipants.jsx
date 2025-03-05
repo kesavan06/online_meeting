@@ -82,7 +82,7 @@ export default function ShowParticipant({ name, socketId, allParticipants, host 
 
 
 async function changeName(name, roomId, socketId) {
-    let fetchCall = await fetch("https://172.17.20.38:3002/changeName", {
+    let fetchCall = await fetch("https://192.168.243.21:3002/changeName", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

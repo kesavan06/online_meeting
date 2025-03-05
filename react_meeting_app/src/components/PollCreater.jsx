@@ -12,7 +12,7 @@ export default function PollCreater({ allMessage, setAllMessage, isPoll, setIsPo
     // console.log("socketref",socketRef);
 
     useEffect(()=>{
-        // socketRef.current = io("https://172.17.20.38:3002")
+        // socketRef.current = io("https://192.168.243.21:3002")
         // console.log("I am inside effect in receive");
         socketRef.current.on("receivedPoll",( poll) => {
             console.log("POLL OBJECT", poll);

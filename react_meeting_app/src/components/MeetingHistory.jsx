@@ -9,9 +9,10 @@ import { RiMoonClearFill } from "react-icons/ri";
 import { IoIosChatboxes } from "react-icons/io";
 import { CgNotes } from "react-icons/cg";
 import { FaChalkboardTeacher } from "react-icons/fa";
+import { MdOutlineCancel } from "react-icons/md";
 
+export default function MeetingHistory({setHistory}) {
 
-export default function MeetingHistory() {
 
     const [array, setArray] = useState([{ time: "12.20PM", user_name: "Deepa", note: " ", chat: ["deepa : hi", "user2 : hello"] }]);
     // const [time, setTime] = useState([<WiSunrise />, <MdBrightnessLow />, <MdBrightnessMedium />, <FaCloudSun />, <RiMoonClearFill />])
@@ -39,7 +40,7 @@ export default function MeetingHistory() {
             tN = (+t.slice(0, 2)) - 12;
             // console.log("T n : ", tN);
 
-            if (tN <2) {
+            if (tN < 2) {
                 return <MdBrightnessMedium />
             }
 
@@ -53,9 +54,17 @@ export default function MeetingHistory() {
         }
     }
 
+    function handleLeave(){
+        setHistory(prev=> !prev);
+    }
+
+
     return (
         <>
             <div className="historyParent">meetings
+                <div onClick={handleLeave} className="leave">
+                    <MdOutlineCancel />
+                </div>
 
                 {array.map((meeting) => {
                     return (
@@ -78,13 +87,13 @@ export default function MeetingHistory() {
 
 
                             <div className="chatAnoteDowload">
-                                <div className="flex" style={{justifyContent : "right"}}>
+                                <div className="flex" style={{ justifyContent: "right" }}>
                                     <IoIosChatboxes style={{ fontSize: "1.6rem" }} /> Chat
                                 </div>
-                                <div  className="flex">
+                                <div className="flex">
                                     <CgNotes style={{ fontSize: "1.6rem" }} /> Notes
                                 </div>
-                                <div  className="flex">
+                                <div className="flex">
                                     <FaChalkboardTeacher style={{ fontSize: "1.6rem" }} /> White Board
                                 </div>
                             </div>

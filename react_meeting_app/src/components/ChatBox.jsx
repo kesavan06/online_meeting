@@ -115,7 +115,7 @@ function ChatBox({
   useEffect(() => {
     setTimeout(async () => {
       let fetchAllMessages = await fetch(
-        "https://172.17.20.38:3002/allMessages",
+        "https://192.168.243.21:3002/allMessages",
         {
           method: "POST",
           headers: {
@@ -167,6 +167,7 @@ function ChatBox({
   const handleNewMessage = (msg) => {
     console.log("MSG TYPE: ", msg.type);
 
+   
     console.log("MSG TYPE: ", msg.type);
     let obj;
     if (msg.type == "vote1") {
@@ -363,8 +364,8 @@ function ChatBox({
         isMyMessage = true;
       }
 
-      let sendClass = isMyMessage;
-      // console.log("Message is mine : ", isMyMessage);
+    let sendClass = isMyMessage;
+    // console.log("Message is mine : ", isMyMessage);
 
       setAllMessage((exsistingMessages) => [
         ...exsistingMessages,
