@@ -67,6 +67,7 @@ export const ChatBot = ({ chatBotMessage, setChatBotMessage }) => {
       }),
     });
     let data = await response.json().then((data) => data);
+    console.log(data);
     let message = data.candidates[0].content.parts[0].text;
     setChatBotMessage((prev) => {
       return [...prev, { message: message, time: day }];

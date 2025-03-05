@@ -22,6 +22,8 @@ const corsOptions = {
 
 let allRoomDetails = [];
 let pollIndex = 0;
+let notes;
+
 
 const mysql = require("mysql2");
 
@@ -227,24 +229,6 @@ app.post("/changeName", (req, res) => {
 })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const rooms = {};
 
 io.on("connection", (socket) => {
@@ -389,36 +373,192 @@ io.on("connection", (socket) => {
       let room=getRoom(msgObject.room_id);
       console.log("Room in vote1",room);
       let roomDetail=room.messages;
-      for(let poll of roomDetail)
+      for(let j=0;j<roomDetail.length;j++)
       {
-        if(poll.type=="poll" && poll.message.index==msgObject.index)
+        if(roomDetail[j].type=="poll" && roomDetail[j].message.index==msgObject.index)
         {
-          console.log(typeof(poll.message.answer1));
-          poll.message.answer1 +=1;
+          console.log(typeof(roomDetail[j].message.answer1));
+          roomDetail[j].message.answer1 +=1;
+          // roomDetail[j].message.check = "vote1";
+          let poll=roomDetail[j].userChoice;
+          let isExist=false;
+          for(let i=0; i<poll.length; i++)
+          {
+            if(poll[i].senderId==msgObject.sender_id)
+            {
+              poll[i].answer="vote1";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msgObject.sender_id,answer:"vote1"};
+            roomDetail[j].userChoice.push(object);
+          }
         }
       }
       console.log(room.messages);
-      io.to(msgObject.roomID).emit("receivedMessage",msgObject)
+      io.to(msgObject.room_id).emit("receivedMessage",msgObject)
     }
     else if(msgObject.type=="vote2")
     {
-      let room=getRoom(msgObject.roomID);
+      let room=getRoom(msgObject.room_id);
       let roomDetail=room.messages;
-      for(let poll of roomDetail)
+      for(let j=0;j<roomDetail.length; j++)
       {
-        if(poll.type=="poll" && poll.message.index==msgObject.index)
+        if(roomDetail[j].type=="poll" && roomDetail[j].message.index==msgObject.index)
         {
-          poll.message.answer2 +=1;
+          roomDetail[j].message.answer2 +=1;
+          // roomDetail[j].message.check = "vote2";
+          let poll=roomDetail[j].userChoice;
+          let isExist=false;
+          for(let i=0; i<poll.length; i++)
+          {
+            if(poll[i].senderId==msgObject.sender_id)
+            {
+              poll[i].answer="vote2";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msgObject.sender_id,answer:"vote2"};
+            roomDetail[j].userChoice.push(object);
+          }
         }
       }
-      io.to(msgObject.roomID).emit("receivedMessage",msgObject);
+      io.to(msgObject.room_id).emit("receivedMessage",msgObject);
+    }
+    else if(msgObject.type=="decreaseVote2AndIncreaseVote1")
+    {
+      let room=getRoom(msgObject.room_id);
+      let roomDetail=room.messages;
+      for(let j=0; j<roomDetail.length; j++)
+      {
+        if(roomDetail[j].type=="poll" && roomDetail[j].message.index==msgObject.index)
+        {
+          roomDetail[j].message.answer1 +=1;
+          roomDetail[j].message.answer2 -=1;
+          // roomDetail[j].message.check = "vote1";
+          let poll=roomDetail[j].userChoice;
+          let isExist=false;
+          for(let i=0; i<poll.length; i++)
+          {
+            if(poll[i].senderId==msgObject.sender_id)
+            {
+              poll[i].answer="vote1";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msgObject.sender_id,answer:"vote1"};
+            roomDetail[j].userChoice.push(object);
+          }
+        }
+      }
+      io.to(msgObject.room_id).emit("receivedMessage",msgObject); 
+    }
+    else if(msgObject.type=="decreaseVote1")
+    {
+      let room=getRoom(msgObject.room_id);
+      let roomDetail=room.messages;
+      for(let j=0; j<roomDetail.length; j++)
+      {
+        if(roomDetail[j].type=="poll" && roomDetail[j].message.index==msgObject.index)
+        {
+          roomDetail[j].message.answer1 -=1;
+          // roomDetail[j].message.check = "";
+          let poll=roomDetail[j].userChoice;
+          let isExist=false;
+          for(let i=0; i<poll.length; i++)
+          {
+            if(poll[i].senderId==msgObject.sender_id)
+            {
+              poll[i].answer="";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msgObject.sender_id,answer:""};
+            roomDetail[j].userChoice.push(object);
+          }
+        }
+      }
+      io.to(msgObject.room_id).emit("receivedMessage",msgObject); 
+    }
+    else if(msgObject.type=="decreaseVote1AndIncreaseVote2")
+    {
+      let room=getRoom(msgObject.room_id);
+      let roomDetail=room.messages;
+      for(let j=0; j<roomDetail.length; j++)
+      {
+        if(roomDetail[j].type=="poll" && roomDetail[j].message.index==msgObject.index)
+        {
+          roomDetail[j].message.answer1 -=1;
+          roomDetail[j].message.answer2 +=1;
+          // poll.message.check = "vote2";
+          let poll=roomDetail[j].userChoice;
+          let isExist=false;
+          for(let i=0; i<poll.length; i++)
+          {
+            if(poll[i].senderId==msgObject.sender_id)
+            {
+              poll[i].answer="vote1";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msgObject.sender_id,answer:"vote2"};
+            roomDetail[j].userChoice.push(object);
+          }
+        }
+      }
+      io.to(msgObject.room_id).emit("receivedMessage",msgObject); 
+    }
+    else if(msgObject.type=="decreaseVote2")
+    {
+      let room=getRoom(msgObject.room_id);
+      let roomDetail=room.messages;
+      for(let j=0; j<roomDetail.length; j++)
+      {
+        if(roomDetail[j].type=="poll" && roomDetail[j].message.index==msgObject.index)
+        {
+          roomDetail[j].message.answer2 +=1;
+          // roomDetail[j].message.check = "";
+          let poll=roomDetail[j].userChoice;
+          let isExist=false;
+          for(let i=0; i<poll.length; i++)
+          {
+            if(poll[i].senderId==msgObject.sender_id)
+            {
+              poll[i].answer="vote1";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msgObject.sender_id,answer:""};
+            roomDetail[j].userChoice.push(object);
+          }
+        }
+      }
+      io.to(msgObject.room_id).emit("receivedMessage",msgObject); 
     }
     else{
       let roomObject = getRoom(msgObject.room_id);
      
       console.log("Room obj: ", roomObject);
 
-      let { user_name, message, time, sender_id, isPrivate, type } = msgObject;
+      let { user_name, message, time, sender_id, isPrivate, type, userChoice } = msgObject;
 
       if (isPrivate == true) {
         roomObject.messages.push({ user_name, sender_id, message, time, receiver_id: msgObject.receiver_id, isPrivate, type });
@@ -428,11 +568,14 @@ io.on("connection", (socket) => {
 
         io.to(msgObject.sender_id).emit("receivedMessage", msgObject);
         io.to(msgObject.receiver_id).emit("receivedMessage", msgObject);
-
-
       }
       else {
-        roomObject.messages.push({ user_name, sender_id, message, time, isPrivate, type });
+        if(msgObject.type=="poll")
+        {
+          message.index=pollIndex;
+          pollIndex++;
+        }
+        roomObject.messages.push({ user_name, sender_id, message, time, isPrivate, type,userChoice });
         console.log("This is a public message : ", { user_name, sender_id, message, time });
 
         io.to(msgObject.room_id).emit("receivedMessage", msgObject);

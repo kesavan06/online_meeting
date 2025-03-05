@@ -14,6 +14,7 @@ import PollCreater from "./PollCreater";
 import { FaCopy } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
 import { BreakOutRoomPopup } from "./BreakOutRoomPopup";
+import Notes from "./Notes";
 
 const VideoComponent = ({ stream, isLocalStream, showWhiteBoard, type }) => {
   const videoRef = useRef();
@@ -85,6 +86,7 @@ function Meeting({
   const [sec, setSec] = useState(0);
   const [min, setMin] = useState(0);
   const [isRun, setIsRun] = useState(false);
+  const [showNotes,setShowNotes] = useState(false);
 
   const [participantLength, setParticipantLength] = useState(0);
   const [leaveMeeting, setLeaveMeeting] = useState(false);
@@ -360,6 +362,12 @@ function Meeting({
             ></ChatParticipants>
           </div>
         )}
+        {showNotes && (
+          <div className="meetingChatParticipants">
+            <Notes showChatBox={showChatBox} setShowNotes={setShowNotes}></Notes>
+          </div>
+        )
+        }
       </div>
       <div className="meetingFooter">
         <MeetingFooter
@@ -391,6 +399,8 @@ function Meeting({
           setViewSetupMeeting={setViewSetupMeeting}
           setDisplayParent={setDisplayParent}
           setShowMeeting={setShowMeeting}
+          showNotes={showNotes}
+          setShowNotes={setShowNotes}
         ></MeetingFooter>{" "}
       </div>
     </div>

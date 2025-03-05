@@ -81,10 +81,6 @@ export default function ShowParticipant({ name, socketId, allParticipants, host 
 }
 
 
-
-
-
-
 async function changeName(name, roomId, socketId) {
     let fetchCall = await fetch("http://localhost:3002/changeName", {
         method: "POST",

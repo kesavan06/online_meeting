@@ -6,7 +6,7 @@ import { FaMicrophone } from "react-icons/fa";
 import { FaVideo } from "react-icons/fa";
 import { FaVideoSlash } from "react-icons/fa";
 import { FaChalkboardTeacher } from "react-icons/fa";
-import { FaB, FaShareFromSquare } from "react-icons/fa6";
+import { FaB, FaNoteSticky, FaShareFromSquare } from "react-icons/fa6";
 import { FaRegFaceSmile } from "react-icons/fa6";
 import { FaRightFromBracket } from "react-icons/fa6";
 import { FaRegMessage } from "react-icons/fa6";
@@ -22,6 +22,7 @@ import { FaRobot } from "react-icons/fa";
 import { io } from "socket.io-client";
 import { FaArrowUpFromBracket } from "react-icons/fa6";
 import { FaArrowRightFromBracket } from "react-icons/fa6";
+import { FaRegNoteSticky } from "react-icons/fa6";
 
 function MeetingFooter({
   handleBoard,
@@ -48,6 +49,8 @@ function MeetingFooter({
   setShowParticipants,
   showChatBot,
   setShowChatBot,
+  showNotes,
+  setShowNotes,
 
   setShowSignIn,
   setShowSignUp,
@@ -266,6 +269,15 @@ function MeetingFooter({
     setMin(0);
   }
 
+  function showNotebook()
+  {
+    setShowNotes(true);
+    setShowChatBot(false);
+    setShowChatBox(false);
+    setShowParticipants(false);
+    setChatView(false);
+  }
+
   return (
     <div className="footerBox">
       <div className="micVideoConrol">
@@ -356,12 +368,16 @@ function MeetingFooter({
         </div>
       </div>
       <div className="moreControls">
+        <div className="controlBox" onClick={showNotebook}>
+          <FaRegNoteSticky className="changeColor"></FaRegNoteSticky>
+        </div>
         <div
           className="controlBox"
           onClick={() => {
             console.log("Hello");
             setShowChatBox((prev) => (prev = true));
             setChatView((prev) => (prev = true));
+            setShowNotes((prev)=>prev=false);
             setShowParticipants((prev) => (prev = false));
             setShowChatBot((prev) => (prev = false));
           }}

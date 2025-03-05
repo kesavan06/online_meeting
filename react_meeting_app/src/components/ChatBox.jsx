@@ -12,8 +12,8 @@ import ShowOptions from "./ShowOptions";
 import { HiOutlineSave } from "react-icons/hi";
 // import EmojiPicker from 'emoji-picker-react';
 
-function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, allParticipants, isPrivate, saveChat }) {
-  let { user_name, socketRef, roomId, toSocket } = useAppContext();
+function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, allParticipants, isPrivate ,saveChat }) {
+  let { user_name, socketRef, roomId , toSocket} = useAppContext();
   // let [allMessage, setAllMessage] = useState([]);
 
   const chatMessageRef = useRef(null);
@@ -68,7 +68,8 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
         room_id: roomId.current,
         time: day,
         isPrivate: isPrivate.current,
-        type: "msg"
+        type: "msg",
+        userChoice:[],
       };
 
       if (isPrivate.current == true) {
@@ -186,41 +187,250 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
     }, 100)
   }, [view])
 
+  //   const handleNewMessage = (msg) => {
+
+  //     let isMyMessage = false;
+
+  //     let { user_name, message, sender_id, time } = msg;
+  //     let msgGot = { user_name, message,time };
+
+  //     if (socketRef.current.id == sender_id) {
+  //         isMyMessage = true;
+  //     }
+
+  //     let sendClass = isMyMessage;
+  //     console.log("Message is mine : ",isMyMessage);
+
+  //     setAllMessage((exsistingMessages) => [...(exsistingMessages), { ...msgGot, isMine: sendClass }]);
+
+  // }
 
   const handleNewMessage = (msg) => {
+   
+    let obj;
+    if(msg.type=="vote1")
+    {
+      let obj;
+      for(let i=0;i<allMessage.length; i++)
+      {
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
+        {
+          allMessage[i].message.answer1 +=1;
+          allMessage[i].message.totalVote +=1;
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="vote1";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:"vote1"};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
 
-    if (msg.type == "vote1") {
-      for (let chat of allMessage) {
-        if (chat.type == "poll" && chat.message.index == msg.index) {
-          chat.message.answer1 += 1;
-          chat.message.totalVote += 1;
+          break;
         }
       }
     }
-    else if (msg.type == "vote2") {
-      for (let pollMsg of allMessage) {
-        if (pollMsg.type == "poll" && pollMsg.message.index == msg.index) {
-          pollMsg.message.answer2 += 1;
-          pollMsg.message.totalVote += 1;
+    else if(msg.type=="vote2")
+    {
+      let obj;
+      for(let i=0; i<allMessage.length; i++)
+      {
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
+        {
+          allMessage[i].message.answer2 +=1;
+          allMessage[i].message.totalVote +=1;
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="vote2";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:"vote2"};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
+
+          break;
         }
       }
     }
+    else if(msg.type=="decreaseVote2AndIncreaseVote1")
+    {
+      for(let i=0;i<allMessage.length;i++)
+      {
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
+        {
+          allMessage[i].message.answer1 += 1;
+          allMessage[i].message.answer2 -= 1;
+          // allMessage[i].message.check = "vote1";
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="vote1";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:"vote1"};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
 
-    let isMyMessage = false;
-    let { user_name, message, sender_id, time, type, isPrivate } = msg;
-    let msgGot = { user_name, message, time, type, isPrivate };
-
-
-    if (socketRef.current.id == sender_id) {
-      isMyMessage = true;
+          break;
+        }
+      }
     }
+    else if(msg.type=="decreaseVote1")
+    {
+      for(let i=0;i<allMessage.length;i++)
+      {
+        
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
+        {
+          allMessage[i].message.answer1 -= 1;
+          allMessage[i].message.totalVote -=1;
+          // allMessage[i].message.check = "";
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:""};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
+
+          break;
+        }
+      }
+    }
+    else if(msg.type=="decreaseVote1AndIncreaseVote2")
+    {
+      for(let i=0;i<allMessage.length;i++)
+      {
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
+        {
+          allMessage[i].message.answer1 -= 1;
+          allMessage[i].message.answer2 += 1;
+          // allMessage[i].message.check = "vote2";
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="vote2";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:"vote2"};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
+          break;
+        }
+      }
+    }
+    else if(msg.type=="decreaseVote2")
+    {
+      let obj;
+      for(let i=0;i<allMessage.length;i++)
+      {
+        if(allMessage[i].type=="poll" && allMessage[i].message.index==msg.index)
+        {
+          allMessage[i].message.answer2 += 1;
+          allMessage[i].message.totalVote +=1;
+          // allMessage[i].message.check = "";
+          let poll=allMessage[i].userChoice;
+          let isExist=false;
+          for(let j=0; j<poll.length; j++)
+          {
+            if(poll[j].senderId==msg.sender_id)
+            {
+              poll[j].answer="";
+              isExist=true;
+              break;
+            }
+          }
+          if(!isExist)
+          {
+            let object={senderId:msg.sender_id,answer:""};
+            allMessage[i].userChoice.push(object);
+          }
+          obj=allMessage[i];
+          allMessage[i]=obj;
+          setAllMessage((prev)=>[...prev]);
+
+          break;
+        }
+      }
+
+    }
+    else
+    {
+      let isMyMessage = false;
+      let { user_name, message, sender_id, time, type, isPrivate,userChoice } = msg;
+      let msgGot = { user_name, message, time, type, isPrivate,sender_id,userChoice };
+
+      console.log("Inside message  : ",msg);
+
+      if (socketRef.current.id == sender_id) {
+        isMyMessage = true;
+      }
 
     let sendClass = isMyMessage;
+    // console.log("Message is mine : ", isMyMessage);
 
-    setAllMessage((exsistingMessages) => [
-      ...exsistingMessages,
-      { ...msgGot, isMine: sendClass },
-    ]);
+      setAllMessage((exsistingMessages) => [
+        ...exsistingMessages,
+        { ...msgGot, isMine: sendClass },
+      ]);
+    }
+  
+    
+    
 
     // }
   };
@@ -236,6 +446,10 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
     });
 
   }, [allMessage]);
+
+  useEffect(()=>{
+    console.log("All message : ",allMessage);
+  },[allMessage])
 
   return (
     <div className="chatBox">
@@ -257,7 +471,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
               handleShowEmoji={handleShowEmoji}
             />
           )}
-          <button onClick={() => setIsPoll(true)}>Poll</button>
+          <button className="pollButton" onClick={() => setIsPoll(true)}>Poll</button>
 
           <button className="saveChat" onClick={() => saveChat(socketRef.current.id)}>
             <HiOutlineSave />
