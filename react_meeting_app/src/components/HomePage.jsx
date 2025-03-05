@@ -186,7 +186,7 @@ export default function HomePage() {
     return <ShareScreen></ShareScreen>;
   }
   else if (showHistory) {
-    return <MeetingHistory />
+    return <MeetingHistory  setHistory={setHistory}/>
   }
 
   else {

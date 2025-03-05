@@ -16,6 +16,7 @@ import { IoTriangleOutline } from "react-icons/io5";
 import { GoArrowUpRight } from "react-icons/go";
 import { MdSaveAlt } from "react-icons/md";
 import { FaRegTrashCan } from "react-icons/fa6";
+import { FaFont } from "react-icons/fa";
 
 
 export default function ButtonDiv(props) {
@@ -104,11 +105,14 @@ export default function ButtonDiv(props) {
     setShowShape((prev) => !prev);
   }
 
+  useEffect(() => {
+    console.log("Tool : ", tool);
+  }, [tool]);
 
   return (
     <div className={style.parent} style={{ width: "100%", height: "10%", display: "flex", alignItems: "center", gap: "2%", position: "relative", background: "#1f2937", }}>
       <Button
-        value={<FaPaintBrush style={{ fontSize: "1.6rem" }} />}
+        value={<FaPaintBrush style={{ fontSize: "1.4rem" }} />}
         onClick={startDrawing}
         type="button"
         title="Doodle"
@@ -127,7 +131,7 @@ export default function ButtonDiv(props) {
       )}
 
       <Button
-        value={<TbBrushOff style={{ fontSize: "1.6rem" }} />}
+        value={<TbBrushOff style={{ fontSize: "1.4rem" }} />}
         onClick={stopDrawing}
         type="button"
         title="Distable Drawing"
@@ -271,9 +275,18 @@ export default function ButtonDiv(props) {
         )}
       </button>
 
+      <Button
+        value={<FaFont style={{ fontSize: "1.4rem", color: "white" }} />}
+        onClick={() => {
+          tool.current = "text"
+          setDrawing(true);
+          setEraser(false);
+        }}
+        title="Text"
+      ></Button>
 
       <Button
-        value={<MdSaveAlt style={{ fontSize: "1.6rem" }} />}
+        value={<MdSaveAlt style={{ fontSize: "1.4rem" }} />}
         onClick={takeWhiteBoardScreenShot}
         type="button"
         title="Take screenshot"
@@ -281,7 +294,7 @@ export default function ButtonDiv(props) {
 
 
       <Button
-        value={<FaRegTrashCan style={{ fontSize: "1.6rem" }} />}
+        value={<FaRegTrashCan style={{ fontSize: "1.4rem" }} />}
         onClick={clearAll}
         type="button"
         title="Clear"

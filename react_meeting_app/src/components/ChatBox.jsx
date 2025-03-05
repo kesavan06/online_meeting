@@ -188,7 +188,6 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
 
 
   const handleNewMessage = (msg) => {
-    // console.log("MSG TYPE: ", msg.type);
 
     if (msg.type == "vote1") {
       for (let chat of allMessage) {
@@ -217,7 +216,6 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
     }
 
     let sendClass = isMyMessage;
-    // console.log("Message is mine : ", isMyMessage);
 
     setAllMessage((exsistingMessages) => [
       ...exsistingMessages,

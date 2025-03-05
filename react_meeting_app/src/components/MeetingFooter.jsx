@@ -20,6 +20,8 @@ import { FaRecordVinyl } from "react-icons/fa";
 import { FaUsersRectangle } from "react-icons/fa6";
 import { FaRobot } from "react-icons/fa";
 import { io } from "socket.io-client";
+import { FaArrowUpFromBracket } from "react-icons/fa6";
+import { FaArrowRightFromBracket } from "react-icons/fa6";
 
 function MeetingFooter({
   handleBoard,
@@ -301,7 +303,7 @@ function MeetingFooter({
             startScreenShare();
           }}
         >
-          <FaShareFromSquare className="changeColor"></FaShareFromSquare>
+          <FaArrowUpFromBracket className="changeColor"></FaArrowUpFromBracket>
         </div>
 
         <div
@@ -350,7 +352,7 @@ function MeetingFooter({
             leaveMeeting();
           }}
         >
-          <FaRightFromBracket className="exit"></FaRightFromBracket>
+          <FaArrowRightFromBracket className="exit"></FaArrowRightFromBracket>
         </div>
       </div>
       <div className="moreControls">
