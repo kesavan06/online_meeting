@@ -63,6 +63,7 @@ export default function Header({
     <div className="homePageHeader">
       <div className="iconAndName">
         <img style={{ width: "70px" }} src="meetingLogo2.png"></img>
+        <h2>KathaiKalaam</h2>
       </div>
       <div className="navLogin">
         {!hasCookie &&

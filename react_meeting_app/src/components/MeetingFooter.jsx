@@ -148,7 +148,7 @@ function MeetingFooter({
       });
       return [];
     });
-    socketRef.current = io("http://localhost:3002");
+    socketRef.current = io("https://172.17.20.38:3002");
     setupSocketListeners();
   };
   // socketRef.current.on("leave-meeting", (roomId, userId) => {

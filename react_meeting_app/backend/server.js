@@ -1,20 +1,30 @@
 const express = require("express");
 const cors = require("cors");
-const http = require("http");
+const https = require("https");
 const socketio = require("socket.io");
+const fs = require("fs");
+const path = require("path");
+
+const certPath = path.join(__dirname, "certs", "172.17.20.38.pem");
+const keyPath = path.join(__dirname, "certs", "172.17.20.38-key.pem");
+
+const options = {
+  cert: fs.readFileSync(certPath),
+  key: fs.readFileSync(keyPath),
+};
 
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(options, app);
 const io = socketio(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: "GET,POST,PUT,DELETE",
     credentials: true,
   },
 });
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "*",
   methods: "GET,POST,PUT,DELETE",
   credentials: true,
   // optionsSuccessStatus: 200
@@ -349,7 +359,7 @@ io.on("connection", (socket) => {
 
   socket.on("remove-breakout-room", (roomId, indexOfRoom) => {
     const room = getRoom(roomId);
-    if(room){
+    if (room) {
       room.breakoutRooms.splice(indexOfRoom, 1);
     }
     console.log("Remove breakout-room:", roomId, indexOfRoom);
@@ -541,7 +551,7 @@ async function getUserDetails() {
 }
 
 server.listen(3002, () => {
-  console.log(`Server running on port 3002`);
+  console.log(`Server running on https://172.17.20.38`);
 });
 
 function checkTheRoomToId(roomId) {

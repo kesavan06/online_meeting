@@ -6,7 +6,7 @@ export default async function useUniqueName(uName) {
 
   try {
     console.log("Unique Name : ", uName);
-    let uniqueCheck = await fetch("http://localhost:3002/unique");
+    let uniqueCheck = await fetch("https://172.17.20.38:3002/unique");
 
     let rare = true;
 

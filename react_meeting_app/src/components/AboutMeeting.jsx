@@ -31,8 +31,7 @@ export default function AboutMeeting({
 
   return (
     <div className="homePageAboutMeeting">
-    <h1>Welcome to KathaiKalaam</h1>
-    <p>Connect with your team anytime, anywhere!</p>
+    <h1>Connect with your team anytime, anywhere!</h1>
     <div className="meetingButtons">
       <button
         onClick={() => {

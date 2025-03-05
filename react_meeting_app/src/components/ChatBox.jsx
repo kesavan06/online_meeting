@@ -104,7 +104,7 @@ function ChatBox({ view, setView, isPoll, setIsPoll, allMessage, setAllMessage, 
   }
   useEffect(() => {
     setTimeout(async () => {
-      let fetchAllMessages = await fetch("http://localhost:3002/allMessages", {
+      let fetchAllMessages = await fetch("https://172.17.20.38:3002/allMessages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

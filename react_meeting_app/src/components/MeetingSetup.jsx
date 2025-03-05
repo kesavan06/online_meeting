@@ -85,7 +85,7 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
   });
 
   // async function cMeetingFetch() {
-  //   let create = await fetch("http://localhost:3002/create", {
+  //   let create = await fetch("https://172.17.20.38:3002/create", {
   //     method: "POST",
   //     headers: {
   //       "Content-Type": "application/json",

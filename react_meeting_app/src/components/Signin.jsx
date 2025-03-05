@@ -1,15 +1,12 @@
 import { useAppContext } from "../Context";
-import "../Signin.css"
+import "../Signin.css";
 import Login from "./SignIn";
 
-
 export default function Signin(props) {
-
-
   let { nameUnique, setNameUnique } = props;
   let { password, setPassword } = props;
   let { user_name, key, user_id } = useAppContext();
-  let {displayMessage, setDisplayMessage} = props
+  let { displayMessage, setDisplayMessage } = props;
 
   function cancelShowSignIn(event) {
     event.preventDefault();
@@ -34,9 +31,12 @@ export default function Signin(props) {
         key.current = userLogin.user_key;
 
         const expires = new Date(Date.now() + 86400000);
-        props.setCookie('user_name', user_name.current, {expires});
-        props.setCookie('user_id', userLogin.user_id, {expires});
-
+        props.setCookie("user_name", user_name.current, {
+          expires,
+        });
+        props.setCookie("user_id", userLogin.user_id, {
+          expires,
+        });
 
         console.log("User ID: ", user_id);
         user_id.current = userLogin.user_id;
@@ -44,32 +44,23 @@ export default function Signin(props) {
         console.log("User in sign in : -----", user_name, key, user_id);
 
         props.setShowSignIn(false);
-      }
-      else{
+      } else {
         console.log("User not correct");
       }
-
     }
   }
 
-
-function handleMessage(e){
-  e.preventDefault();
-  setDisplayMessage((prev)=> prev=false);
-}
-
-
-
-
-
-
-
+  function handleMessage(e) {
+    e.preventDefault();
+    setDisplayMessage((prev) => (prev = false));
+  }
 
   return (
-    <div onMouseDown={displayMessage ? (e)=>handleMessage(e): undefined}>
-      <form id="signin" >
-
-        {displayMessage && <p className="message">You need to sign in to create a meeting</p>}
+    <div onMouseDown={displayMessage ? (e) => handleMessage(e) : undefined}>
+      <form id="signin">
+        {displayMessage && (
+          <p className="message">You need to sign in to create a meeting</p>
+        )}
         <h1 style={{ color: "white" }}>Sign in to your account</h1>
 
         <p style={{ color: "rgb(159 163 166 / 88%)" }}>

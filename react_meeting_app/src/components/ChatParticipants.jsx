@@ -180,7 +180,7 @@ export default ChatParticipants;
 
 async function getPaticipants(roomId) {
   try {
-    let fetchP = await fetch("http://localhost:3002/getP", {
+    let fetchP = await fetch("https://172.17.20.38:3002/getP", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
