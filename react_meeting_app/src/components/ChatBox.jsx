@@ -115,7 +115,7 @@ function ChatBox({
   useEffect(() => {
     setTimeout(async () => {
       let fetchAllMessages = await fetch(
-        "https://192.168.243.21:3002/allMessages",
+        "https://10.89.72.171:3002/allMessages",
         {
           method: "POST",
           headers: {
@@ -420,7 +420,7 @@ function ChatBox({
             className="saveChat"
             onClick={() => saveChat(socketRef.current.id)}
           >
-            <HiOutlineSave />
+            <HiOutlineSave className="save" />
           </button>
         </div>
 

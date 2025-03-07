@@ -71,7 +71,7 @@ export default function ShowParticipant({ name, socketId, allParticipants, host 
             <div className="participantProfile">
                 <Profile firstLetter={userName[0].toUpperCase() } />
                 <p ref={nameOfUser} contentEditable={editName} tabIndex={0} style={{ cursor: editName ? "text" : "default" }} className="userName">{userName} </p>
-                {host && <span style={{ fontSize: "0.75rem", position : "absolute", top: "36%", left : "29%"}}>(host)</span>}
+                {host && <span style={{ fontSize: "0.75rem", position : "absolute", top: "36%", left : "50%"}}>(host)</span>}
             </div>
             {showEdid && !editName && <MdEditSquare style={{ alignSelf: "right", cursor: "pointer" }} onClick={() => handleEditing()} />}
             {showEdid && editName && <IoCheckmarkCircleSharp style={{ alignSelf: "right", cursor: "pointer" }} onClick={() => handleNameChange()} />}
@@ -82,7 +82,7 @@ export default function ShowParticipant({ name, socketId, allParticipants, host 
 
 
 async function changeName(name, roomId, socketId) {
-    let fetchCall = await fetch("https://192.168.243.21:3002/changeName", {
+    let fetchCall = await fetch("https://10.89.72.171:3002/changeName", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

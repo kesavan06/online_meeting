@@ -40,15 +40,9 @@ function VideoRecord({sec,min,setMin,setSec,setIsRecord,isRecord,isRun,setIsRun}
   
   return (
       <div className="recordElement">
-        <div className="recordIconBox">
-          <FaRecordVinyl className="recordIcon"></FaRecordVinyl>
-        </div>
         <div className="recordTime">
           <div className="round"></div>
           <p>LIVE {min}:{sec}</p>
-        </div>
-        <div className="stopRecord">
-            <FaCircleStop className="stopRecordIcon"></FaCircleStop>
         </div>
       </div>
   );

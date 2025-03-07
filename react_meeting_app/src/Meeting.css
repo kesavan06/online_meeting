@@ -85,7 +85,6 @@
   transform: rotateY(180deg);
 }
 
-
 .video-item {
   color: white;
   display: flex;
@@ -159,13 +158,19 @@
 
 .emoji {
   position: absolute;
-  top: 43%;
-  right: 23%;
+  top: 53%;
+  right: 45%;
 }
 .emoji1 {
   position: absolute;
-  top: 43%;
-  right: 42.3%;
+  top: 53%;
+  right: 45%;
+}
+
+.emoji2 {
+  position: absolute;
+  top: 42%;
+  right: 45%;
 }
 
 .EmojiPickerReact .epr-preview {

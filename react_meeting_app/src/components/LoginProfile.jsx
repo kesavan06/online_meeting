@@ -23,7 +23,7 @@ function LoginProfile({ cookie, handleLogOut, setHistory }) {
 
             {showDetails ? (
                 <div className="details" onBlur={handleClickProfile}>
-                    <p onClick={() => handleLogOut()} style={{ textAlign: "center", width: "100%" }}>Logout</p>
+                    <p onClick={() => handleLogOut()} style={{ textAlign: "center", width: "100%" }}>Log out</p>
                     <p onClick={() => handleMeetingHistory()}>meetings</p>
                 </div>
             ) : null}

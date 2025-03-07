@@ -10,7 +10,7 @@ async function LoginFunction(unique_name, password) {
   try {
     console.log("Unique Name: ", unique_name + " Password: ", password);
 
-    let fetchSec = await fetch("https://192.168.243.21:3002/secretKey");
+    let fetchSec = await fetch("https://10.89.72.171:3002/secretKey");
     console.log("Fetch: ", fetchSec);
 
     let theUser = null;

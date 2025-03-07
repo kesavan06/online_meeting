@@ -10,6 +10,7 @@ export const BreakOutRoomPopup = ({
   setShowBreakOutRoom,
   setShowMeeting,
   joinBreakoutRoom,
+  onScreenShare,
 }) => {
   const {
     socketRef,
@@ -45,7 +46,15 @@ export const BreakOutRoomPopup = ({
   };
 
   return (
-    <div className={showChatBox ? "breakoutContainer" : "breakoutContainer1"}>
+    <div
+      className={
+        showChatBox
+          ? "breakoutContainer"
+          : onScreenShare.current
+          ? "breakoutContainer2"
+          : "breakoutContainer1"
+      }
+    >
       <div className="breakoutHeading">
         <div className="breakOutRoomName">
           <p>Breakout Rooms</p>

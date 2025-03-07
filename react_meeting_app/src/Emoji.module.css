@@ -21,27 +21,25 @@
     flex-wrap: wrap;
 } */
 
-
-
 .emojiContainer {
-    position: relative;
-    /* Ensures picker stays inside this div */
-    display: inline-block;
+  position: relative;
+  /* Ensures picker stays inside this div */
+  display: inline-block;
 }
 
 .emojiWrapper {
-    position: absolute;
-    left: 0;
-    bottom: 0%;
-    z-index: 1;
-    background: #1e1e1e;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  position: absolute;
+  left: 0;
+  bottom: 0%;
+  z-index: 1;
+  background: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
 }
 
-
 .epr-category-nav {
-    padding: 0px;
-    padding-left: 2%;
-    padding-right: 2%;
+  padding: 0px;
+  padding-left: 2%;
+  padding-right: 2%;
 }

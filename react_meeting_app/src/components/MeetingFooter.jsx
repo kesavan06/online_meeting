@@ -156,7 +156,7 @@ function MeetingFooter({
       });
       return [];
     });
-    socketRef.current = io("https://192.168.243.21:3002");
+    socketRef.current = io("https://10.89.72.171:3002");
     setupSocketListeners();
   };
   // socketRef.current.on("leave-meeting", (roomId, userId) => {
@@ -202,11 +202,6 @@ function MeetingFooter({
     } catch (err) {
       console.log("Error: " + err);
     }
-  }
-
-  function handleEmoji() {
-    setShowEmojis((prev) => (prev = !prev));
-    setBreakOutRoom((prev) => (prev = false));
   }
 
   // function timer()
@@ -339,7 +334,13 @@ function MeetingFooter({
           <FaChalkboardTeacher className="changeColor"></FaChalkboardTeacher>
         </div>
 
-        <div className="controlBox" onClick={() => handleEmoji()}>
+        <div
+          className="controlBox"
+          onClick={() => {
+            setShowEmojis((prev) => (prev = !prev));
+            setBreakOutRoom((prev) => (prev = false));
+          }}
+        >
           <FaRegFaceSmile className="changeColor"></FaRegFaceSmile>
         </div>
         <div
@@ -356,16 +357,14 @@ function MeetingFooter({
         </div>
         <div div className="controlBox">
           {!isRecord && (
-            <FaRecordVinyl
-              className="changeColor"
-              onClick={startRecording}
-            ></FaRecordVinyl>
+            <div className="startRecord" onClick={startRecording}>
+              <FaRecordVinyl className="changeColor"></FaRecordVinyl>
+            </div>
           )}
           {isRecord && (
-            <FaCircleStop
-              className="changeColor"
-              onClick={stopRecording}
-            ></FaCircleStop>
+            <div className="startRecord" onClick={stopRecording}>
+              <FaCircleStop className="changeColor"></FaCircleStop>
+            </div>
           )}
         </div>
 
@@ -379,9 +378,6 @@ function MeetingFooter({
         </div>
       </div>
       <div className="moreControls">
-        <div className="controlBox" onClick={showNotebook}>
-          <FaRegNoteSticky className="changeColor"></FaRegNoteSticky>
-        </div>
         <div
           className="controlBox"
           onClick={() => {
@@ -401,6 +397,7 @@ function MeetingFooter({
             setChatView((prev) => (prev = false));
             setShowParticipants((prev) => (prev = true));
             setShowChatBot((prev) => (prev = false));
+            setShowNotes((prev) => (prev = false));
           }}
         >
           <FaUsers className="changeColor"></FaUsers>
@@ -413,10 +410,14 @@ function MeetingFooter({
             setChatView((prev) => (prev = false));
             setShowParticipants((prev) => (prev = false));
             setShowChatBot((prev) => (prev = true));
+            setShowNotes((prev) => (prev = false));
           }}
         >
           <FaRobot className="changeColor"></FaRobot>
         </div>
+        <div className="controlBox" onClick={showNotebook}>
+          <FaRegNoteSticky className="changeColor"></FaRegNoteSticky>
+      </div>
       </div>
     </div>
   );

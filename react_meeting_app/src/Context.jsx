@@ -44,7 +44,7 @@ export const AppProvider = ({ children }) => {
   }, [streamState]);
 
   useEffect(() => {
-    socketRef.current = io("https://192.168.243.21:3002");
+    socketRef.current = io("https://10.89.72.171:3002");
     setupSocketListeners();
 
     return () => {
@@ -384,6 +384,7 @@ export const AppProvider = ({ children }) => {
     );
     console.log(isScreenShare);
     if (isScreenShare) {
+      onScreenShare.current = true;
       console.log("Screen sharing already active");
       return;
     }

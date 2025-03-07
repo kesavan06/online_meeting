@@ -221,6 +221,13 @@ function Meeting({
 
   useEffect(() => {
     console.log("Current streams:", streams);
+    let isScreenShare = streams.some(
+      (videoStream) => videoStream.type == "screen"
+    );
+    console.log("is screen is sharing: ", isScreenShare);
+    if (isScreenShare) {
+      onScreenShare.current = true;
+    }
   }, [streams]);
 
   function handleClickOnEmoji(emojiObject) {
@@ -392,7 +399,16 @@ function Meeting({
             )}
 
             {showEmojis && (
-              <div className={showChatBox ? "emoji" : "emoji1"} ref={emojiRef}>
+              <div
+                className={
+                  showChatBox
+                    ? "emoji"
+                    : onScreenShare.current
+                    ? "emoji2"
+                    : "emoji1"
+                }
+                ref={emojiRef}
+              >
                 <EmojiPicker
                   theme="dark"
                   width={300}
@@ -415,6 +431,7 @@ function Meeting({
                 setBRoomArray={setBRoomArray}
                 setShowBreakOutRoom={setShowBreakOutRoom}
                 setShowMeeting={setShowMeeting}
+                onScreenShare={onScreenShare}
                 joinBreakoutRoom={joinBreakoutRoom}
               ></BreakOutRoomPopup>
             )}

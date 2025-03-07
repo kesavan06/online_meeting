@@ -85,7 +85,7 @@ function MeetingSetup({ view, setView, showMeeting, setShowMeeting }) {
   });
 
   // async function cMeetingFetch() {
-  //   let create = await fetch("https://192.168.243.21:3002/create", {
+  //   let create = await fetch("https://10.89.72.171:3002/create", {
   //     method: "POST",
   //     headers: {
   //       "Content-Type": "application/json",
